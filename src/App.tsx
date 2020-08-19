@@ -50,6 +50,17 @@ const App: React.FC = () => {
         rendition.next();
       }
     });
+    rendition?.on("click", (e: MouseEvent) => {
+      const clickLocation = e.pageX;
+      const third = (containerRef.current?.offsetWidth || 0) / 3;
+      // If click is on first third of page go to previous page
+      // If last third go to next page
+      if (clickLocation < third) {
+        rendition.prev();
+      } else if (clickLocation > third * 2) {
+        rendition.next();
+      }
+    });
   }, [rendition]);
 
   React.useEffect(() => {

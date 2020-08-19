@@ -16,7 +16,6 @@
     "fontsource-roboto": "^3.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-reader": "^0.18.4",
     "react-scripts": "3.4.1",
     "source-map-explorer": "^2.4.2",
     "typescript": "~3.9.6"
