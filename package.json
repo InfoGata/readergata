@@ -16,6 +16,7 @@
     "fontsource-roboto": "^3.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-pdf": "^5.0.0",
     "react-scripts": "3.4.1",
     "source-map-explorer": "^2.4.2",
     "typescript": "~3.9.6"
@@ -25,7 +26,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cors-server": "node servers/cors/server.js",
+    "postinstall": "cd servers/cors && npm install",
+    "dev": "concurrently --kill-others \"npm run cors-server\" \"npm start\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,5 +45,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-pdf": "^4.0.6",
+    "concurrently": "^5.3.0"
   }
 }

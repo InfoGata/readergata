@@ -1,67 +1,19 @@
 import React from "react";
 import { AppBar, Toolbar, CssBaseline, Slide } from "@material-ui/core";
-import Epub, { Rendition, Book } from "epubjs";
+import EbookViewer from "./components/EbookViewer";
+import PdfViewer from "./components/PdfViewer";
 
-const DEMO_URL =
-  "https://gerhardsletten.github.io/react-reader/files/alice.epub";
-
+const proxy = "http://localhost:8080/";
 const App: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(true);
-  const [url, setUrl] = React.useState<string | ArrayBuffer>(DEMO_URL);
-  const [rendition, setRendition] = React.useState<Rendition | null>(null);
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const book = React.useRef<Book>();
+  const [ebook, setEbook] = React.useState<string | ArrayBuffer>("");
+  const [inputUrl, setInputUrl] = React.useState("");
+  const [pdf, setPdf] = React.useState<string | ArrayBuffer>("");
+  const [useEbook, setUseEbook] = React.useState(false);
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
-
-  React.useEffect(() => {
-    if (book.current) {
-      book.current.destroy();
-    }
-    book.current = Epub();
-    if (url instanceof ArrayBuffer) {
-      book.current.open(url, "binary");
-    } else {
-      book.current.open(url);
-    }
-    console.log(url);
-
-    const viewer = containerRef?.current;
-    if (viewer) {
-      const rend = book.current.renderTo(viewer, {
-        width: "100%",
-        height: "100vh",
-      });
-      rend.display();
-      setRendition(rend);
-    }
-  }, [url]);
-
-  React.useEffect(() => {
-    rendition?.on("keyup", (e: KeyboardEvent) => {
-      if ((e.keyCode || e.which) === 37) {
-        rendition.prev();
-      }
-
-      // Right Key
-      if ((e.keyCode || e.which) === 39) {
-        rendition.next();
-      }
-    });
-    rendition?.on("click", (e: MouseEvent) => {
-      const clickLocation = e.pageX;
-      const third = (containerRef.current?.offsetWidth || 0) / 3;
-      // If click is on first third of page go to previous page
-      // If last third go to next page
-      if (clickLocation < third) {
-        rendition.prev();
-      } else if (clickLocation > third * 2) {
-        rendition.next();
-      }
-    });
-  }, [rendition]);
 
   React.useEffect(() => {
     window.addEventListener("mousemove", (event: MouseEvent) => {
@@ -77,27 +29,80 @@ const App: React.FC = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      if (file.type !== "application/epub+zip") {
-        return alert("Unsupported type");
+      if (file.type === "application/epub+zip") {
+        const bookData = await file.arrayBuffer();
+        setUseEbook(true);
+        setEbook(bookData);
+      } else if (file.type === "application/pdf") {
+        const pdfData = await file.arrayBuffer();
+        setUseEbook(false);
+        setPdf(pdfData);
+      } else {
+        alert("Unsupported type");
       }
-      const bookData = await file.arrayBuffer();
-      setUrl(bookData);
     }
   };
+
+  const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputUrl(value);
+  };
+
+  const setDataUrl = (response: Response, url: string) => {
+    const mimeType = response.headers.get("Content-Type");
+    if (mimeType === "application/epub+zip") {
+      setUseEbook(true);
+      setEbook(url);
+    } else if (mimeType === "application/pdf") {
+      setUseEbook(false);
+      setPdf(url);
+    } else {
+      alert("Unsupported type");
+    }
+  };
+
+  const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Fetch head and check mime type
+    fetch(inputUrl, { method: "HEAD" })
+      .then((data) => {
+        setDataUrl(data, inputUrl);
+      })
+      .catch(() => {
+        // Determine if error is because of cors
+        const noProtocol = inputUrl.replace(/(^\w+:|^)\/\//, "");
+        const proxyUrl = `${proxy}${noProtocol}`;
+        fetch(proxyUrl, { method: "HEAD" })
+          .then((data) => {
+            setDataUrl(data, proxyUrl);
+          })
+          .catch(() => {
+            alert("Could not get file");
+          });
+      });
+  };
+
+  const reader = useEbook ? (
+    <EbookViewer ebook={ebook} />
+  ) : (
+    <PdfViewer pdf={pdf} />
+  );
 
   return (
     <>
       <CssBaseline />
-      <div style={{ position: "relative", height: "100vh" }}>
-        <Slide direction="down" in={menuOpen}>
-          <AppBar position="fixed" hidden={!menuOpen}>
-            <Toolbar>
-              <input type="file" onChange={onFileChange} />
-            </Toolbar>
-          </AppBar>
-        </Slide>
-        <div ref={containerRef}></div>
-      </div>
+      <Slide direction="down" in={menuOpen}>
+        <AppBar position="fixed" hidden={!menuOpen}>
+          <Toolbar>
+            <input type="file" onChange={onFileChange} />
+            <form onSubmit={onUrlSubmit}>
+              <input type="text" value={inputUrl} onChange={onInputUrlChange} />
+              <input type="submit" value="submit" />
+            </form>
+          </Toolbar>
+        </AppBar>
+      </Slide>
+      <div style={{ position: "relative", height: "100vh" }}>{reader}</div>
     </>
   );
 };
