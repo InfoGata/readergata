@@ -2,6 +2,7 @@ import React from "react";
 import { AppBar, Toolbar, CssBaseline, Slide } from "@material-ui/core";
 import EbookViewer from "./components/EbookViewer";
 import PdfViewer from "./components/PdfViewer";
+import "./App.css";
 
 const proxy = "http://localhost:8080/";
 const App: React.FC = () => {
@@ -29,11 +30,11 @@ const App: React.FC = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      if (file.type === "application/epub+zip") {
+      if (file.type.includes("application/epub+zip")) {
         const bookData = await file.arrayBuffer();
         setUseEbook(true);
         setEbook(bookData);
-      } else if (file.type === "application/pdf") {
+      } else if (file.type.includes("application/pdf")) {
         const pdfData = await file.arrayBuffer();
         setUseEbook(false);
         setPdf(pdfData);
@@ -50,10 +51,11 @@ const App: React.FC = () => {
 
   const setDataUrl = (response: Response, url: string) => {
     const mimeType = response.headers.get("Content-Type");
-    if (mimeType === "application/epub+zip") {
+    console.log(mimeType);
+    if (mimeType?.includes("application/epub+zip")) {
       setUseEbook(true);
       setEbook(url);
-    } else if (mimeType === "application/pdf") {
+    } else if (mimeType?.includes("application/pdf")) {
       setUseEbook(false);
       setPdf(url);
     } else {
