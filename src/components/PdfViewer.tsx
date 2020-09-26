@@ -8,11 +8,45 @@ interface IProps {
 }
 
 const PdfViewer: React.FC<IProps> = (props) => {
+  const [numPages, setNumPages] = React.useState(1);
+  const [pageNumber, setPageNumber] = React.useState(1);
   const { pdf } = props;
 
+  const onDocumentLoadSuccess = (event: pdfjs.PDFDocumentProxy) => {
+    setNumPages(event.numPages);
+    setPageNumber(1);
+  };
+
+  function changePage(offset: number) {
+    setPageNumber((prevPageNumber) => prevPageNumber + offset);
+  }
+
+  function previousPage() {
+    changePage(-1);
+  }
+
+  function nextPage() {
+    changePage(1);
+  }
+
   return (
-    <Document file={pdf}>
-      <Page pageNumber={1} />
+    <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
+      <Page pageNumber={pageNumber} />
+      <div>
+        <p>
+          Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+        </p>
+        <button type="button" disabled={pageNumber <= 1} onClick={previousPage}>
+          Previous
+        </button>
+        <button
+          type="button"
+          disabled={pageNumber >= numPages}
+          onClick={nextPage}
+        >
+          Next
+        </button>
+      </div>
     </Document>
   );
 };
