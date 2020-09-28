@@ -1,15 +1,24 @@
 import React from "react";
-import Epub, { Rendition, Book } from "epubjs";
+import Epub, { Rendition, Book, NavItem } from "epubjs";
+import { BookContent } from "../models";
 
 interface IProps {
   ebook: string | ArrayBuffer;
+  location: string;
+  setContents: (contents: BookContent[]) => void;
 }
 
 const EbookViewer: React.FC<IProps> = (props) => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
-  const { ebook } = props;
+  const { ebook, setContents, location } = props;
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    if (location) {
+      rendition?.display(location);
+    }
+  }, [location, rendition]);
 
   React.useEffect(() => {
     rendition?.on("keyup", (e: KeyboardEvent) => {
@@ -35,6 +44,7 @@ const EbookViewer: React.FC<IProps> = (props) => {
     });
   }, [rendition]);
 
+  const stableSetContents = React.useCallback(setContents, []);
   React.useEffect(() => {
     if (book.current) {
       book.current.destroy();
@@ -42,23 +52,37 @@ const EbookViewer: React.FC<IProps> = (props) => {
     if (!ebook) {
       return;
     }
-    book.current = Epub();
+    const newBook = Epub();
     if (ebook instanceof ArrayBuffer) {
-      book.current.open(ebook, "binary");
+      newBook.open(ebook, "binary");
     } else {
-      book.current.open(ebook);
+      newBook.open(ebook);
     }
 
     const viewer = containerRef?.current;
     if (viewer) {
-      const rend = book.current.renderTo(viewer, {
+      const rend = newBook.renderTo(viewer, {
         width: "100%",
         height: "100vh",
       });
       rend.display();
       setRendition(rend);
     }
-  }, [ebook]);
+    newBook.loaded.navigation.then((navigation) => {
+      const navItemToContent = (items: NavItem[]): BookContent[] => {
+        if (items.length === 0) return [];
+
+        return items.map((t) => ({
+          title: t.label,
+          location: t.href,
+          items: navItemToContent(t.subitems || []),
+        }));
+      };
+      const contents = navItemToContent(navigation.toc);
+      stableSetContents(contents);
+    });
+    book.current = newBook;
+  }, [ebook, stableSetContents]);
   return <div ref={containerRef}></div>;
 };
 

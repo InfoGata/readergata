@@ -2,31 +2,34 @@ import React from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import { BookContent } from "../models";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 interface Props {
+  setContents: (contents: BookContent[]) => void;
   pdf: ArrayBuffer | string;
-}
-
-interface PageLinkProps {
-  content: BookContent;
+  location: string;
 }
 
 const PdfViewer: React.FC<Props> = (props) => {
   const [numPages, setNumPages] = React.useState(1);
   const [pageNumber, setPageNumber] = React.useState(1);
-  const [bookContents, setBookContents] = React.useState<BookContent[]>([]);
   const [pdfDocument, setPdfDocument] = React.useState<
     pdfjs.PDFDocumentProxy
   >();
-  const { pdf } = props;
+  const { pdf, setContents, location } = props;
 
   React.useEffect(() => {
-    const testPage = async (outline: pdfjs.PDFTreeNode) => {
-      const [ref] = outline.dest;
-      const test: number = await (pdfDocument as any).getPageIndex(ref);
-      console.log(test);
-      return (test + 1).toString();
+    const getPage = async (outline: pdfjs.PDFTreeNode) => {
+      let page = 0;
+      if (typeof outline.dest === "string") {
+        // TODO: replace with correct code once
+        // a pdf that doesn't use object is found
+        alert("Need to test");
+      } else {
+        // dest is an object
+        const [ref] = outline.dest;
+        page = await (pdfDocument as any).getPageIndex(ref);
+      }
+      return (page + 1).toString();
     };
 
     const outlineToContent = async (
@@ -34,23 +37,31 @@ const PdfViewer: React.FC<Props> = (props) => {
     ): Promise<BookContent[]> => {
       if (outline.length === 0) return [];
 
-      const test = outline.map(async (o) => ({
+      const pdfContents = outline.map(async (o) => ({
         title: o.title,
-        page: await testPage(o),
+        location: await getPage(o),
         items: await outlineToContent(o.items),
       }));
 
-      return Promise.all(test);
+      return Promise.all(pdfContents);
     };
 
     const onDocumentChange = async () => {
       if (pdfDocument) {
         const outline = await pdfDocument.getOutline();
-        setBookContents(await outlineToContent(outline));
+        const contents = await outlineToContent(outline);
+        setContents(contents);
       }
     };
     onDocumentChange();
-  }, [pdfDocument]);
+  }, [setContents, pdfDocument]);
+
+  React.useEffect(() => {
+    if (location) {
+      const page = parseInt(location);
+      setPageNumber(page);
+    }
+  }, [location]);
 
   const onDocumentLoadSuccess = async (pdfDocument: pdfjs.PDFDocumentProxy) => {
     setPdfDocument(pdfDocument);
@@ -70,40 +81,8 @@ const PdfViewer: React.FC<Props> = (props) => {
     changePage(1);
   }
 
-  function onItemClick({ pageNumber }: { pageNumber: string }) {
-    if (pageNumber) {
-      setPageNumber(parseInt(pageNumber));
-    }
-  }
-
-  const PageLink: React.FC<PageLinkProps> = (props) => {
-    const onClick = () => {
-      setPageNumber(parseInt(props.content.page));
-    };
-
-    return <button onClick={onClick}>{props.content.title}</button>;
-  };
-
-  const bookContentsToList = (contents: BookContent[]) => {
-    if (contents.length === 0) {
-      return null;
-    }
-
-    return (
-      <ul>
-        {contents.map((c) => (
-          <li>
-            <PageLink content={c} />
-            {bookContentsToList(c.items)}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
   return (
     <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
-      {bookContentsToList(bookContents)}
       <Page pageNumber={pageNumber} />
       <div>
         <p>

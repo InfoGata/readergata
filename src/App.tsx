@@ -1,17 +1,59 @@
 import React from "react";
-import { AppBar, Toolbar, CssBaseline, Slide } from "@material-ui/core";
+import {
+  AppBar,
+  Toolbar,
+  CssBaseline,
+  Slide,
+  Menu,
+  MenuItem,
+  makeStyles,
+  createStyles,
+  Theme,
+} from "@material-ui/core";
 import EbookViewer from "./components/EbookViewer";
 import PdfViewer from "./components/PdfViewer";
 import "./App.css";
+import { BookContent } from "./models";
 
 const proxy = "http://localhost:8080/";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    nested: {
+      paddingLeft: theme.spacing(3),
+    },
+  })
+);
+
+interface TocItemProps {
+  content: BookContent;
+  setLocation: (location: string) => void;
+  isNested: boolean;
+}
+
+const TocItem: React.FC<TocItemProps> = (props) => {
+  const classes = useStyles();
+  const { content, isNested, setLocation } = props;
+  const onClick = () => {
+    setLocation(content.location);
+  };
+  return (
+    <MenuItem onClick={onClick} className={isNested ? classes.nested : ""}>
+      {content.title}
+    </MenuItem>
+  );
+};
+
 const App: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(true);
   const [ebook, setEbook] = React.useState<string | ArrayBuffer>("");
   const [inputUrl, setInputUrl] = React.useState("");
   const [pdf, setPdf] = React.useState<string | ArrayBuffer>("");
   const [useEbook, setUseEbook] = React.useState(false);
-
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const gotoMenuOpen = Boolean(anchorEl);
+  const [bookContents, setBookContents] = React.useState<BookContent[]>([]);
+  const [bookLocation, setBookLocation] = React.useState("");
   const closeMenu = () => {
     setMenuOpen(false);
   };
@@ -84,10 +126,50 @@ const App: React.FC = () => {
       });
   };
 
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const setLocation = (location: string) => {
+    setBookLocation(location);
+    setAnchorEl(null);
+  };
+
+  const getBookContents = (
+    contents: BookContent[],
+    isNested = false
+  ): JSX.Element[] => {
+    if (contents.length === 0) {
+      return [];
+    }
+
+    return contents.flatMap((c) => [
+      <TocItem
+        key={c.title}
+        content={c}
+        setLocation={setLocation}
+        isNested={isNested}
+      />,
+      ...getBookContents(c.items, true),
+    ]);
+  };
+
+  const setContents = (bookContents: BookContent[]) => {
+    setBookContents(bookContents);
+  };
+
   const reader = useEbook ? (
-    <EbookViewer ebook={ebook} />
+    <EbookViewer
+      location={bookLocation}
+      setContents={setContents}
+      ebook={ebook}
+    />
   ) : (
-    <PdfViewer pdf={pdf} />
+    <PdfViewer location={bookLocation} setContents={setContents} pdf={pdf} />
   );
 
   return (
@@ -101,6 +183,18 @@ const App: React.FC = () => {
               <input type="text" value={inputUrl} onChange={onInputUrlChange} />
               <input type="submit" value="submit" />
             </form>
+            {bookContents.length > 0 && (
+              <div>
+                <button onClick={handleMenu}>Go To</button>
+                <Menu
+                  open={gotoMenuOpen}
+                  onClose={handleClose}
+                  anchorEl={anchorEl}
+                >
+                  {getBookContents(bookContents)}
+                </Menu>
+              </div>
+            )}
           </Toolbar>
         </AppBar>
       </Slide>
