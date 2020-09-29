@@ -1,5 +1,5 @@
 export interface BookContent {
   title: string;
-  location: string;
+  location?: string;
   items: BookContent[];
 }

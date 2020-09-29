@@ -35,7 +35,9 @@ const TocItem: React.FC<TocItemProps> = (props) => {
   const classes = useStyles();
   const { content, isNested, setLocation } = props;
   const onClick = () => {
-    setLocation(content.location);
+    if (content.location) {
+      setLocation(content.location);
+    }
   };
   return (
     <MenuItem onClick={onClick} className={isNested ? classes.nested : ""}>

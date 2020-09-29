@@ -20,6 +20,9 @@ const PdfViewer: React.FC<Props> = (props) => {
   React.useEffect(() => {
     const getPage = async (outline: pdfjs.PDFTreeNode) => {
       let page = 0;
+      if (!outline.dest) {
+        return undefined;
+      }
       if (typeof outline.dest === "string") {
         // TODO: replace with correct code once
         // a pdf that doesn't use object is found
