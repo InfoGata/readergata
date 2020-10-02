@@ -12,8 +12,10 @@ import {
 } from "@material-ui/core";
 import EbookViewer from "./components/EbookViewer";
 import PdfViewer from "./components/PdfViewer";
+import Plugins from "./components/Plugins";
 import "./App.css";
 import { BookContent } from "./models";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const proxy = "http://localhost:8080/";
 
@@ -175,7 +177,7 @@ const App: React.FC = () => {
   );
 
   return (
-    <>
+    <Router>
       <CssBaseline />
       <Slide direction="down" in={menuOpen}>
         <AppBar position="fixed" hidden={!menuOpen}>
@@ -185,6 +187,8 @@ const App: React.FC = () => {
               <input type="text" value={inputUrl} onChange={onInputUrlChange} />
               <input type="submit" value="submit" />
             </form>
+            <Link to="/">Home</Link>
+            <Link to="/plugins">Plugins</Link>
             {bookContents.length > 0 && (
               <div>
                 <button onClick={handleMenu}>Go To</button>
@@ -200,8 +204,15 @@ const App: React.FC = () => {
           </Toolbar>
         </AppBar>
       </Slide>
-      <div style={{ position: "relative", height: "100vh" }}>{reader}</div>
-    </>
+      <Switch>
+        <Route exact path="/">
+          <div style={{ position: "relative", height: "100vh" }}>{reader}</div>
+        </Route>
+        <Route path="/plugins">
+          <Plugins />
+        </Route>
+      </Switch>
+    </Router>
   );
 };
 
