@@ -14,6 +14,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
+    "axios": "^0.20.0",
     "electron-is-dev": "^1.2.0",
     "epubjs": "^0.3.88",
     "fontsource-roboto": "^3.0.3",

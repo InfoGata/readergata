@@ -1,7 +1,8 @@
 const path = require("path");
 
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, session } = require("electron");
 const isDev = require("electron-is-dev");
+const { electron } = require("process");
 
 function createWindow() {
   // Create the browser window.
@@ -9,8 +10,9 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+      webSecurity: false,
+    },
   });
 
   // and load the index.html of the app.
