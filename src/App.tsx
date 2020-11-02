@@ -3,12 +3,13 @@ import {
   AppBar,
   Toolbar,
   CssBaseline,
-  Slide,
   Menu,
   MenuItem,
   makeStyles,
   createStyles,
   Theme,
+  Container,
+  Box,
 } from "@material-ui/core";
 import EbookViewer from "./components/EbookViewer";
 import PdfViewer from "./components/PdfViewer";
@@ -49,7 +50,6 @@ const TocItem: React.FC<TocItemProps> = (props) => {
 };
 
 const App: React.FC = () => {
-  const [menuOpen, setMenuOpen] = React.useState(true);
   const [ebook, setEbook] = React.useState<string | ArrayBuffer>("");
   const [inputUrl, setInputUrl] = React.useState("");
   const [pdf, setPdf] = React.useState<string | ArrayBuffer>("");
@@ -58,19 +58,6 @@ const App: React.FC = () => {
   const gotoMenuOpen = Boolean(anchorEl);
   const [bookContents, setBookContents] = React.useState<BookContent[]>([]);
   const [bookLocation, setBookLocation] = React.useState("");
-  const closeMenu = () => {
-    setMenuOpen(false);
-  };
-
-  React.useEffect(() => {
-    window.addEventListener("mousemove", (event: MouseEvent) => {
-      if (event.pageY < 65) {
-        setMenuOpen(true);
-      } else {
-        closeMenu();
-      }
-    });
-  }, []);
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -179,39 +166,43 @@ const App: React.FC = () => {
   return (
     <Router>
       <CssBaseline />
-      <Slide direction="down" in={menuOpen}>
-        <AppBar position="fixed" hidden={!menuOpen}>
-          <Toolbar>
-            <input type="file" onChange={onFileChange} />
-            <form onSubmit={onUrlSubmit}>
-              <input type="text" value={inputUrl} onChange={onInputUrlChange} />
-              <input type="submit" value="submit" />
-            </form>
-            <Link to="/">Home</Link>
-            <Link to="/plugins">Plugins</Link>
-            {bookContents.length > 0 && (
-              <div>
-                <button onClick={handleMenu}>Go To</button>
-                <Menu
-                  open={gotoMenuOpen}
-                  onClose={handleClose}
-                  anchorEl={anchorEl}
-                >
-                  {getBookContents(bookContents)}
-                </Menu>
+      <AppBar position="fixed">
+        <Toolbar>
+          <input type="file" onChange={onFileChange} />
+          <form onSubmit={onUrlSubmit}>
+            <input type="text" value={inputUrl} onChange={onInputUrlChange} />
+            <input type="submit" value="submit" />
+          </form>
+          <Link to="/">Home</Link>
+          <Link to="/plugins">Plugins</Link>
+          {bookContents.length > 0 && (
+            <div>
+              <button onClick={handleMenu}>Go To</button>
+              <Menu
+                open={gotoMenuOpen}
+                onClose={handleClose}
+                anchorEl={anchorEl}
+              >
+                {getBookContents(bookContents)}
+              </Menu>
+            </div>
+          )}
+        </Toolbar>
+      </AppBar>
+      <Container>
+        <Box my={8}>
+          <Switch>
+            <Route exact path="/">
+              <div style={{ position: "relative", height: "100vh" }}>
+                {reader}
               </div>
-            )}
-          </Toolbar>
-        </AppBar>
-      </Slide>
-      <Switch>
-        <Route exact path="/">
-          <div style={{ position: "relative", height: "100vh" }}>{reader}</div>
-        </Route>
-        <Route path="/plugins">
-          <Plugins />
-        </Route>
-      </Switch>
+            </Route>
+            <Route path="/plugins">
+              <Plugins />
+            </Route>
+          </Switch>
+        </Box>
+      </Container>
     </Router>
   );
 };
