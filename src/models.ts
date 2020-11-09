@@ -13,5 +13,4 @@ export interface BookLinkItem {
 export interface BookLinkItemUrl {
   type: string;
   url: string;
-  size: string;
 }

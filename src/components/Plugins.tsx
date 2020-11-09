@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { BookLinkItem, BookLinkItemUrl } from "../models";
 import BookLink from "./BookLink";
+import Opds from "./Opds";
 
 // const humbleBundleSess = "sfsfs";
 const bundleUrl = "https://www.humblebundle.com/api/v1/user/order?ajax=true";
@@ -96,6 +97,7 @@ const Plugins: React.FC = () => {
     <div>
       <button onClick={openBundles}>Open Humble Bundle</button>
       {bookUrls}
+      <Opds />
     </div>
   );
 };

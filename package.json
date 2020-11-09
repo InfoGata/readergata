@@ -18,6 +18,8 @@
     "electron-is-dev": "^1.2.0",
     "epubjs": "^0.3.88",
     "fontsource-roboto": "^3.0.3",
+    "opds-feed-parser": "^0.0.18",
+    "r2-opds-js": "^1.0.27",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-pdf": "^5.0.0",

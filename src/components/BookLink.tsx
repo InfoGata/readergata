@@ -13,7 +13,7 @@ const BookItemButton: React.FC<BookItemButton> = (props) => {
 
   return (
     <button onClick={onClick}>
-      {bookUrl.type}: {bookUrl.size}
+      {bookUrl.type}
     </button>
   );
 };
@@ -29,8 +29,8 @@ const BookLink: React.FC<BookLinkProps> = (props) => {
     <>
       <img src={bookItem.icon} alt="icon" />
       <h3>{bookItem.name}</h3>
-      {bookItem.urls.map((u) => (
-        <BookItemButton bookUrl={u} />
+      {bookItem.urls.map((u, i) => (
+        <BookItemButton key={i} bookUrl={u} />
       ))}
     </>
   );
