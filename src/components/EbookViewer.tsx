@@ -63,7 +63,7 @@ const EbookViewer: React.FC<IProps> = (props) => {
     if (viewer) {
       const rend = newBook.renderTo(viewer, {
         width: "100%",
-        height: "100vh",
+        height: "80vh",
       });
       rend.display();
       setRendition(rend);
