@@ -1,7 +1,6 @@
 import React from "react";
 import {
   CssBaseline,
-  ListItemText,
   makeStyles,
   createStyles,
   Theme,
@@ -10,8 +9,6 @@ import {
   Typography,
   IconButton,
   Drawer,
-  ListItem,
-  List,
 } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import EbookViewer from "./components/EbookViewer";
@@ -19,6 +16,7 @@ import Plugins from "./components/Plugins";
 import "./App.css";
 import { BookContent } from "./models";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import TableOfContents from "./components/TableOfContents";
 
 const proxy = "http://localhost:8080/";
 
@@ -27,9 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-    },
-    nested: {
-      paddingLeft: theme.spacing(3),
     },
     drawer: {
       [theme.breakpoints.up('sm')]: {
@@ -51,26 +46,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface TocItemProps {
-  content: BookContent;
-  setLocation: (location: string) => void;
-  isNested: boolean;
-}
-
-const TocItem: React.FC<TocItemProps> = (props) => {
-  const classes = useStyles();
-  const { content, isNested, setLocation } = props;
-  const onClick = () => {
-    if (content.location) {
-      setLocation(content.location);
-    }
-  };
-  return (
-    <ListItem button={true} onClick={onClick} className={isNested ? classes.nested : ""}>
-      <ListItemText primary={content.title} />
-    </ListItem>
-  );
-};
 
 const App: React.FC = () => {
   const [ebook, setEbook] = React.useState<string | ArrayBuffer>("");
@@ -138,25 +113,6 @@ const App: React.FC = () => {
     setBookLocation(location);
   };
 
-  const getBookContents = (
-    contents: BookContent[],
-    isNested = false
-  ): JSX.Element[] => {
-    if (contents.length === 0) {
-      return [];
-    }
-
-    return contents.flatMap((c) => [
-      <TocItem
-        key={c.title}
-        content={c}
-        setLocation={setLocation}
-        isNested={isNested}
-      />,
-      ...getBookContents(c.items, true),
-    ]);
-  };
-
   const setContents = (bookContents: BookContent[]) => {
     setBookContents(bookContents);
   };
@@ -199,11 +155,12 @@ const App: React.FC = () => {
             <input type="text" value={inputUrl} onChange={onInputUrlChange} />
             <input type="submit" value="submit" />
           </form>
-      <Link to="/">Home</Link>
-      <Link to="/plugins">Plugins</Link>
-          <List>
-            {getBookContents(bookContents)}
-          </List>
+          <Link to="/">Home</Link>
+          <Link to="/plugins">Plugins</Link>
+          <TableOfContents
+            setLocation={setLocation}
+            bookContents={bookContents}
+          />
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
