@@ -9,6 +9,7 @@ import {
   Typography,
   IconButton,
   Drawer,
+  Button,
 } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import EbookViewer from "./components/EbookViewer";
@@ -61,16 +62,12 @@ const App: React.FC = () => {
       const file = files[0];
       if (file.type.includes("application/epub+zip")) {
         const bookData = await file.arrayBuffer();
-        // setUseEbook(true);
         setEbook(bookData);
-      } else if (file.type.includes("application/pdf")) {
-        // const pdfData = await file.arrayBuffer();
-        // setUseEbook(false);
-        // setPdf(pdfData);
       } else {
         alert("Unsupported type");
       }
     }
+    setDrawerOpen(false);
   };
 
   const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +108,7 @@ const App: React.FC = () => {
 
   const setLocation = (location: string) => {
     setBookLocation(location);
+    setDrawerOpen(false);
   };
 
   const setContents = (bookContents: BookContent[]) => {
@@ -150,7 +148,10 @@ const App: React.FC = () => {
           }}
           onClose={onDrawerToggle}
         >
-          <input type="file" onChange={onFileChange} />
+          <Button variant="contained" component="label">
+            Open File
+            <input type="file" onChange={onFileChange} hidden/>
+          </Button>
           <form onSubmit={onUrlSubmit}>
             <input type="text" value={inputUrl} onChange={onInputUrlChange} />
             <input type="submit" value="submit" />
