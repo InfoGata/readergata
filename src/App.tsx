@@ -19,7 +19,7 @@ import { BookContent } from "./models";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import TableOfContents from "./components/TableOfContents";
 
-const proxy = "http://localhost:8080/";
+const proxy = "http://localhost:36325/";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
@@ -80,6 +80,7 @@ const App: React.FC = () => {
     console.log(mimeType);
     if (mimeType?.includes("application/epub+zip")) {
       setEbook(url);
+      setDrawerOpen(false);
     } else {
       alert("Unsupported type");
     }
