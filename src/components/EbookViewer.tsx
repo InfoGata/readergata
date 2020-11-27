@@ -21,16 +21,6 @@ const EbookViewer: React.FC<IProps> = (props) => {
   }, [location, rendition]);
 
   React.useEffect(() => {
-    rendition?.on("keyup", (e: KeyboardEvent) => {
-      if ((e.keyCode || e.which) === 37) {
-        rendition.prev();
-      }
-
-      // Right Key
-      if ((e.keyCode || e.which) === 39) {
-        rendition.next();
-      }
-    });
     rendition?.on("click", (e: MouseEvent) => {
       const clickLocation = e.pageX;
       const third = (containerRef.current?.offsetWidth || 0) / 3;
