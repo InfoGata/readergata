@@ -1,3 +1,13 @@
+export enum BookSourceType {
+  Url,
+  Binary,
+}
+
+export interface Book {
+  bookSource: string;
+  bookSourceType: BookSourceType;
+}
+
 export interface BookContent {
   title: string;
   location?: string;

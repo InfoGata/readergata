@@ -15,9 +15,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import EbookViewer from "./components/EbookViewer";
 import Plugins from "./components/Plugins";
 import "./App.css";
-import { BookContent } from "./models";
+import { BookContent, BookSourceType } from "./models";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import TableOfContents from "./components/TableOfContents";
+import { useDispatch } from "react-redux";
+import { setBook } from "./reducers/ebookReducer";
 
 const proxy = "http://localhost:36325/";
 
@@ -47,22 +49,37 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const openFile = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = res => {
+      resolve(res.target?.result as string);
+    }
+    reader.onerror = err => reject(err);
+    reader.readAsBinaryString(file);
+  });
+};
 
 const App: React.FC = () => {
-  const [ebook, setEbook] = React.useState<string | ArrayBuffer>("");
   const [inputUrl, setInputUrl] = React.useState("");
   const [bookContents, setBookContents] = React.useState<BookContent[]>([]);
   const [bookLocation, setBookLocation] = React.useState("");
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const dispatch = useDispatch();
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
       if (file.type.includes("application/epub+zip")) {
-        const bookData = await file.arrayBuffer();
-        setEbook(bookData);
+        const bookData = await openFile(file);
+        if (bookData) {
+          dispatch(setBook({
+            bookSource: bookData,
+            bookSourceType: BookSourceType.Binary
+          }));
+        }
       } else {
         alert("Unsupported type");
       }
@@ -79,7 +96,10 @@ const App: React.FC = () => {
     const mimeType = response.headers.get("Content-Type");
     console.log(mimeType);
     if (mimeType?.includes("application/epub+zip")) {
-      setEbook(url);
+      dispatch(setBook({
+        bookSource: url,
+        bookSourceType: BookSourceType.Url
+      }));
       setDrawerOpen(false);
     } else {
       alert("Unsupported type");
@@ -171,7 +191,6 @@ const App: React.FC = () => {
               <EbookViewer
                 location={bookLocation}
                 setContents={setContents}
-                ebook={ebook}
               />
             </Route>
             <Route path="/plugins">

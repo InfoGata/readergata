@@ -1,18 +1,20 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
-import { BookContent } from "../models";
+import { BookContent, BookSourceType } from "../models";
+import { useSelector } from "react-redux";
+import { RootState } from "../rootReducer";
 
 interface IProps {
-  ebook: string | ArrayBuffer;
   location: string;
   setContents: (contents: BookContent[]) => void;
 }
 
 const EbookViewer: React.FC<IProps> = (props) => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
-  const { ebook, setContents, location } = props;
+  const { setContents, location } = props;
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const ebook = useSelector((state: RootState) => state.ebook.currentBook);
 
   React.useEffect(() => {
     if (location) {
@@ -43,10 +45,11 @@ const EbookViewer: React.FC<IProps> = (props) => {
       return;
     }
     const newBook = Epub();
-    if (ebook instanceof ArrayBuffer) {
-      newBook.open(ebook, "binary");
+    if (ebook.bookSourceType === BookSourceType.Binary) {
+      newBook.open(ebook.bookSource, "binary");
     } else {
-      newBook.open(ebook);
+      // Url
+      newBook.open(ebook.bookSource);
     }
 
     const viewer = containerRef?.current;
