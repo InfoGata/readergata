@@ -1,20 +1,17 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { BookContent, BookSourceType } from "../models";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../rootReducer";
+import { setContents } from "../reducers/ebookReducer";
 
-interface IProps {
-  location: string;
-  setContents: (contents: BookContent[]) => void;
-}
-
-const EbookViewer: React.FC<IProps> = (props) => {
+const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
-  const { setContents, location } = props;
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const ebook = useSelector((state: RootState) => state.ebook.currentBook);
+  const location = useSelector((state: RootState) => state.ebook.location);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (location) {
@@ -36,7 +33,6 @@ const EbookViewer: React.FC<IProps> = (props) => {
     });
   }, [rendition]);
 
-  const stableSetContents = React.useCallback(setContents, []);
   React.useEffect(() => {
     if (book.current) {
       book.current.destroy();
@@ -72,10 +68,10 @@ const EbookViewer: React.FC<IProps> = (props) => {
         }));
       };
       const contents = navItemToContent(navigation.toc);
-      stableSetContents(contents);
+      dispatch(setContents(contents));
     });
     book.current = newBook;
-  }, [ebook, stableSetContents]);
+  }, [ebook, dispatch]);
   return <div ref={containerRef}></div>;
 };
 

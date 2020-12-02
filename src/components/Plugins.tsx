@@ -3,6 +3,8 @@ import axios from "axios";
 import { BookLinkItem, BookLinkItemUrl } from "../models";
 import BookLink from "./BookLink";
 import Opds from "./Opds";
+import { useDispatch } from "react-redux";
+import { setNavigationOpen } from "../reducers/uiReducer";
 
 // const humbleBundleSess = "sfsfs";
 const bundleUrl = "https://www.humblebundle.com/api/v1/user/order?ajax=true";
@@ -73,6 +75,11 @@ const getHumbleBundleOrder = async (gamekey: string): Promise<BookLinkItem[]> =>
 
 const Plugins: React.FC = () => {
   const [books, setBooks] = React.useState<BookLinkItem[]>([]);
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(setNavigationOpen(false));
+  }, [dispatch]);
 
   const openBundles = async () => {
     const bundleResponse = await axios.get<Bundle[]>(

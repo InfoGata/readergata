@@ -1,6 +1,7 @@
 export enum BookSourceType {
   Url,
   Binary,
+  Base64,
 }
 
 export interface Book {

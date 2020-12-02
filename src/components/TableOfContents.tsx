@@ -1,6 +1,9 @@
 import { List, ListItem, ListItemText, makeStyles, createStyles, Theme } from "@material-ui/core";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { BookContent } from "../models";
+import { setLocation } from "../reducers/ebookReducer";
+import { RootState } from "../rootReducer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -12,16 +15,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface TocItemProps {
   content: BookContent;
-  setLocation: (location: string) => void;
   isNested: boolean;
 }
 
 const TocItem: React.FC<TocItemProps> = (props) => {
+  const dispatch = useDispatch();
   const classes = useStyles();
-  const { content, isNested, setLocation } = props;
+  const { content, isNested } = props;
   const onClick = () => {
     if (content.location) {
-      setLocation(content.location);
+      dispatch(setLocation(content.location));
     }
   };
   return (
@@ -31,14 +34,8 @@ const TocItem: React.FC<TocItemProps> = (props) => {
   );
 };
 
-interface Props  {
-  bookContents: BookContent[];
-  setLocation: (location: string) => void;
-}
-
-const TableOfContents: React.FC<Props> = (props) => {
-  const { bookContents, setLocation } = props;
-
+const TableOfContents: React.FC = () => {
+  const bookContents = useSelector((state: RootState) => state.ebook.contents);
   const getBookContents = (
     contents: BookContent[],
     isNested = false
@@ -51,7 +48,6 @@ const TableOfContents: React.FC<Props> = (props) => {
       <TocItem
         key={c.title}
         content={c}
-        setLocation={setLocation}
         isNested={isNested}
       />,
       ...getBookContents(c.items, true),
