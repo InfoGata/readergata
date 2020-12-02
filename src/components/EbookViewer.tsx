@@ -14,6 +14,23 @@ const EbookViewer: React.FC = () => {
   const location = useSelector((state: RootState) => state.ebook.location);
   const dispatch = useDispatch<AppDispatch>();
 
+  const onKeyUp = React.useCallback((event: KeyboardEvent) => {
+    const key = event.keyCode || event.which;
+    if (key === 37) {
+      rendition?.prev();
+    } else if (key === 39) {
+      rendition?.next();
+    }
+  }, [rendition]);
+
+  React.useEffect(() => {
+    document.body.addEventListener("keyup", onKeyUp);
+  }, [onKeyUp]);
+
+  React.useEffect(() => {
+    rendition?.on("keyup", onKeyUp)
+  }, [rendition, onKeyUp]);
+
   React.useEffect(() => {
     if (location) {
       rendition?.display(location);
@@ -74,6 +91,7 @@ const EbookViewer: React.FC = () => {
     newBook.loaded.metadata.then((metadata) => {
       dispatch(setTitle(metadata.title));
     });
+
     book.current = newBook;
   }, [ebook, dispatch]);
   return <div ref={containerRef}></div>;
