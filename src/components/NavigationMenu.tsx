@@ -13,6 +13,7 @@ import { setBook } from "../reducers/ebookReducer";
 import { BookSourceType } from "../models";
 import { setNavigationOpen } from "../reducers/uiReducer";
 import { RootState } from "../rootReducer";
+import { AppDispatch } from "../store";
 
 const proxy = "http://localhost:36325/";
 
@@ -48,7 +49,7 @@ const openFile = (file: File): Promise<string> => {
 const NavigationMenu: React.FC = () => {
   const classes  = useStyles();
   const [inputUrl, setInputUrl] = React.useState("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigationOpen = useSelector((state: RootState) => state.ui.navigationOpen);
 
   const onClose = ()=> dispatch(setNavigationOpen(false));

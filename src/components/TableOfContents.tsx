@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BookContent } from "../models";
 import { setLocation } from "../reducers/ebookReducer";
 import { RootState } from "../rootReducer";
+import { AppDispatch } from "../store";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,7 +20,7 @@ interface TocItemProps {
 }
 
 const TocItem: React.FC<TocItemProps> = (props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const { content, isNested } = props;
   const onClick = () => {

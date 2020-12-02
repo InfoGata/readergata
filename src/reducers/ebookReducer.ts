@@ -5,12 +5,14 @@ interface EbookState {
   currentBook?: Book;
   location: string;
   contents: BookContent[];
+  title: string;
 }
 
 let initialState: EbookState = {
   contents: [],
-  location: ""
-}
+  location: "",
+  title: "",
+};
 
 const ebookSlice = createSlice({
   name: "ebook",
@@ -24,6 +26,9 @@ const ebookSlice = createSlice({
     },
     setLocation(state, action: PayloadAction<string>) {
       state.location = action.payload;
+    },
+    setTitle(state, action: PayloadAction<string>) {
+      state.title = action.payload;
     }
   }
 });
@@ -31,7 +36,8 @@ const ebookSlice = createSlice({
 export const {
   setBook,
   setContents,
-  setLocation
+  setLocation,
+  setTitle
 } = ebookSlice.actions;
 
 export default ebookSlice.reducer

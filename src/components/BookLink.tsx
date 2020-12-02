@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { BookLinkItem, BookLinkItemUrl, BookSourceType } from "../models";
 import { Book } from "../models";
 import { setBook } from "../reducers/ebookReducer";
+import { AppDispatch } from "../store";
 
 interface BookItemButton {
   bookUrl: BookLinkItemUrl;
@@ -12,7 +13,7 @@ interface BookItemButton {
 const BookItemButton: React.FC<BookItemButton> = (props) => {
   const { bookUrl } = props;
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const onClick = () => {
     const book: Book = {
       bookSource: bookUrl.url,

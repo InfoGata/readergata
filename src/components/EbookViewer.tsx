@@ -3,7 +3,8 @@ import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { BookContent, BookSourceType } from "../models";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../rootReducer";
-import { setContents } from "../reducers/ebookReducer";
+import { setContents, setTitle } from "../reducers/ebookReducer";
+import { AppDispatch } from "../store";
 
 const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
@@ -11,7 +12,7 @@ const EbookViewer: React.FC = () => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const ebook = useSelector((state: RootState) => state.ebook.currentBook);
   const location = useSelector((state: RootState) => state.ebook.location);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   React.useEffect(() => {
     if (location) {
@@ -69,6 +70,9 @@ const EbookViewer: React.FC = () => {
       };
       const contents = navItemToContent(navigation.toc);
       dispatch(setContents(contents));
+    });
+    newBook.loaded.metadata.then((metadata) => {
+      dispatch(setTitle(metadata.title));
     });
     book.current = newBook;
   }, [ebook, dispatch]);

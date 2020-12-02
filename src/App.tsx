@@ -8,6 +8,7 @@ import {
   Toolbar,
   Typography,
   IconButton,
+  Grid,
 } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import EbookViewer from "./components/EbookViewer";
@@ -18,6 +19,7 @@ import NavigationMenu from "./components/NavigationMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { setNavigationOpen } from "./reducers/uiReducer";
 import { RootState } from "./rootReducer";
+import { AppDispatch } from "./store";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,9 +39,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const App: React.FC = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const navigationOpen = useSelector((s: RootState) => s.ui.navigationOpen)
-
+  const dispatch = useDispatch<AppDispatch>();
+  const navigationOpen = useSelector((state: RootState) => state.ui.navigationOpen)
+  const title = useSelector((state: RootState) => state.ebook.title);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
 
   return (
@@ -58,9 +60,11 @@ const App: React.FC = () => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
-              Responsive drawer
-            </Typography>
+            <Grid container justify="center">
+              <Typography variant="h6" noWrap>
+                {title}
+              </Typography>
+            </Grid>
           </Toolbar>
         </AppBar>
         <NavigationMenu />
