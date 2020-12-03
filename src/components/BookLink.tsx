@@ -38,13 +38,13 @@ const BookLink: React.FC<BookLinkProps> = (props) => {
   const { bookItem } = props;
 
   return (
-    <>
+    <div>
       <img src={bookItem.icon} alt="icon" />
       <h3>{bookItem.name}</h3>
       {bookItem.urls.map((u, i) => (
         <BookItemButton key={i} bookUrl={u} />
       ))}
-    </>
+    </div>
   );
 }
 
