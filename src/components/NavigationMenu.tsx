@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setBook } from "../reducers/ebookReducer";
 import { BookSourceType } from "../models";
-import { setNavigationOpen } from "../reducers/uiReducer";
+import { setIsFullscreen, setNavigationOpen } from "../reducers/uiReducer";
 import { RootState } from "../rootReducer";
 import { AppDispatch } from "../store";
 
@@ -51,8 +51,8 @@ const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigationOpen = useSelector((state: RootState) => state.ui.navigationOpen);
-
   const onClose = ()=> dispatch(setNavigationOpen(false));
+  const isFullscreen = useSelector((state: RootState) => state.ui.isFullscreen);
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -132,6 +132,9 @@ const NavigationMenu: React.FC = () => {
         <input type="text" value={inputUrl} onChange={onInputUrlChange} />
         <input type="submit" value="submit" />
       </form>
+      <button onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
+        Toggle Full Screen
+      </button>
       <Link to="/">Home</Link>
       <Link to="/plugins">Plugins</Link>
       <TableOfContents />

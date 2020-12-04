@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   CssBaseline,
   makeStyles,
@@ -17,9 +17,10 @@ import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NavigationMenu from "./components/NavigationMenu";
 import { useDispatch, useSelector } from "react-redux";
-import { setNavigationOpen } from "./reducers/uiReducer";
+import { setIsFullscreen, setNavigationOpen } from "./reducers/uiReducer";
 import { RootState } from "./rootReducer";
 import { AppDispatch } from "./store";
+import screenfull, { Screenfull } from "screenfull";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,6 +44,27 @@ const App: React.FC = () => {
   const navigationOpen = useSelector((state: RootState) => state.ui.navigationOpen)
   const title = useSelector((state: RootState) => state.ebook.title);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
+  const isFullScreen = useSelector((state: RootState) => state.ui.isFullscreen);
+
+  useEffect(() => {
+    const sfull = screenfull as Screenfull;
+    if (sfull.isEnabled) {
+      sfull.on('change', () => {
+        dispatch(setIsFullscreen(sfull.isFullscreen));
+      });
+    }
+  });
+
+  useEffect(() => {
+    if (screenfull.isEnabled)
+    {
+      if (isFullScreen) {
+          (screenfull as Screenfull).request();
+      } else {
+        (screenfull as Screenfull).exit()
+      }
+    }
+  }, [isFullScreen]);
 
   return (
     <Router>
@@ -61,7 +83,7 @@ const App: React.FC = () => {
               <MenuIcon />
             </IconButton>
             <Grid container justify="center">
-              <Typography variant="h6" noWrap>
+              <Typography variant="subtitle1" noWrap>
                 {title}
               </Typography>
             </Grid>
