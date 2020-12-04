@@ -15,10 +15,10 @@ const EbookViewer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const onKeyUp = React.useCallback((event: KeyboardEvent) => {
-    const key = event.keyCode || event.which;
-    if (key === 37) {
+    const key = event.key;
+    if (key === "ArrowLeft") {
       rendition?.prev();
-    } else if (key === 39) {
+    } else if (key === "ArrowRight") {
       rendition?.next();
     }
   }, [rendition]);
