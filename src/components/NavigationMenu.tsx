@@ -15,8 +15,6 @@ import { setIsFullscreen, setNavigationOpen } from "../reducers/uiReducer";
 import { RootState } from "../rootReducer";
 import { AppDispatch } from "../store";
 
-const proxy = "http://localhost:36325/";
-
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,39 +71,14 @@ const NavigationMenu: React.FC = () => {
     dispatch(setNavigationOpen(false));
   };
 
-  const setDataUrl = (response: Response, url: string) => {
-    const mimeType = response.headers.get("Content-Type");
-    console.log(mimeType);
-    if (mimeType?.includes("application/epub+zip")) {
-      dispatch(setBook({
-        bookSource: url,
-        bookSourceType: BookSourceType.Url
-      }));
-      dispatch(setNavigationOpen(false));
-    } else {
-      alert("Unsupported type");
-    }
-  };
-
   const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Fetch head and check mime type
-    fetch(inputUrl, { method: "HEAD" })
-      .then((data) => {
-        setDataUrl(data, inputUrl);
-      })
-      .catch(() => {
-        // Determine if error is because of cors
-        const noProtocol = inputUrl.replace(/(^\w+:|^)\/\//, "");
-        const proxyUrl = `${proxy}${noProtocol}`;
-        fetch(proxyUrl, { method: "HEAD" })
-          .then((data) => {
-            setDataUrl(data, proxyUrl);
-          })
-          .catch(() => {
-            alert("Could not get file");
-          });
-      });
+    if (inputUrl) {
+      dispatch(setBook({
+        bookSource: inputUrl,
+        bookSourceType: BookSourceType.Url
+      }));
+    }
   };
 
   const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {

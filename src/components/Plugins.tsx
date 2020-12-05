@@ -7,11 +7,10 @@ import { useDispatch } from "react-redux";
 import { setNavigationOpen } from "../reducers/uiReducer";
 import { AppDispatch } from "../store";
 
-// const humbleBundleSess = "sfsfs";
 const bundleUrl = "https://www.humblebundle.com/api/v1/user/order?ajax=true";
 const requestHeaders = {
   Cookie:
-    "",
+    "_simpleauth_sess=eyJ1c2VyX2lkIjo0OTIyNjYwNzE2NDEyOTI4LCJpZCI6ImxMRXlGYjk1bXEiLCJhdXRoX3RpbWUiOjE2MDM2ODkzOTh9|1607064420|a70975fc44cb8c81c30fade7dad31749e6e7f681;",
 };
 const proxiedUrl = `https://cloudcors.audio-pwa.workers.dev?setRequestHeaders=${JSON.stringify(
   requestHeaders

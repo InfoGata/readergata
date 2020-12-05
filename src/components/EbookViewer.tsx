@@ -6,6 +6,36 @@ import { RootState } from "../rootReducer";
 import { setContents, setTitle } from "../reducers/ebookReducer";
 import { AppDispatch } from "../store";
 
+const isCorrectMimeType = (response: Response): boolean => {
+  const mimeType = response.headers.get("Content-Type");
+  if (mimeType?.includes("application/epub+zip")) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const proxy = "http://localhost:36325/";
+
+const getValidUrl = async (url: string) => {
+  try {
+    // Fetch and check the mime type
+    const response = await fetch(url, { method: "HEAD" });
+    return isCorrectMimeType(response) ? url : null;
+  } catch {
+    // Determine if error is because of cors
+    const noProtocol = url.replace(/(^\w+:|^)\/\//, "");
+    const proxyUrl = `${proxy}${noProtocol}`;
+    try {
+      const response = await fetch(proxyUrl, { method: "HEAD" });
+      return isCorrectMimeType(response) ? proxyUrl : null;
+    } catch {
+      alert("Could not get file");
+    }
+  }
+  return null;
+}
+
 const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
@@ -52,47 +82,55 @@ const EbookViewer: React.FC = () => {
   }, [rendition]);
 
   React.useEffect(() => {
-    if (book.current) {
-      book.current.destroy();
-    }
-    if (!ebook) {
-      return;
-    }
-    const newBook = Epub();
-    if (ebook.bookSourceType === BookSourceType.Binary) {
-      newBook.open(ebook.bookSource, "binary");
-    } else {
-      // Url
-      newBook.open(ebook.bookSource);
-    }
+    const loadEbook = async () => {
+      if (book.current) {
+        book.current.destroy();
+      }
+      if (!ebook) {
+        return;
+      }
+      const newBook = Epub();
+      if (ebook.bookSourceType === BookSourceType.Binary) {
+        newBook.open(ebook.bookSource, "binary");
+      } else {
+        // Url
+        const validUrl = await getValidUrl(ebook.bookSource);
+        if (validUrl) {
+          newBook.open(validUrl);
+        } else {
+          return;
+        }
+      }
 
-    const viewer = containerRef?.current;
-    if (viewer) {
-      const rend = newBook.renderTo(viewer, {
-        width: "100vw",
-        height: "80vh",
+      const viewer = containerRef?.current;
+      if (viewer) {
+        const rend = newBook.renderTo(viewer, {
+          width: "100vw",
+          height: "90vh",
+        });
+        rend.display();
+        setRendition(rend);
+      }
+      newBook.loaded.navigation.then((navigation) => {
+        const navItemToContent = (items: NavItem[]): BookContent[] => {
+          if (items.length === 0) return [];
+
+          return items.map((t) => ({
+            title: t.label,
+            location: t.href,
+            items: navItemToContent(t.subitems || []),
+          }));
+        };
+        const contents = navItemToContent(navigation.toc);
+        dispatch(setContents(contents));
       });
-      rend.display();
-      setRendition(rend);
-    }
-    newBook.loaded.navigation.then((navigation) => {
-      const navItemToContent = (items: NavItem[]): BookContent[] => {
-        if (items.length === 0) return [];
+      newBook.loaded.metadata.then((metadata) => {
+        dispatch(setTitle(metadata.title));
+      });
 
-        return items.map((t) => ({
-          title: t.label,
-          location: t.href,
-          items: navItemToContent(t.subitems || []),
-        }));
-      };
-      const contents = navItemToContent(navigation.toc);
-      dispatch(setContents(contents));
-    });
-    newBook.loaded.metadata.then((metadata) => {
-      dispatch(setTitle(metadata.title));
-    });
-
-    book.current = newBook;
+      book.current = newBook;
+    };
+    loadEbook();
   }, [ebook, dispatch]);
   return <div ref={containerRef}></div>;
 };
