@@ -3,7 +3,13 @@ import Parser, { OPDSEntry, OPDSFeed, OPDSLink } from "opds-feed-parser";
 import { BookLinkItem, BookLinkItemUrl } from "../models";
 import BookLink from "./BookLink";
 
-const standardEbooks = 'https://standardebooks.org/opds';
+const defaultCatalogs = [
+  {
+    name: 'Standard Ebooks',
+    url: 'https://standardebooks.org/opds'
+  }
+]
+
 const proxiedUrl = 'https://cloudcors.audio-pwa.workers.dev?url=';
 
 interface Catalog {
@@ -22,7 +28,7 @@ const imageRels = [
   "http://opds-spec.org/thumbnail",
 ];
 
-const linkIsRel = (link: OPDSLink, rel: string) => {
+const linkIsRel = (link: OPDSLink, rel: string | ((r: string) => boolean)) => {
   if (!('rel' in link) || !link.rel) return false
   const rels = link.rel.split(' ')
   return typeof rel === 'function'
@@ -30,6 +36,21 @@ const linkIsRel = (link: OPDSLink, rel: string) => {
       : rels.some(x => x === rel)
 }
 
+
+const isCatalogEntry = (entry: OPDSEntry) => {
+  return (
+    entry.links &&
+    entry.links.some((link) =>
+      linkIsRel(link, (rel) =>
+        rel.startsWith("http://opds-spec.org/acquisition")
+      )
+    )
+  );
+};
+
+const isAcquisitionFeed = (feed: OPDSFeed) => {
+  return feed.entries && feed.entries.some(isCatalogEntry);
+};
 
 const getImage = (entry: OPDSEntry) => {
   for (const rel of imageRels) {
@@ -55,54 +76,55 @@ const getAcquisitionUrls = (entry: OPDSEntry): BookLinkItemUrl[]  => {
 const CatalogLink: React.FC<CatalogItem> = (props) => {
   const {catalog} = props;
   const [books, setBooks] = React.useState<BookLinkItem[]>([]);
+  const [catalogs, setCatalogs] = React.useState<Catalog[]>([]);
   const onClick = async () => {
     const response = await fetch(`${proxiedUrl}${catalog.url}`);
     const parser = new Parser();
     const responseString = await response.text();
     const opds = await parser.parse(responseString);
     const feed = opds as OPDSFeed;
-    console.log(feed);
-    const origin = new URL(feed.id).origin;
-    setBooks(feed.entries.map(e => ({
-      name: e.title,
-      icon: `${origin}${getImage(e)}`,
-      urls: getAcquisitionUrls(e)
-    })));
+    if (isAcquisitionFeed(feed)) {
+      const origin = new URL(feed.id).origin;
+      setBooks(feed.entries.map(e => ({
+        name: e.title,
+        icon: `${origin}${getImage(e)}`,
+        urls: getAcquisitionUrls(e)
+      })));
+    } else {
+      setCatalogs(feed.entries.map(e => ({
+        name: e.title,
+        url: e.id
+      })));
+    }
   };
   const bookItems = books.map((b, i) => 
     <BookLink key={i} bookItem={b} />
   );
+  const catalogLinks = catalogs.map((c, i) => 
+    <CatalogLink key={i} catalog={c} />
+    );
   return (
     <div>
       <div>
         <button onClick={onClick}>{catalog.name}</button>
       </div>
       {bookItems}
+      {catalogLinks}
     </div>
   );
 };
 
 const Opds: React.FC = () => {
-  const [catalogs, setCatalogs] = React.useState<Catalog[]>([])
-  const onClick = async () => {
-    const response = await fetch(`${proxiedUrl}${standardEbooks}`);
-    const parser = new Parser();
-    const responseString = await response.text();
-    const opds = await parser.parse(responseString);
-    const feed = opds as OPDSFeed;
-    console.log(feed);
-    setCatalogs(feed.entries.map(e => ({
-      name: e.title,
-      url: e.id
-    })));
-  };
-  const catalogLinks = catalogs.map((c, i) => 
+  const catalogs = defaultCatalogs.map((c, i) => (
     <CatalogLink key={i} catalog={c} />
-    );
+  ));
   return <div>
-      <button onClick={onClick}>Open Standard Ebooks</button>
-      {catalogLinks}
+      {catalogs}
     </div>;
 };
+
+interface CatalogButtonProps {
+  catalog: Catalog;
+}
 
 export default Opds;
