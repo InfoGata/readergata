@@ -69,10 +69,12 @@ const EbookViewer: React.FC = () => {
 
   React.useEffect(() => {
     rendition?.on("click", (e: MouseEvent) => {
-      const clickLocation = e.pageX;
+      const clickLocation = e.screenX;
       const third = (containerRef.current?.offsetWidth || 0) / 3;
       // If click is on first third of page go to previous page
       // else go to next page
+      console.log(third);
+      console.log(clickLocation);
       if (clickLocation < third) {
         rendition.prev();
       } else if (clickLocation >= third) {
