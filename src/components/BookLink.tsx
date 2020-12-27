@@ -6,11 +6,11 @@ import { Book } from "../models";
 import { setBook } from "../reducers/ebookReducer";
 import { AppDispatch } from "../store";
 
-interface BookItemButton {
+interface BookItemButtonProps {
   bookUrl: BookLinkItemUrl;
 }
 
-const BookItemButton: React.FC<BookItemButton> = (props) => {
+const BookItemButton: React.FC<BookItemButtonProps> = (props) => {
   const { bookUrl } = props;
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
