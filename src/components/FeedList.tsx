@@ -90,15 +90,12 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
       return;
     }
 
-    let opds = XML.deserialize<OPDS>(xmlDom, OPDS);
-    if (!opds) {
-      return;
-    }
-    const search = opds.Links.find((link) => linkIsRel(link, "search"));
+    let feed = XML.deserialize<OPDS>(xmlDom, OPDS);
+    const search = feed.Links.find((link) => linkIsRel(link, "search"));
     setSearchUrl(search ? search.Href : "");
-    if (isAcquisitionFeed(opds)) {
-      const origin = new URL(opds.Id).origin;
-      let books: BookLinkItem[] = opds.Entries.map((e) => ({
+    if (isAcquisitionFeed(feed)) {
+      const origin = new URL(feed.Id).origin;
+      let books: BookLinkItem[] = feed.Entries.map((e) => ({
         name: e.Title,
         authors: e.Authors.map((a) => ({ name: a.Name })),
         icon: `${origin}${getImage(e)}`,
@@ -108,7 +105,7 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
       setIsBookFeed(true);
     } else {
       setCatalogs(
-        opds.Entries.map((e) => ({
+        feed.Entries.map((e) => ({
           name: e.Title,
           url: e.Id,
         }))
