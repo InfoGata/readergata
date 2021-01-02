@@ -21,6 +21,7 @@ import { setIsFullscreen, setNavigationOpen } from "./reducers/uiReducer";
 import { RootState } from "./rootReducer";
 import { AppDispatch } from "./store";
 import screenfull, { Screenfull } from "screenfull";
+import FeedList from "./components/FeedList";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -93,12 +94,9 @@ const App: React.FC = () => {
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Switch>
-            <Route exact path="/">
-              <EbookViewer />
-            </Route>
-            <Route path="/plugins">
-              <Plugins />
-            </Route>
+            <Route exact path="/" component={EbookViewer} />
+            <Route path="/plugins" component={Plugins} />
+            <Route path="/feed" component={FeedList} />
           </Switch>
         </main>
       </div>

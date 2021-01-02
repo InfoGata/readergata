@@ -17,11 +17,22 @@ export interface BookContent {
 
 export interface BookLinkItem {
   name: string;
+  authors?: Author[];
   icon: string;
   urls: BookLinkItemUrl[];
 }
 
+export interface Author {
+  name: string;
+}
+
 export interface BookLinkItemUrl {
   type: string;
+  url: string;
+}
+
+export interface Catalog {
+  id?: string[];
+  name: string;
   url: string;
 }

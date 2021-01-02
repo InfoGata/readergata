@@ -1,3 +1,4 @@
+import { Avatar, ListItem, ListItemAvatar, ListItemText } from "@material-ui/core";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -37,14 +38,25 @@ interface BookLinkProps {
 const BookLink: React.FC<BookLinkProps> = (props) => {
   const { bookItem } = props;
 
+//  return (
+//    <div>
+//      <img src={bookItem.icon} alt="icon" />
+//      <h3>{bookItem.name}</h3>
+//      {bookItem.urls.map((u, i) => (
+//        <BookItemButton key={i} bookUrl={u} />
+//      ))}
+//    </div>
+//  );
   return (
-    <div>
-      <img src={bookItem.icon} alt="icon" />
-      <h3>{bookItem.name}</h3>
-      {bookItem.urls.map((u, i) => (
-        <BookItemButton key={i} bookUrl={u} />
-      ))}
-    </div>
+    <ListItem button={true}>
+      <ListItemAvatar>
+        <Avatar src={bookItem.icon} variant="square" />
+      </ListItemAvatar>
+      <ListItemText
+        primary={bookItem.name}
+        secondary={bookItem.authors?.map((a) => a.name).join(", ")}
+      />
+    </ListItem>
   );
 }
 

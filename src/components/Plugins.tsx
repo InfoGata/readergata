@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setNavigationOpen } from "../reducers/uiReducer";
 import { AppDispatch } from "../store";
 import HumbleBundle from "./HumbleBundle";
+import { Typography } from "@material-ui/core";
 
 const Plugins: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,7 +14,9 @@ const Plugins: React.FC = () => {
   }, [dispatch]);
   return (
     <div>
+      <Typography variant="h3">Plugins</Typography>
       <HumbleBundle />
+      <Typography variant="h3">Opds</Typography>
       <Opds />
     </div>
   );

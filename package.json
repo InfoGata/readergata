@@ -14,13 +14,16 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
+    "@types/uuid": "^8.3.0",
+    "@types/xmldom": "^0.1.30",
     "axios": "^0.20.0",
     "crypto-js": "^4.0.0",
     "epubjs": "^0.3.88",
     "fontsource-roboto": "^3.0.3",
     "install": "^0.13.0",
     "opds-feed-parser": "^0.0.18",
-    "r2-opds-js": "^1.0.27",
+    "r2-opds-js": "^1.0.31",
+    "r2-utils-js": "^1.0.24",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",
@@ -29,13 +32,15 @@
     "screenfull": "^5.0.2",
     "source-map-explorer": "^2.4.2",
     "typescript": "^4.0.3",
-    "web-vitals": "^0.2.4"
+    "uuid": "^8.3.2",
+    "web-vitals": "^0.2.4",
+    "xmldom": "^0.4.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "cors-server": "node servers/cors/server.js",
     "postinstall": "cd servers/cors && npm install",
@@ -43,8 +48,8 @@
   },
   "eslintConfig": {
     "extends": [
-    "react-app",
-    "react-app/jest"
+      "react-app",
+      "react-app/jest"
     ]
   },
   "browserslist": {
@@ -62,6 +67,9 @@
   "devDependencies": {
     "@types/react-redux": "^7.1.11",
     "@types/webpack-env": "^1.16.0",
-    "concurrently": "^5.3.0"
+    "concurrently": "^5.3.0",
+    "customize-cra": "^1.0.0",
+    "react-app-rewire-alias": "^0.1.9",
+    "react-app-rewired": "^2.1.8"
   }
 }
