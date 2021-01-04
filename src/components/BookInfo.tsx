@@ -36,11 +36,13 @@ interface BookProps {
 
 const BookInfo: React.FC<BookProps> = (props) => {
   const { book } = props;
+  const authors = book.authors?.map(a => a.name).join(", ");
   return (
     <>
       <img alt="cover" src={book.icon} />
       <Typography variant="h3">{book.name}</Typography>
-      <Typography variant="h4">{book.authors?.join(" ,")}</Typography>
+      <Typography variant="h5">{authors}</Typography>
+      <Typography variant="body1">{book.summary}</Typography>
       {book.urls.map((u, i) => (
         <BookItemButton key={i} bookUrl={u} />
       ))}

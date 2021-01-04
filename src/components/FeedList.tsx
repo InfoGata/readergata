@@ -91,10 +91,16 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
     }
 
     let feed = XML.deserialize<OPDS>(xmlDom, OPDS);
+    const origin = new URL(feed.Id).origin;
     const search = feed.Links.find((link) => linkIsRel(link, "search"));
-    setSearchUrl(search ? search.Href : "");
+    if (search) {
+      const absoluteReg = new RegExp('^(?:[a-z]+:)?//', 'i');
+      const openSearchUrl = absoluteReg.test(search.Href)
+        ? search.Href
+        : `${origin}${search.Href}`;
+      setSearchUrl(openSearchUrl);
+    }
     if (isAcquisitionFeed(feed)) {
-      const origin = new URL(feed.Id).origin;
       let books: BookLinkItem[] = feed.Entries.map((e) => ({
         name: e.Title,
         authors: e.Authors.map((a) => ({ name: a.Name })),
@@ -143,7 +149,7 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
     // Exmaple: https://standardebooks.org/ebooks?query={searchTerms}
     const queryUrl = template?.replace("{searchTerms}", searchString);
     if (queryUrl) {
-      await makeOpdsRequest(queryUrl);
+      history.push("/feed", { url: queryUrl });
     }
   };
 
