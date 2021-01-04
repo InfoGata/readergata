@@ -20,6 +20,10 @@ export interface BookLinkItem {
   authors?: Author[];
   icon: string;
   urls: BookLinkItemUrl[];
+  rights?: string;
+  publisher?: string;
+  summary?: string;
+  language?: string;
 }
 
 export interface Author {

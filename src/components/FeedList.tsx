@@ -100,6 +100,9 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
         authors: e.Authors.map((a) => ({ name: a.Name })),
         icon: `${origin}${getImage(e)}`,
         urls: getAcquisitionUrls(e),
+        rights: e.DcRights,
+        summary: e.Summary,
+        language: e.DcLanguage,
       }));
       setBooks(books);
       setIsBookFeed(true);

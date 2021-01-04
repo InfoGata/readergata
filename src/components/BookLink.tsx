@@ -1,35 +1,14 @@
-import { Avatar, ListItem, ListItemAvatar, ListItemText } from "@material-ui/core";
+import {
+  Avatar,
+  Dialog,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+} from "@material-ui/core";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { BookLinkItem, BookLinkItemUrl, BookSourceType } from "../models";
-import { Book } from "../models";
-import { setBook } from "../reducers/ebookReducer";
-import { AppDispatch } from "../store";
+import { BookLinkItem }  from "../models";
+import BookInfo from "./BookInfo";
 
-interface BookItemButtonProps {
-  bookUrl: BookLinkItemUrl;
-}
-
-const BookItemButton: React.FC<BookItemButtonProps> = (props) => {
-  const { bookUrl } = props;
-  const history = useHistory();
-  const dispatch = useDispatch<AppDispatch>();
-  const onClick = () => {
-    const book: Book = {
-      bookSource: bookUrl.url,
-      bookSourceType: BookSourceType.Url,
-    };
-    history.push("/");
-    dispatch(setBook(book));
-  };
-
-  return (
-    <button onClick={onClick}>
-      {bookUrl.type}
-    </button>
-  );
-};
 
 interface BookLinkProps {
   bookItem: BookLinkItem;
@@ -37,26 +16,27 @@ interface BookLinkProps {
 
 const BookLink: React.FC<BookLinkProps> = (props) => {
   const { bookItem } = props;
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
-//  return (
-//    <div>
-//      <img src={bookItem.icon} alt="icon" />
-//      <h3>{bookItem.name}</h3>
-//      {bookItem.urls.map((u, i) => (
-//        <BookItemButton key={i} bookUrl={u} />
-//      ))}
-//    </div>
-//  );
+  const toggleDialogOpen = () => {
+    setDialogOpen(!dialogOpen);
+  }
+
   return (
-    <ListItem button={true}>
-      <ListItemAvatar>
-        <Avatar src={bookItem.icon} variant="square" />
-      </ListItemAvatar>
-      <ListItemText
-        primary={bookItem.name}
-        secondary={bookItem.authors?.map((a) => a.name).join(", ")}
-      />
-    </ListItem>
+    <>
+      <ListItem button={true} onClick={toggleDialogOpen}>
+        <ListItemAvatar>
+          <Avatar src={bookItem.icon} variant="square" />
+        </ListItemAvatar>
+        <ListItemText
+          primary={bookItem.name}
+          secondary={bookItem.authors?.map((a) => a.name).join(", ")}
+        />
+      </ListItem>
+      <Dialog open={dialogOpen} onClose={toggleDialogOpen}>
+        <BookInfo book={bookItem} />
+      </Dialog>
+    </>
   );
 }
 
