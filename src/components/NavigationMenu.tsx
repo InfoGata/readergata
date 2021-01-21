@@ -46,7 +46,7 @@ const openFile = (file: File): Promise<string> => {
 
 const NavigationMenu: React.FC = () => {
   const classes  = useStyles();
-  const [inputUrl, setInputUrl] = React.useState("");
+  // const [inputUrl, setInputUrl] = React.useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigationOpen = useSelector((state: RootState) => state.ui.navigationOpen);
   const onClose = ()=> dispatch(setNavigationOpen(false));
@@ -71,20 +71,20 @@ const NavigationMenu: React.FC = () => {
     dispatch(setNavigationOpen(false));
   };
 
-  const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (inputUrl) {
-      dispatch(setBook({
-        bookSource: inputUrl,
-        bookSourceType: BookSourceType.Url
-      }));
-    }
-  };
+  // const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   if (inputUrl) {
+  //     dispatch(setBook({
+  //       bookSource: inputUrl,
+  //       bookSourceType: BookSourceType.Url
+  //     }));
+  //   }
+  // };
 
-  const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputUrl(value);
-  };
+  // const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setInputUrl(value);
+  // };
 
   return (
     <Drawer
@@ -101,10 +101,10 @@ const NavigationMenu: React.FC = () => {
         Open File
         <input type="file" onChange={onFileChange} hidden />
       </Button>
-      <form onSubmit={onUrlSubmit}>
+      {/*<form onSubmit={onUrlSubmit}>
         <input type="text" value={inputUrl} onChange={onInputUrlChange} />
         <input type="submit" value="submit" />
-      </form>
+      </form> */}
       <button onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
         Toggle Full Screen
       </button>

@@ -68,7 +68,7 @@ const App: React.FC = () => {
   }, [isFullScreen]);
 
   return (
-    <Router>
+    <Router basename={"pwa-reader"}>
       <div className={classes.root}>
         <CssBaseline />
         <AppBar color="transparent" position="fixed" variant="outlined">
