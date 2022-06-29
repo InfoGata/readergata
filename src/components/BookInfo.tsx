@@ -1,7 +1,7 @@
-import { Typography } from "@material-ui/core";
-import React from "react"
+import { Typography } from "@mui/material";
+import React from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Book, BookLinkItem, BookLinkItemUrl, BookSourceType } from "../models";
 import { setBook } from "../reducers/ebookReducer";
 import { AppDispatch } from "../store";
@@ -12,22 +12,18 @@ interface BookItemButtonProps {
 
 const BookItemButton: React.FC<BookItemButtonProps> = (props) => {
   const { bookUrl } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const onClick = () => {
     const book: Book = {
       bookSource: bookUrl.url,
       bookSourceType: BookSourceType.Url,
     };
-    history.push("/");
+    navigate("/");
     dispatch(setBook(book));
   };
 
-  return (
-    <button onClick={onClick}>
-      {bookUrl.type}
-    </button>
-  );
+  return <button onClick={onClick}>{bookUrl.type}</button>;
 };
 
 interface BookProps {
@@ -36,7 +32,7 @@ interface BookProps {
 
 const BookInfo: React.FC<BookProps> = (props) => {
   const { book } = props;
-  const authors = book.authors?.map(a => a.name).join(", ");
+  const authors = book.authors?.map((a) => a.name).join(", ");
   return (
     <>
       <img alt="cover" src={book.icon} />

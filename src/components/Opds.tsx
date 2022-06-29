@@ -1,9 +1,8 @@
 import React from "react";
 import { Catalog } from "../models";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../rootReducer";
-import { FeedListRouteState } from "./FeedList";
 
 interface CatalogLinkProps {
   catalog: Catalog;
@@ -11,10 +10,10 @@ interface CatalogLinkProps {
 
 const CatalogLink: React.FC<CatalogLinkProps> = (props) => {
   const { catalog } = props;
-  const history = useHistory<FeedListRouteState>();
+  const navigate = useNavigate();
 
   const onClick = async () => {
-    history.push("/feed", { url: catalog.url });
+    navigate("/feed", { state: { url: catalog.url } });
   };
   return <button onClick={onClick}>{catalog.name}</button>;
 };

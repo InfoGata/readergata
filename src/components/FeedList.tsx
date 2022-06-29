@@ -1,6 +1,5 @@
-import { List, ListItem, ListItemText } from "@material-ui/core";
+import { List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
-import { RouteComponentProps, useHistory } from "react-router-dom";
 import { BookLinkItem, BookLinkItemUrl, Catalog } from "../models";
 import BookList from "./BookList";
 import * as xmldom from "xmldom";
@@ -8,7 +7,12 @@ import { OPDS } from "@r2-opds-js/opds/opds1/opds";
 import { Entry } from "@r2-opds-js/opds/opds1/opds-entry";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { Link } from "@r2-opds-js/opds/opds1/opds-link";
-import { initGlobalConverters_GENERIC, initGlobalConverters_OPDS } from "@r2-opds-js/opds/init-globals";
+import {
+  initGlobalConverters_GENERIC,
+  initGlobalConverters_OPDS,
+} from "@r2-opds-js/opds/init-globals";
+import { useLocation, useNavigate } from "react-router-dom";
+window.Buffer = window.Buffer || require("buffer").Buffer;
 initGlobalConverters_GENERIC();
 initGlobalConverters_OPDS();
 
@@ -61,22 +65,24 @@ const getImage = (entry: Entry) => {
 const getAcquisitionUrls = (entry: Entry): BookLinkItemUrl[] => {
   const origin = new URL(entry.Id).origin;
   const acquisitionUrl = "http://opds-spec.org/acquisition";
-  return entry.Links
-    .filter((l) => l.Rel.startsWith(acquisitionUrl))
-    .map((l) => ({
+  return entry.Links.filter((l) => l.Rel.startsWith(acquisitionUrl)).map(
+    (l) => ({
       type: l.Title,
       url: `${origin}${l.Href}`,
-    }));
+    })
+  );
 };
 
-const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (props)=> {
-  const feedUrl = props.location.state.url;
+const FeedList: React.FC = (props) => {
   const [catalogs, setCatalogs] = React.useState<Catalog[]>([]);
   const [books, setBooks] = React.useState<BookLinkItem[]>([]);
   const [isBookFeed, setIsBookFeed] = React.useState(false);
   const [searchUrl, setSearchUrl] = React.useState("");
   const [searchString, setSearchString] = React.useState("");
-  const history = useHistory<FeedListRouteState>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as FeedListRouteState;
+  console.log(location);
 
   const makeOpdsRequest = async (url: string) => {
     const response = await fetch(`${proxiedUrl}${url}`);
@@ -94,7 +100,7 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
     const origin = new URL(feed.Id).origin;
     const search = feed.Links.find((link) => linkIsRel(link, "search"));
     if (search) {
-      const absoluteReg = new RegExp('^(?:[a-z]+:)?//', 'i');
+      const absoluteReg = new RegExp("^(?:[a-z]+:)?//", "i");
       const openSearchUrl = absoluteReg.test(search.Href)
         ? search.Href
         : `${origin}${search.Href}`;
@@ -124,8 +130,8 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
   };
 
   React.useEffect(() => {
-    makeOpdsRequest(feedUrl);
-  }, [feedUrl]);
+    makeOpdsRequest(state.url);
+  }, [state.url]);
 
   const onSearchStringChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
@@ -149,14 +155,14 @@ const FeedList: React.FC<RouteComponentProps<{}, {}, FeedListRouteState>> = (pro
     // Exmaple: https://standardebooks.org/ebooks?query={searchTerms}
     const queryUrl = template?.replace("{searchTerms}", searchString);
     if (queryUrl) {
-      history.push("/feed", { url: queryUrl });
+      navigate("/feed", { state: { url: queryUrl } });
     }
   };
 
   const catalogList = catalogs.map((c, i) => {
     const onClick = () => {
-      history.push("/feed", { url: c.url });
-    }
+      navigate("/feed", { state: { url: c.url } });
+    };
     return (
       <ListItem key={i} button={true} onClick={onClick}>
         <ListItemText primary={c.name} />

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setNavigationOpen } from "../reducers/uiReducer";
 import { AppDispatch } from "../store";
 import HumbleBundle from "./HumbleBundle";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 
 const Plugins: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

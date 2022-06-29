@@ -1,20 +1,18 @@
 import React, { useEffect } from "react";
 import {
   CssBaseline,
-  makeStyles,
-  createStyles,
-  Theme,
   AppBar,
   Toolbar,
   Typography,
   IconButton,
   Grid,
-} from "@material-ui/core";
-import MenuIcon from '@material-ui/icons/Menu';
+  Box,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import EbookViewer from "./components/EbookViewer";
 import Plugins from "./components/Plugins";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import NavigationMenu from "./components/NavigationMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsFullscreen, setNavigationOpen } from "./reducers/uiReducer";
@@ -23,26 +21,11 @@ import { AppDispatch } from "./store";
 import screenfull, { Screenfull } from "screenfull";
 import FeedList from "./components/FeedList";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    content: {
-      flexGrow: 1,
-    },
-  }),
-);
-
 const App: React.FC = () => {
-  const classes = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const navigationOpen = useSelector((state: RootState) => state.ui.navigationOpen)
+  const navigationOpen = useSelector(
+    (state: RootState) => state.ui.navigationOpen
+  );
   const title = useSelector((state: RootState) => state.ebook.title);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
   const isFullScreen = useSelector((state: RootState) => state.ui.isFullscreen);
@@ -50,40 +33,39 @@ const App: React.FC = () => {
   useEffect(() => {
     const sfull = screenfull as Screenfull;
     if (sfull.isEnabled) {
-      sfull.on('change', () => {
+      sfull.on("change", () => {
         dispatch(setIsFullscreen(sfull.isFullscreen));
       });
     }
   });
 
   useEffect(() => {
-    if (screenfull.isEnabled)
-    {
+    if (screenfull.isEnabled) {
       if (isFullScreen) {
-          (screenfull as Screenfull).request();
+        (screenfull as Screenfull).request();
       } else {
-        (screenfull as Screenfull).exit()
+        (screenfull as Screenfull).exit();
       }
     }
   }, [isFullScreen]);
 
   return (
-    <Router basename={"pwa-reader"}>
-      <div className={classes.root}>
+    <Router>
+      <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar color="transparent" position="fixed" variant="outlined">
+        <AppBar color="transparent" position="fixed">
           <Toolbar variant="dense">
             <IconButton
               color="inherit"
-              aria-label="open drawer"
+              aria-label="menu"
               edge="start"
               onClick={onNavigationToggle}
-              className={classes.menuButton}
+              sx={{ mr: 2 }}
               size="small"
             >
               <MenuIcon />
             </IconButton>
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <Typography variant="subtitle1" noWrap>
                 {title}
               </Typography>
@@ -91,15 +73,15 @@ const App: React.FC = () => {
           </Toolbar>
         </AppBar>
         <NavigationMenu />
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Switch>
-            <Route exact path="/" component={EbookViewer} />
-            <Route path="/plugins" component={Plugins} />
-            <Route path="/feed" component={FeedList} />
-          </Switch>
-        </main>
-      </div>
+        <Box component="main">
+          <Toolbar />
+          <Routes>
+            <Route path="/" element={<EbookViewer />} />
+            <Route path="/plugins" element={<Plugins />} />
+            <Route path="/feed" element={<FeedList />} />
+          </Routes>
+        </Box>
+      </Box>
     </Router>
   );
 };

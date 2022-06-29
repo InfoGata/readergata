@@ -4,7 +4,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-} from "@material-ui/core";
+} from "@mui/material";
 import React from "react";
 import { BookLinkItem }  from "../models";
 import BookInfo from "./BookInfo";

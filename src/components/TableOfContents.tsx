@@ -1,18 +1,10 @@
-import { List, ListItem, ListItemText, makeStyles, createStyles, Theme } from "@material-ui/core";
+import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BookContent } from "../models";
 import { setLocation } from "../reducers/ebookReducer";
 import { RootState } from "../rootReducer";
 import { AppDispatch } from "../store";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    nested: {
-      paddingLeft: theme.spacing(3),
-    },
-  })
-);
 
 interface TocItemProps {
   content: BookContent;
@@ -21,7 +13,6 @@ interface TocItemProps {
 
 const TocItem: React.FC<TocItemProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
-  const classes = useStyles();
   const { content, isNested } = props;
   const onClick = () => {
     if (content.location) {
@@ -29,8 +20,10 @@ const TocItem: React.FC<TocItemProps> = (props) => {
     }
   };
   return (
-    <ListItem button={true} onClick={onClick} className={isNested ? classes.nested : ""}>
-      <ListItemText primary={content.title} />
+    <ListItem onClick={onClick}>
+      <ListItemButton sx={isNested ? { pl: 4 } : undefined}>
+        <ListItemText primary={content.title} />
+      </ListItemButton>
     </ListItem>
   );
 };
@@ -46,15 +39,11 @@ const TableOfContents: React.FC = () => {
     }
 
     return contents.flatMap((c) => [
-      <TocItem
-        key={c.title}
-        content={c}
-        isNested={isNested}
-      />,
+      <TocItem key={c.title} content={c} isNested={isNested} />,
       ...getBookContents(c.items, true),
     ]);
   };
-return <List>{getBookContents(bookContents)}</List>;
-}
+  return <List>{getBookContents(bookContents)}</List>;
+};
 
 export default TableOfContents;

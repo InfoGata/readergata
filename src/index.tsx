@@ -1,27 +1,22 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import "fontsource-roboto";
-import store from './store'
-import { Provider } from 'react-redux';
-import reportWebVitals from './reportWebVitals';
+import store from "./store";
+import { Provider } from "react-redux";
+import reportWebVitals from "./reportWebVitals";
+import App from "./App";
 
-const render = () => {
-  const App = require("./App").default;
-  ReactDOM.render(
-    <React.StrictMode>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </React.StrictMode>,
-    document.getElementById("root")
-  );
-}
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 
-render();
-
-if (process.env.NODE_ENV === 'development' && module.hot) {
-  module.hot.accept('./App', render)
-}
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
 
 reportWebVitals();
