@@ -2,7 +2,7 @@ import { List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
 import { BookLinkItem, BookLinkItemUrl, Catalog } from "../models";
 import BookList from "./BookList";
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 import { OPDS } from "@r2-opds-js/opds/opds1/opds";
 import { Entry } from "@r2-opds-js/opds/opds1/opds-entry";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
@@ -97,6 +97,7 @@ const FeedList: React.FC = (props) => {
     }
 
     let feed = XML.deserialize<OPDS>(xmlDom, OPDS);
+    console.log(feed);
     const origin = new URL(feed.Id).origin;
     const search = feed.Links.find((link) => linkIsRel(link, "search"));
     if (search) {
