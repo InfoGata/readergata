@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Catalog } from "../models";
+import { Catalog } from "../../models";
 import { v4 as uuid } from "uuid";
 
 export const defaultCatalogs: Catalog[] = [

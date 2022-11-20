@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "fontsource-roboto";
-import store from "./store";
+import store from "./store/store";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";

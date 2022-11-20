@@ -1,8 +1,7 @@
 import React from "react";
 import { Catalog } from "../models";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../rootReducer";
+import { useAppSelector } from "../store/hooks";
 
 interface CatalogLinkProps {
   catalog: Catalog;
@@ -19,7 +18,7 @@ const CatalogLink: React.FC<CatalogLinkProps> = (props) => {
 };
 
 const Opds: React.FC = () => {
-  const catalogs = useSelector((state: RootState) => state.catalog.catalogs);
+  const catalogs = useAppSelector((state) => state.catalog.catalogs);
 
   const catalogLinks = catalogs.map((c, i) => (
     <CatalogLink key={i} catalog={c} />

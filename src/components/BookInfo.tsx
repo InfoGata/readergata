@@ -1,10 +1,9 @@
 import { Typography } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../store/hooks";
 import { Book, BookLinkItem, BookLinkItemUrl, BookSourceType } from "../models";
-import { setBook } from "../reducers/ebookReducer";
-import { AppDispatch } from "../store";
+import { setBook } from "../store/reducers/ebookReducer";
 
 interface BookItemButtonProps {
   bookUrl: BookLinkItemUrl;
@@ -13,7 +12,7 @@ interface BookItemButtonProps {
 const BookItemButton: React.FC<BookItemButtonProps> = (props) => {
   const { bookUrl } = props;
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const onClick = () => {
     const book: Book = {
       bookSource: bookUrl.url,

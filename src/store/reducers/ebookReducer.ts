@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Book, BookContent } from '../models';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Book, BookContent } from "../../models";
 
 interface EbookState {
   currentBook?: Book;
@@ -19,7 +19,7 @@ const ebookSlice = createSlice({
   initialState,
   reducers: {
     setBook(state, action: PayloadAction<Book>) {
-      state.currentBook = action.payload
+      state.currentBook = action.payload;
     },
     setContents(state, action: PayloadAction<BookContent[]>) {
       state.contents = action.payload;
@@ -29,15 +29,11 @@ const ebookSlice = createSlice({
     },
     setTitle(state, action: PayloadAction<string>) {
       state.title = action.payload;
-    }
-  }
+    },
+  },
 });
 
-export const {
-  setBook,
-  setContents,
-  setLocation,
-  setTitle
-} = ebookSlice.actions;
+export const { setBook, setContents, setLocation, setTitle } =
+  ebookSlice.actions;
 
-export default ebookSlice.reducer
+export default ebookSlice.reducer;

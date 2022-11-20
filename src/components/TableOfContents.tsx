@@ -1,10 +1,8 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent } from "../models";
-import { setLocation } from "../reducers/ebookReducer";
-import { RootState } from "../rootReducer";
-import { AppDispatch } from "../store";
+import { setLocation } from "../store/reducers/ebookReducer";
 
 interface TocItemProps {
   content: BookContent;
@@ -12,7 +10,7 @@ interface TocItemProps {
 }
 
 const TocItem: React.FC<TocItemProps> = (props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { content, isNested } = props;
   const onClick = () => {
     if (content.location) {
@@ -29,7 +27,7 @@ const TocItem: React.FC<TocItemProps> = (props) => {
 };
 
 const TableOfContents: React.FC = () => {
-  const bookContents = useSelector((state: RootState) => state.ebook.contents);
+  const bookContents = useAppSelector((state) => state.ebook.contents);
   const getBookContents = (
     contents: BookContent[],
     isNested = false

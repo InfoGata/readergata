@@ -1,13 +1,21 @@
-import { Button, Drawer } from "@mui/material";
+import {
+  Button,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import React from "react";
-import TableOfContents from "./TableOfContents";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setBook } from "../reducers/ebookReducer";
+import { setBook } from "../store/reducers/ebookReducer";
 import { BookSourceType } from "../models";
-import { setIsFullscreen, setNavigationOpen } from "../reducers/uiReducer";
-import { RootState } from "../rootReducer";
-import { AppDispatch } from "../store";
+import {
+  setIsFullscreen,
+  setNavigationOpen,
+} from "../store/reducers/uiReducer";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { Extension, Home } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -24,12 +32,10 @@ const openFile = (file: File): Promise<string> => {
 
 const NavigationMenu: React.FC = () => {
   // const [inputUrl, setInputUrl] = React.useState("");
-  const dispatch = useDispatch<AppDispatch>();
-  const navigationOpen = useSelector(
-    (state: RootState) => state.ui.navigationOpen
-  );
+  const dispatch = useAppDispatch();
+  const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const onClose = () => dispatch(setNavigationOpen(false));
-  const isFullscreen = useSelector((state: RootState) => state.ui.isFullscreen);
+  const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -89,9 +95,20 @@ const NavigationMenu: React.FC = () => {
       <button onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
         Toggle Full Screen
       </button>
-      <Link to="/">Home</Link>
-      <Link to="/plugins">Plugins</Link>
-      <TableOfContents />
+      <List>
+        <ListItem button={true} component={Link} to="/" key="Home">
+          <ListItemIcon>
+            <Home />
+          </ListItemIcon>
+          <ListItemText>Home</ListItemText>
+        </ListItem>
+        <ListItem button={true} component={Link} to="/plugins" key="Plugins">
+          <ListItemIcon>
+            <Extension />
+          </ListItemIcon>
+          <ListItemText>Plugins</ListItemText>
+        </ListItem>
+      </List>
     </Drawer>
   );
 };

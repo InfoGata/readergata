@@ -1,13 +1,12 @@
 import React from "react";
 import Opds from "./Opds";
-import { useDispatch } from "react-redux";
-import { setNavigationOpen } from "../reducers/uiReducer";
-import { AppDispatch } from "../store";
+import { setNavigationOpen } from "../store/reducers/uiReducer";
 import HumbleBundle from "./HumbleBundle";
 import { Typography } from "@mui/material";
+import { useAppDispatch } from "../store/hooks";
 
 const Plugins: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     dispatch(setNavigationOpen(false));

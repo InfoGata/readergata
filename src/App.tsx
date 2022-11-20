@@ -14,21 +14,25 @@ import Plugins from "./components/Plugins";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import NavigationMenu from "./components/NavigationMenu";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsFullscreen, setNavigationOpen } from "./reducers/uiReducer";
-import { RootState } from "./rootReducer";
-import { AppDispatch } from "./store";
+import {
+  setIsFullscreen,
+  setNavigationOpen,
+  setTocOpen,
+} from "./store/reducers/uiReducer";
 import screenfull, { Screenfull } from "screenfull";
 import FeedList from "./components/FeedList";
+import { Toc } from "@mui/icons-material";
+import TocMenu from "./components/TocMenu";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
 
 const App: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigationOpen = useSelector(
-    (state: RootState) => state.ui.navigationOpen
-  );
-  const title = useSelector((state: RootState) => state.ebook.title);
+  const dispatch = useAppDispatch();
+  const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
+  const tocOpen = useAppSelector((state) => state.ui.tocOpen);
+  const title = useAppSelector((state) => state.ebook.title);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
-  const isFullScreen = useSelector((state: RootState) => state.ui.isFullscreen);
+  const onTocToggle = () => dispatch(setTocOpen(!tocOpen));
+  const isFullScreen = useAppSelector((state) => state.ui.isFullscreen);
 
   useEffect(() => {
     const sfull = screenfull as Screenfull;
@@ -70,6 +74,16 @@ const App: React.FC = () => {
                 {title}
               </Typography>
             </Grid>
+            <IconButton
+              color="inherit"
+              aria-label="menu"
+              edge="start"
+              onClick={onTocToggle}
+              sx={{ mr: 2 }}
+              size="small"
+            >
+              <Toc />
+            </IconButton>
           </Toolbar>
         </AppBar>
         <NavigationMenu />
@@ -81,6 +95,7 @@ const App: React.FC = () => {
             <Route path="/feed" element={<FeedList />} />
           </Routes>
         </Box>
+        <TocMenu />
       </Box>
     </Router>
   );

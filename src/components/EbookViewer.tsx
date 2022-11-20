@@ -1,10 +1,8 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { BookContent, BookSourceType } from "../models";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../rootReducer";
-import { setContents, setTitle } from "../reducers/ebookReducer";
-import { AppDispatch } from "../store";
+import { setContents, setTitle } from "../store/reducers/ebookReducer";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const isCorrectMimeType = (response: Response): boolean => {
   const mimeType = response.headers.get("Content-Type");
@@ -34,31 +32,34 @@ const getValidUrl = async (url: string) => {
     }
   }
   return null;
-}
+};
 
 const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const ebook = useSelector((state: RootState) => state.ebook.currentBook);
-  const location = useSelector((state: RootState) => state.ebook.location);
-  const dispatch = useDispatch<AppDispatch>();
+  const ebook = useAppSelector((state) => state.ebook.currentBook);
+  const location = useAppSelector((state) => state.ebook.location);
+  const dispatch = useAppDispatch();
 
-  const onKeyUp = React.useCallback((event: KeyboardEvent) => {
-    const key = event.key;
-    if (key === "ArrowLeft") {
-      rendition?.prev();
-    } else if (key === "ArrowRight") {
-      rendition?.next();
-    }
-  }, [rendition]);
+  const onKeyUp = React.useCallback(
+    (event: KeyboardEvent) => {
+      const key = event.key;
+      if (key === "ArrowLeft") {
+        rendition?.prev();
+      } else if (key === "ArrowRight") {
+        rendition?.next();
+      }
+    },
+    [rendition]
+  );
 
   React.useEffect(() => {
     document.body.addEventListener("keyup", onKeyUp);
   }, [onKeyUp]);
 
   React.useEffect(() => {
-    rendition?.on("keyup", onKeyUp)
+    rendition?.on("keyup", onKeyUp);
   }, [rendition, onKeyUp]);
 
   React.useEffect(() => {

@@ -6,9 +6,7 @@ import catalogReducer from "./reducers/catalogReducer";
 const rootReducer = combineReducers({
   ebook: ebookReducer,
   ui: uiReducer,
-  catalog: catalogReducer, 
+  catalog: catalogReducer,
 });
-
-export type RootState = ReturnType<typeof rootReducer>;
 
 export default rootReducer;
