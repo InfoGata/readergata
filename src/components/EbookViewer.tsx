@@ -6,14 +6,21 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const isCorrectMimeType = (response: Response): boolean => {
   const mimeType = response.headers.get("Content-Type");
-  if (mimeType?.includes("application/epub+zip")) {
+
+  if (!mimeType) {
+    // If no content type, just return true
+    return true;
+  } else if (mimeType.includes("application/epub+zip")) {
     return true;
   } else {
     return false;
   }
 };
 
-const proxy = "http://localhost:36325/";
+const proxy =
+  process.env.NODE_ENV === "production"
+    ? "https://cloudcors.audio-pwa.workers.dev?url="
+    : "http://localhost:36325/";
 
 const getValidUrl = async (url: string) => {
   try {
@@ -98,7 +105,9 @@ const EbookViewer: React.FC = () => {
       } else {
         // Url
         const validUrl = await getValidUrl(ebook.bookSource);
+        console.log(validUrl);
         if (validUrl) {
+          console.log("why");
           newBook.open(validUrl);
         } else {
           return;

@@ -1,10 +1,12 @@
 import {
   Button,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  TextField,
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -15,7 +17,12 @@ import {
   setNavigationOpen,
 } from "../store/reducers/uiReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { Extension, Home } from "@mui/icons-material";
+import {
+  Extension,
+  Fullscreen,
+  FullscreenExit,
+  Home,
+} from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -31,7 +38,7 @@ const openFile = (file: File): Promise<string> => {
 };
 
 const NavigationMenu: React.FC = () => {
-  // const [inputUrl, setInputUrl] = React.useState("");
+  const [inputUrl, setInputUrl] = React.useState("");
   const dispatch = useAppDispatch();
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const onClose = () => dispatch(setNavigationOpen(false));
@@ -58,20 +65,22 @@ const NavigationMenu: React.FC = () => {
     dispatch(setNavigationOpen(false));
   };
 
-  // const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   if (inputUrl) {
-  //     dispatch(setBook({
-  //       bookSource: inputUrl,
-  //       bookSourceType: BookSourceType.Url
-  //     }));
-  //   }
-  // };
+  const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (inputUrl) {
+      dispatch(
+        setBook({
+          bookSource: inputUrl,
+          bookSourceType: BookSourceType.Url,
+        })
+      );
+    }
+  };
 
-  // const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   setInputUrl(value);
-  // };
+  const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputUrl(value);
+  };
 
   return (
     <Drawer
@@ -84,17 +93,6 @@ const NavigationMenu: React.FC = () => {
       }}
       onClose={onClose}
     >
-      <Button variant="contained" component="label">
-        Open File
-        <input type="file" onChange={onFileChange} hidden />
-      </Button>
-      {/*<form onSubmit={onUrlSubmit}>
-        <input type="text" value={inputUrl} onChange={onInputUrlChange} />
-        <input type="submit" value="submit" />
-      </form> */}
-      <button onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
-        Toggle Full Screen
-      </button>
       <List>
         <ListItem button={true} component={Link} to="/" key="Home">
           <ListItemIcon>
@@ -109,6 +107,24 @@ const NavigationMenu: React.FC = () => {
           <ListItemText>Plugins</ListItemText>
         </ListItem>
       </List>
+      <Button variant="contained" component="label">
+        Open File
+        <input type="file" onChange={onFileChange} hidden />
+      </Button>
+      <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
+        {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+      </IconButton>
+      <form onSubmit={onUrlSubmit}>
+        <TextField
+          value={inputUrl}
+          onChange={onInputUrlChange}
+          placeholder="Epub url"
+          name="url"
+        />
+        <Button variant="contained" type="submit">
+          Submit
+        </Button>
+      </form>
     </Drawer>
   );
 };
