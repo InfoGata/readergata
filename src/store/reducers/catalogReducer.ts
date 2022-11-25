@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Catalog } from "../../models";
-import { v4 as uuid } from "uuid";
+import { nanoid } from "@reduxjs/toolkit";
 
 export const defaultCatalogs: Catalog[] = [
   {
@@ -26,7 +26,7 @@ const catalogSlice = createSlice({
         state.catalogs.push(action.payload);
       },
       prepare(catalog: Catalog) {
-        return { payload: { id: uuid(), ...catalog } as Catalog };
+        return { payload: { id: nanoid(), ...catalog } as Catalog };
       },
     },
     deleteCatalog(state, action: PayloadAction<Catalog>) {
