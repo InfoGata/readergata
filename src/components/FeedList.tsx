@@ -1,6 +1,6 @@
 import { List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
-import { BookLinkItem, BookLinkItemUrl, Catalog } from "../models";
+import { BookLinkItem, BookLinkItemUrl } from "../models";
 import BookList from "./BookList";
 import * as xmldom from "@xmldom/xmldom";
 import { OPDS } from "@r2-opds-js/opds/opds1/opds";
@@ -12,6 +12,7 @@ import {
   initGlobalConverters_OPDS,
 } from "@r2-opds-js/opds/init-globals";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Catalog } from "../plugintypes";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 initGlobalConverters_GENERIC();
 initGlobalConverters_OPDS();
@@ -82,7 +83,6 @@ const FeedList: React.FC = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as FeedListRouteState;
-  console.log(location);
 
   const makeOpdsRequest = async (url: string) => {
     const response = await fetch(`${proxiedUrl}${url}`);
@@ -97,7 +97,6 @@ const FeedList: React.FC = (props) => {
     }
 
     let feed = XML.deserialize<OPDS>(xmlDom, OPDS);
-    console.log(feed);
     const origin = new URL(feed.Id).origin;
     const search = feed.Links.find((link) => linkIsRel(link, "search"));
     if (search) {

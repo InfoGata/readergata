@@ -1,7 +1,13 @@
 import React from "react";
-import { Catalog } from "../models";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../store/hooks";
+import { Catalog } from "../plugintypes";
+
+export const defaultCatalogs: Catalog[] = [
+  {
+    name: "Project Gutenberg",
+    url: "https://m.gutenberg.org/ebooks.opds/",
+  },
+];
 
 interface CatalogLinkProps {
   catalog: Catalog;
@@ -18,7 +24,7 @@ const CatalogLink: React.FC<CatalogLinkProps> = (props) => {
 };
 
 const Opds: React.FC = () => {
-  const catalogs = useAppSelector((state) => state.catalog.catalogs);
+  const catalogs = defaultCatalogs;
 
   const catalogLinks = catalogs.map((c, i) => (
     <CatalogLink key={i} catalog={c} />

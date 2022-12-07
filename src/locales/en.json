@@ -1,0 +1,22 @@
+{
+  "common": {
+    "manifestNoScript": "Error: Manifest does not contain script",
+    "fileNotFound": "Error: Couldn't find {{name}}",
+    "cantGetFile": "Error: Couldn't get {{name}}",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "plugins": {
+    "addPlugin_one": "Add Plugin",
+    "addPlugin_other": "Add Plugins",
+    "confirmDelete": "Are you sure you want to delete this plugin",
+    "pluginOptions": "{{pluginName}} Options",
+    "options": "Options",
+    "updateFromFile": "Update from file",
+    "deletePlugin": "Delete",
+    "reloadPlugin": "Reload",
+    "loadPluginFromFolder": "Load Plugin From Folder",
+    "installManifestUrl": "Install Manifest Url",
+    "updateManifestUrl": "Update Manifest Url"
+  }
+}

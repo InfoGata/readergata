@@ -53,8 +53,8 @@ const NavigationMenu: React.FC = () => {
         if (bookData) {
           dispatch(
             setBook({
-              bookSource: bookData,
-              bookSourceType: BookSourceType.Binary,
+              source: bookData,
+              sourceType: BookSourceType.Binary,
             })
           );
         }
@@ -70,8 +70,8 @@ const NavigationMenu: React.FC = () => {
     if (inputUrl) {
       dispatch(
         setBook({
-          bookSource: inputUrl,
-          bookSourceType: BookSourceType.Url,
+          source: inputUrl,
+          sourceType: BookSourceType.Url,
         })
       );
     }

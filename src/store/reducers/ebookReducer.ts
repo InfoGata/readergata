@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Book, BookContent } from "../../models";
+import { EBook, BookContent } from "../../models";
 
 interface EbookState {
-  currentBook?: Book;
+  currentBook?: EBook;
   location: string;
   contents: BookContent[];
   title: string;
@@ -18,7 +18,7 @@ const ebookSlice = createSlice({
   name: "ebook",
   initialState,
   reducers: {
-    setBook(state, action: PayloadAction<Book>) {
+    setBook(state, action: PayloadAction<EBook>) {
       state.currentBook = action.payload;
     },
     setContents(state, action: PayloadAction<BookContent[]>) {

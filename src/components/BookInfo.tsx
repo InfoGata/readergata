@@ -2,7 +2,12 @@ import { Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store/hooks";
-import { Book, BookLinkItem, BookLinkItemUrl, BookSourceType } from "../models";
+import {
+  EBook,
+  BookLinkItem,
+  BookLinkItemUrl,
+  BookSourceType,
+} from "../models";
 import { setBook } from "../store/reducers/ebookReducer";
 
 interface BookItemButtonProps {
@@ -14,9 +19,9 @@ const BookItemButton: React.FC<BookItemButtonProps> = (props) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const onClick = () => {
-    const book: Book = {
-      bookSource: bookUrl.url,
-      bookSourceType: BookSourceType.Url,
+    const book: EBook = {
+      source: bookUrl.url,
+      sourceType: BookSourceType.Url,
     };
     navigate("/");
     dispatch(setBook(book));

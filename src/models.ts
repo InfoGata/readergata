@@ -1,12 +1,14 @@
+import { Author } from "./plugintypes";
+
 export enum BookSourceType {
   Url,
   Binary,
   Base64,
 }
 
-export interface Book {
-  bookSource: string;
-  bookSourceType: BookSourceType;
+export interface EBook {
+  source: string;
+  sourceType: BookSourceType;
 }
 
 export interface BookContent {
@@ -26,17 +28,7 @@ export interface BookLinkItem {
   language?: string;
 }
 
-export interface Author {
-  name: string;
-}
-
 export interface BookLinkItemUrl {
   type: string;
-  url: string;
-}
-
-export interface Catalog {
-  id?: string[];
-  name: string;
   url: string;
 }

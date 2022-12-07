@@ -26,6 +26,11 @@ const getValidUrl = async (url: string) => {
   try {
     // Fetch and check the mime type
     const response = await fetch(url, { method: "HEAD" });
+    if (response.status === 404) {
+      // HEAD will sometimes return 404
+      // But GET returns successfully
+      return url;
+    }
     return isCorrectMimeType(response) ? url : null;
   } catch {
     // Determine if error is because of cors
@@ -33,6 +38,11 @@ const getValidUrl = async (url: string) => {
     const proxyUrl = `${proxy}${noProtocol}`;
     try {
       const response = await fetch(proxyUrl, { method: "HEAD" });
+      if (response.status === 404) {
+        // HEAD will sometimes return 404
+        // But GET returns successfully
+        return proxyUrl;
+      }
       return isCorrectMimeType(response) ? proxyUrl : null;
     } catch {
       alert("Could not get file");
@@ -81,8 +91,6 @@ const EbookViewer: React.FC = () => {
       const third = (containerRef.current?.offsetWidth || 0) / 3;
       // If click is on first third of page go to previous page
       // else go to next page
-      console.log(third);
-      console.log(clickLocation);
       if (clickLocation < third) {
         rendition.prev();
       } else if (clickLocation >= third) {
@@ -100,15 +108,19 @@ const EbookViewer: React.FC = () => {
         return;
       }
       const newBook = Epub();
-      if (ebook.bookSourceType === BookSourceType.Binary) {
-        newBook.open(ebook.bookSource, "binary");
+      if (ebook.sourceType === BookSourceType.Binary) {
+        newBook.open(ebook.source, "binary");
       } else {
         // Url
-        const validUrl = await getValidUrl(ebook.bookSource);
-        console.log(validUrl);
+        const validUrl = await getValidUrl(ebook.source);
         if (validUrl) {
-          console.log("why");
-          newBook.open(validUrl);
+          const test = await fetch(validUrl);
+          if (test.status !== 404) {
+            const arrayBuffer = await test.arrayBuffer();
+            newBook.open(arrayBuffer);
+          } else {
+            return;
+          }
         } else {
           return;
         }
