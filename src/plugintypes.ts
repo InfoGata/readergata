@@ -31,7 +31,6 @@ export interface Catalog {
   apiId?: string;
   pluginId?: string;
   name: string;
-  url: string;
 }
 
 export type CatalogFeed = {

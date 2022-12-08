@@ -1,8 +1,6 @@
 import React from "react";
-import Opds from "./Opds";
 import { styled } from "@mui/material/styles";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
-import HumbleBundle from "./HumbleBundle";
 import { Button, Grid, Typography } from "@mui/material";
 import { useAppDispatch } from "../store/hooks";
 import { usePlugins } from "../PluginsContext";
@@ -74,9 +72,6 @@ const Plugins: React.FC = () => {
         </label>
       </Grid>
       <Typography variant="h3">Plugins</Typography>
-      <HumbleBundle />
-      <Typography variant="h3">Opds</Typography>
-      <Opds />
       <Grid>{pluginComponents}</Grid>
       <ConfirmPluginDialog
         open={Boolean(pendingPlugin)}
