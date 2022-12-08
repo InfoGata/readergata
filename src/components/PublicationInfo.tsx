@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Publication } from "src/plugintypes";
+import { Publication } from "../plugintypes";
 import { getThumbnailImage, searchThumbnailSize } from "../utils";
 import PublicationSourceButton from "./PublicationSourceButton";
 
