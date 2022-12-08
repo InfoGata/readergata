@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EBook, BookContent } from "../../models";
+import { EBook, BookContent } from "../../types";
 
 interface EbookState {
   currentBook?: EBook;

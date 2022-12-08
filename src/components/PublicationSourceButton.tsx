@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { setBook } from "../store/reducers/ebookReducer";
 import { PublicationSource } from "../plugintypes";
 import { useAppDispatch } from "../store/hooks";
-import { BookSourceType, EBook } from "../models";
+import { BookSourceType, EBook } from "../types";
 
 interface PublicationSourceButtonProps {
   source: PublicationSource;

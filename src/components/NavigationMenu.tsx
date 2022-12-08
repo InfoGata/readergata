@@ -11,7 +11,6 @@ import {
 import React from "react";
 import { Link } from "react-router-dom";
 import { setBook } from "../store/reducers/ebookReducer";
-import { BookSourceType } from "../models";
 import {
   setIsFullscreen,
   setNavigationOpen,
@@ -23,6 +22,7 @@ import {
   FullscreenExit,
   Home,
 } from "@mui/icons-material";
+import { BookSourceType } from "../types";
 
 const drawerWidth = 240;
 

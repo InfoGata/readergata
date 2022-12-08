@@ -1,7 +1,7 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
+import { BookContent } from "../types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { BookContent } from "../models";
 import { setLocation } from "../store/reducers/ebookReducer";
 
 interface TocItemProps {

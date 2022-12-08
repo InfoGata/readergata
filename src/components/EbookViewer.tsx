@@ -1,8 +1,8 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
-import { BookContent, BookSourceType } from "../models";
 import { setContents, setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { BookContent, BookSourceType } from "../types";
 
 const isCorrectMimeType = (response: Response): boolean => {
   const mimeType = response.headers.get("Content-Type");
