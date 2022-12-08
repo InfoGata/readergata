@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import EbookViewer from "./EbookViewer";
 import FeedList from "./FeedList";
 import PluginFeed from "./PluginFeed";
+import PluginOptions from "./PluginOptions";
 import Plugins from "./Plugins";
 
 const Routing: React.FC = () => {
@@ -16,6 +17,7 @@ const Routing: React.FC = () => {
         <Route path="/feed" element={<FeedList />} />
         <Route path="/plugins/:pluginId/feed/:apiId" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId/feed" element={<PluginFeed />} />
+        <Route path="/plugins/:pluginId/options" element={<PluginOptions />} />
       </Routes>
     </Box>
   );

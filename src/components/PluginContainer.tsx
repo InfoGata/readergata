@@ -83,6 +83,11 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
       <Typography>
         {plugin.name} {plugin.version}
       </Typography>
+      {plugin.hasOptions && (
+        <Button component={Link} to={`/plugins/${plugin.id}/options`}>
+          {t("options")}
+        </Button>
+      )}
       {hasFeed && (
         <Button component={Link} to={`/plugins/${plugin.id}/feed`}>
           Open Feed

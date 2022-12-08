@@ -1,10 +1,20 @@
-import { PluginFrame } from "plugin-frame";
+import { PluginFrame, PluginInterface } from "plugin-frame";
 import React from "react";
 import { Feed, GetFeedRequest, PluginInfo } from "./plugintypes";
 import { db } from "./database";
 
 export interface PluginMethodInterface {
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
+  onUiMessage(message: any): Promise<void>;
+}
+
+interface ApplicationPluginInterface extends PluginInterface {
+  postUiMessage(message: any): Promise<void>;
+}
+
+interface PluginMessage {
+  pluginId?: string;
+  message: any;
 }
 
 export class PluginFrameContainer extends PluginFrame<PluginMethodInterface> {
@@ -26,6 +36,7 @@ export interface PluginContextInterface {
   ) => Promise<void>;
   deletePlugin: (plugin: PluginFrameContainer) => Promise<void>;
   plugins: PluginFrameContainer[];
+  pluginMessage?: PluginMessage;
   pluginsLoaded: boolean;
 }
 
@@ -36,11 +47,18 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const [pluginFrames, setPluginFrames] = React.useState<
     PluginFrameContainer[]
   >([]);
+  const [pluginMessage, setPluginMessage] = React.useState<PluginMessage>();
 
   const loadingPlugin = React.useRef(false);
 
   const loadPlugin = React.useCallback(
     async (plugin: PluginInfo, pluginFiles?: FileList) => {
+      const api: ApplicationPluginInterface = {
+        postUiMessage: async (message: any) => {
+          setPluginMessage({ pluginId: plugin.id, message });
+        },
+      };
+
       const completeMethods: {
         [key in keyof PluginMethodInterface]?: (
           arg: any
@@ -57,14 +75,11 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
       };
 
       const srcUrl = `${window.location.protocol}//${plugin.id}.${window.location.host}/pluginframe.html`;
-      const host = new PluginFrameContainer(
-        {},
-        {
-          completeMethods,
-          frameSrc: new URL(srcUrl),
-          sandboxAttributes: ["allow-scripts", "allow-same-origin"],
-        }
-      );
+      const host = new PluginFrameContainer(api, {
+        completeMethods,
+        frameSrc: new URL(srcUrl),
+        sandboxAttributes: ["allow-scripts", "allow-same-origin"],
+      });
       host.id = plugin.id;
       host.optionsSameOrigin = plugin.optionsSameOrigin;
       host.name = plugin.name;
@@ -131,6 +146,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     updatePlugin: updatePlugin,
     plugins: pluginFrames,
     pluginsLoaded,
+    pluginMessage,
   };
 
   return (
