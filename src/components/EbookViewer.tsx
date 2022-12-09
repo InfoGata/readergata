@@ -3,6 +3,7 @@ import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { setContents, setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType } from "../types";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 const isCorrectMimeType = (response: Response): boolean => {
   const mimeType = response.headers.get("Content-Type");
@@ -52,6 +53,7 @@ const getValidUrl = async (url: string) => {
 };
 
 const EbookViewer: React.FC = () => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -107,6 +109,8 @@ const EbookViewer: React.FC = () => {
       if (!ebook) {
         return;
       }
+
+      setIsLoading(true);
       const newBook = Epub();
       if (ebook.sourceType === BookSourceType.Binary) {
         newBook.open(ebook.source, "binary");
@@ -117,7 +121,8 @@ const EbookViewer: React.FC = () => {
           const test = await fetch(validUrl);
           if (test.status !== 404) {
             const arrayBuffer = await test.arrayBuffer();
-            newBook.open(arrayBuffer);
+            await newBook.open(arrayBuffer);
+            setIsLoading(false);
           } else {
             return;
           }
@@ -156,7 +161,14 @@ const EbookViewer: React.FC = () => {
     };
     loadEbook();
   }, [ebook, dispatch]);
-  return <div ref={containerRef}></div>;
+  return (
+    <>
+      <Backdrop open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <div ref={containerRef}></div>
+    </>
+  );
 };
 
 export default EbookViewer;
