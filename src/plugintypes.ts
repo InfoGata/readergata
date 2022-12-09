@@ -2,15 +2,16 @@ export interface Publication {
   title: string;
   images?: ImageInfo[];
   summary?: string;
-  authors: Author[];
+  authors?: Author[];
   apiId?: string;
   sources?: PublicationSource[];
   pluginId?: string;
 }
 
 export interface PublicationSource {
-  name: string;
+  name?: string;
   source: string;
+  type?: string;
 }
 
 export interface Author {
@@ -55,10 +56,4 @@ export interface PluginInfo {
   optionsSameOrigin?: boolean;
   manifestUrl?: string;
   homepage?: string;
-}
-
-export interface ImageInfo {
-  url: string;
-  height?: number;
-  width?: number;
 }

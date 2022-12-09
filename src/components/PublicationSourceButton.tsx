@@ -26,7 +26,7 @@ const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
     navigate("/");
     dispatch(setBook(book));
   };
-  return <Button onClick={onClick}>{source.name}</Button>;
+  return <Button onClick={onClick}>{source.name ?? source.type}</Button>;
 };
 
 export default PublicationSourceButton;
