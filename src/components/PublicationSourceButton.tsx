@@ -1,10 +1,7 @@
 import { Button } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { setBook } from "../store/reducers/ebookReducer";
+import { Link } from "react-router-dom";
 import { PublicationSource } from "../plugintypes";
-import { useAppDispatch } from "../store/hooks";
-import { BookSourceType, EBook } from "../types";
 
 interface PublicationSourceButtonProps {
   source: PublicationSource;
@@ -15,18 +12,17 @@ const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
 ) => {
   const { source } = props;
 
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const onClick = () => {
-    const book: EBook = {
-      source: source.source,
-      sourceType: BookSourceType.Url,
-    };
-    console.log(book);
-    navigate("/");
-    dispatch(setBook(book));
-  };
-  return <Button onClick={onClick}>{source.name ?? source.type}</Button>;
+  return (
+    <Button
+      component={Link}
+      to={{
+        pathname: "/viewer",
+        search: `?source=${encodeURIComponent(source.source)}`,
+      }}
+    >
+      {source.name ?? source.type}
+    </Button>
+  );
 };
 
 export default PublicationSourceButton;
