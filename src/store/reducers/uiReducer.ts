@@ -12,7 +12,7 @@ let initialState: UiState = {
   tocOpen: false,
 };
 
-const ebookSlice = createSlice({
+const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
@@ -29,6 +29,6 @@ const ebookSlice = createSlice({
 });
 
 export const { setNavigationOpen, setIsFullscreen, setTocOpen } =
-  ebookSlice.actions;
+  uiSlice.actions;
 
-export default ebookSlice.reducer;
+export default uiSlice.reducer;
