@@ -50,6 +50,10 @@ const App: React.FC = () => {
     }
   }, [isFullScreen]);
 
+  const onClickDismiss = (key: SnackbarKey) => () => {
+    notistackRef?.current?.closeSnackbar(key);
+  };
+
   React.useEffect(() => {
     const updateServiceWorker = () => {
       if (waitingServiceWorker) {
@@ -69,15 +73,12 @@ const App: React.FC = () => {
         action: (key) => (
           <>
             <Button onClick={updateServiceWorker}>{t("reload")}</Button>
+            <Button onClick={onClickDismiss(key)}>{t("dismiss")}</Button>
           </>
         ),
       });
     }
   }, [waitingServiceWorker, t]);
-
-  const onClickDismiss = (key: SnackbarKey) => () => {
-    notistackRef?.current?.closeSnackbar(key);
-  };
 
   return (
     <SnackbarProvider
