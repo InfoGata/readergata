@@ -4,6 +4,7 @@ interface UiState {
   navigationOpen: boolean;
   isFullscreen: boolean;
   tocOpen: boolean;
+  waitingServiceWorker?: ServiceWorker;
 }
 
 let initialState: UiState = {
@@ -25,10 +26,13 @@ const uiSlice = createSlice({
     setTocOpen(state, action: PayloadAction<boolean>) {
       state.tocOpen = action.payload;
     },
+    updateReady(state, action: PayloadAction<ServiceWorker>) {
+      state.waitingServiceWorker = action.payload;
+    },
   },
 });
 
-export const { setNavigationOpen, setIsFullscreen, setTocOpen } =
+export const { setNavigationOpen, setIsFullscreen, setTocOpen, updateReady } =
   uiSlice.actions;
 
 export default uiSlice.reducer;

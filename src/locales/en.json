@@ -5,7 +5,10 @@
     "cantGetFile": "Error: Couldn't get {{name}}",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "notFound": "Not Found"
+    "notFound": "Not Found",
+    "dismiss": "Dismiss",
+    "newVersion": "A new version of this site is available",
+    "reload": "Reload"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
