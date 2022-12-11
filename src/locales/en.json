@@ -8,7 +8,11 @@
     "notFound": "Not Found",
     "dismiss": "Dismiss",
     "newVersion": "A new version of this site is available",
-    "reload": "Reload"
+    "reload": "Reload",
+    "openFile": "Open File",
+    "submit": "Submit",
+    "plugins": "Plugins",
+    "home": "Home"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
@@ -21,6 +25,7 @@
     "reloadPlugin": "Reload",
     "loadPluginFromFolder": "Load Plugin From Folder",
     "installManifestUrl": "Install Manifest Url",
-    "updateManifestUrl": "Update Manifest Url"
+    "updateManifestUrl": "Update Manifest Url",
+    "openFeed": "Open Feed"
   }
 }

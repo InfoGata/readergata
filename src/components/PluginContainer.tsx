@@ -90,7 +90,7 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
       )}
       {hasFeed && (
         <Button component={Link} to={`/plugins/${plugin.id}/feed`}>
-          Open Feed
+          {t("openFeed")}
         </Button>
       )}
       <Button onClick={onDelete}>{t("deletePlugin")}</Button>

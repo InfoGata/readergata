@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -23,6 +24,7 @@ import {
   Home,
 } from "@mui/icons-material";
 import { BookSourceType } from "../types";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 
@@ -43,6 +45,7 @@ const NavigationMenu: React.FC = () => {
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const onClose = () => dispatch(setNavigationOpen(false));
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
+  const { t } = useTranslation();
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -96,19 +99,23 @@ const NavigationMenu: React.FC = () => {
       <List>
         <ListItem button={true} component={Link} to="/" key="Home">
           <ListItemIcon>
-            <Home />
+            <Tooltip title={t("home")} placement="right">
+              <Home />
+            </Tooltip>
           </ListItemIcon>
-          <ListItemText>Home</ListItemText>
+          <ListItemText>{t("home")}</ListItemText>
         </ListItem>
         <ListItem button={true} component={Link} to="/plugins" key="Plugins">
-          <ListItemIcon>
-            <Extension />
-          </ListItemIcon>
-          <ListItemText>Plugins</ListItemText>
+          <Tooltip title={t("plugins")} placement="right">
+            <ListItemIcon>
+              <Extension />
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText>{t("plugins")}</ListItemText>
         </ListItem>
       </List>
       <Button variant="contained" component="label">
-        Open File
+        {t("openFile")}
         <input type="file" onChange={onFileChange} hidden />
       </Button>
       <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
@@ -122,7 +129,7 @@ const NavigationMenu: React.FC = () => {
           name="url"
         />
         <Button variant="contained" type="submit">
-          Submit
+          {t("submit")}
         </Button>
       </form>
     </Drawer>
