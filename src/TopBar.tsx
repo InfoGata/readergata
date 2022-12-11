@@ -14,7 +14,7 @@ const TopBar: React.FC = () => {
   const onTocToggle = () => dispatch(setTocOpen(!tocOpen));
 
   return (
-    <AppBar color="transparent" position="fixed">
+    <AppBar color="default" position="fixed">
       <Toolbar variant="dense">
         <IconButton
           color="inherit"
