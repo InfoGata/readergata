@@ -103,7 +103,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
       host.hasOptions = !!plugin.optionsHtml;
       host.fileList = pluginFiles;
       host.manifestUrl = plugin.manifestUrl;
-      const timeoutMs = 5000;
+      const timeoutMs = 3000;
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(), timeoutMs);
       });
@@ -115,13 +115,13 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   );
 
   const loadPlugins = React.useCallback(async () => {
+    setPluginsFailed(false);
     try {
       const plugs = await db.plugins.toArray();
 
       const framePromises = plugs.map((p) => loadPlugin(p));
       const frames = await Promise.all(framePromises);
       setPluginFrames(frames);
-      setPluginsFailed(false);
     } catch {
       enqueueSnackbar(t("failedPlugins"), { variant: "error" });
       setPluginsFailed(true);

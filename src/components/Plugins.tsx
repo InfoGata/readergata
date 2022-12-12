@@ -57,7 +57,7 @@ const Plugins: React.FC = () => {
     dispatch(setNavigationOpen(false));
   }, [dispatch]);
   return (
-    <Grid sx={{ "& button": { m: 1 } }}>
+    <Grid sx={{ "& button": { m: 1 }, "& label": { m: 1 } }}>
       <Grid>
         <label htmlFor="contained-button-file">
           <FileInput
@@ -73,9 +73,11 @@ const Plugins: React.FC = () => {
       </Grid>
       {pluginsFailed && (
         <Grid>
-          <Button onClick={reloadPlugins}>{`${t("failedPlugins")}: ${t(
-            "clickReload"
-          )}`}</Button>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={reloadPlugins}
+          >{`${t("failedPlugins")}: ${t("clickReload")}`}</Button>
         </Grid>
       )}
       <Grid>{pluginComponents}</Grid>
