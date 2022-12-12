@@ -11,7 +11,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "./i18n";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-// import { updateReady } from "./store/reducers/uiReducer";
+import { updateReady } from "./store/reducers/uiReducer";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -25,14 +25,13 @@ root.render(
   </React.StrictMode>
 );
 
-serviceWorkerRegistration.unregister();
-// serviceWorkerRegistration.register({
-//   onUpdate: (registration) => {
-//     const waitingServiceWorker = registration.waiting;
-//     if (waitingServiceWorker) {
-//       store.dispatch(updateReady(waitingServiceWorker));
-//     }
-//   },
-// });
+serviceWorkerRegistration.register({
+  onUpdate: (registration) => {
+    const waitingServiceWorker = registration.waiting;
+    if (waitingServiceWorker) {
+      store.dispatch(updateReady(waitingServiceWorker));
+    }
+  },
+});
 
 reportWebVitals();

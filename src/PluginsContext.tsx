@@ -1,7 +1,14 @@
 import { PluginFrame, PluginInterface } from "plugin-frame";
 import React from "react";
-import { Feed, GetFeedRequest, PluginInfo } from "./plugintypes";
+import {
+  Feed,
+  GetFeedRequest,
+  NotificationMessage,
+  PluginInfo,
+} from "./plugintypes";
 import { db } from "./database";
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
 
 export interface PluginMethodInterface {
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
@@ -38,12 +45,16 @@ export interface PluginContextInterface {
   plugins: PluginFrameContainer[];
   pluginMessage?: PluginMessage;
   pluginsLoaded: boolean;
+  pluginsFailed: boolean;
+  reloadPlugins: () => Promise<void>;
 }
 
 const PluginsContext = React.createContext<PluginContextInterface>(undefined!);
 
 export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
+  const { t } = useTranslation("plugins");
   const [pluginsLoaded, setPluginsLoaded] = React.useState(false);
+  const [pluginsFailed, setPluginsFailed] = React.useState(false);
   const [pluginFrames, setPluginFrames] = React.useState<
     PluginFrameContainer[]
   >([]);
@@ -51,11 +62,16 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
   const loadingPlugin = React.useRef(false);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const loadPlugin = React.useCallback(
     async (plugin: PluginInfo, pluginFiles?: FileList) => {
       const api: ApplicationPluginInterface = {
         postUiMessage: async (message: any) => {
           setPluginMessage({ pluginId: plugin.id, message });
+        },
+        createNotification: async (notification: NotificationMessage) => {
+          enqueueSnackbar(notification.message, { variant: notification.type });
         },
       };
 
@@ -87,30 +103,38 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
       host.hasOptions = !!plugin.optionsHtml;
       host.fileList = pluginFiles;
       host.manifestUrl = plugin.manifestUrl;
-      await host.ready();
+      const timeoutMs = 5000;
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(), timeoutMs);
+      });
+      await Promise.race([host.ready(), timeoutPromise]);
       await host.executeCode(plugin.script);
       return host;
     },
-    []
+    [enqueueSnackbar]
   );
 
+  const loadPlugins = React.useCallback(async () => {
+    try {
+      const plugs = await db.plugins.toArray();
+
+      const framePromises = plugs.map((p) => loadPlugin(p));
+      const frames = await Promise.all(framePromises);
+      setPluginFrames(frames);
+      setPluginsFailed(false);
+    } catch {
+      enqueueSnackbar(t("failedPlugins"), { variant: "error" });
+      setPluginsFailed(true);
+    } finally {
+      setPluginsLoaded(true);
+    }
+  }, [loadPlugin, enqueueSnackbar, t]);
+
   React.useEffect(() => {
-    const getPlugins = async () => {
-      try {
-        const plugs = await db.plugins.toArray();
-
-        const framePromises = plugs.map((p) => loadPlugin(p));
-        const frames = await Promise.all(framePromises);
-        setPluginFrames(frames);
-      } finally {
-        setPluginsLoaded(true);
-      }
-    };
-
     if (loadingPlugin.current) return;
     loadingPlugin.current = true;
-    getPlugins();
-  }, [loadPlugin]);
+    loadPlugins();
+  }, [loadPlugins]);
 
   const addPlugin = async (plugin: PluginInfo) => {
     if (pluginFrames.some((p) => p.id === plugin.id)) {
@@ -147,6 +171,8 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     plugins: pluginFrames,
     pluginsLoaded,
     pluginMessage,
+    pluginsFailed,
+    reloadPlugins: loadPlugins,
   };
 
   return (

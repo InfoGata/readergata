@@ -26,6 +26,8 @@
     "loadPluginFromFolder": "Load Plugin From Folder",
     "installManifestUrl": "Install Manifest Url",
     "updateManifestUrl": "Update Manifest Url",
-    "openFeed": "Open Feed"
+    "openFeed": "Open Feed",
+    "failedPlugins": "Failed to load plugins",
+    "clickReload": "Click to reload plugins"
   }
 }

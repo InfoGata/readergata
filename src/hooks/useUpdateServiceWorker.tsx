@@ -31,10 +31,15 @@ const useUpdateServiceWorker = (
 
     if (waitingServiceWorker && enqueueSnackbar) {
       enqueueSnackbar(t("newVersion"), {
+        persist: true,
         action: (key) => (
           <>
-            <Button onClick={updateServiceWorker}>{t("reload")}</Button>
-            <Button onClick={() => onClickDismiss(key)}>{t("dismiss")}</Button>
+            <Button color="primary" onClick={updateServiceWorker}>
+              {t("reload")}
+            </Button>
+            <Button color="error" onClick={() => onClickDismiss(key)}>
+              {t("dismiss")}
+            </Button>
           </>
         ),
       });

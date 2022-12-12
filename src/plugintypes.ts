@@ -57,3 +57,8 @@ export interface PluginInfo {
   manifestUrl?: string;
   homepage?: string;
 }
+
+export interface NotificationMessage {
+  message: string;
+  type?: "default" | "success" | "error" | "warning" | "info";
+}
