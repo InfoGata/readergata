@@ -1,6 +1,5 @@
 import React from "react";
 import { CssBaseline, Box, Button } from "@mui/material";
-import "./App.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import NavigationMenu from "./components/NavigationMenu";
 import TocMenu from "./components/TocMenu";
