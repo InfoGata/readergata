@@ -11,6 +11,7 @@ import { SnackbarKey, SnackbarProvider } from "notistack";
 import { useTranslation } from "react-i18next";
 import useFullScreen from "./hooks/useFullScreen";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
+import useOffline from "./hooks/useOffline";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,19 +25,20 @@ const App: React.FC = () => {
   const notistackRef = React.useRef<SnackbarProvider>(null);
   const { t } = useTranslation();
 
-  const onClickDismiss = (key: SnackbarKey) => () => {
+  const onClickDismiss = (key: SnackbarKey) => {
     notistackRef?.current?.closeSnackbar(key);
   };
 
   useFullScreen();
   useUpdateServiceWorker(notistackRef.current?.enqueueSnackbar, onClickDismiss);
+  useOffline(notistackRef.current?.enqueueSnackbar, onClickDismiss);
 
   return (
     <SnackbarProvider
       maxSnack={3}
       ref={notistackRef}
       action={(key) => (
-        <Button onClick={onClickDismiss(key)}>{t("dismiss")}</Button>
+        <Button onClick={() => onClickDismiss(key)}>{t("dismiss")}</Button>
       )}
     >
       <QueryClientProvider client={queryClient}>

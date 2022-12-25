@@ -12,7 +12,8 @@
     "openFile": "Open File",
     "submit": "Submit",
     "plugins": "Plugins",
-    "home": "Home"
+    "home": "Home",
+    "offline": "You are offline"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
