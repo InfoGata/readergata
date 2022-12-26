@@ -4,6 +4,7 @@ import {
   Grid,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
 } from "@mui/material";
 import React from "react";
@@ -38,15 +39,15 @@ const PluginFeed: React.FC = () => {
               <PublicationInfo key={i} publication={p} />
             ))
           : query.data?.items.map((c, i) => (
-              <ListItem
-                key={i}
-                button={true}
-                component={Link}
-                to={`/plugins/${c.pluginId}/feed/${encodeURIComponent(
-                  c.apiId || ""
-                )}`}
-              >
-                <ListItemText primary={c.name} />
+              <ListItem key={i} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={`/plugins/${c.pluginId}/feed/${encodeURIComponent(
+                    c.apiId || ""
+                  )}`}
+                >
+                  <ListItemText primary={c.name} />
+                </ListItemButton>
               </ListItem>
             ))}
       </List>

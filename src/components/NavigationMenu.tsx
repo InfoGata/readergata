@@ -4,6 +4,7 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   TextField,
@@ -97,21 +98,25 @@ const NavigationMenu: React.FC = () => {
       onClose={onClose}
     >
       <List>
-        <ListItem button={true} component={Link} to="/" key="Home">
-          <ListItemIcon>
-            <Tooltip title={t("home")} placement="right">
-              <Home />
-            </Tooltip>
-          </ListItemIcon>
-          <ListItemText>{t("home")}</ListItemText>
-        </ListItem>
-        <ListItem button={true} component={Link} to="/plugins" key="Plugins">
-          <Tooltip title={t("plugins")} placement="right">
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/">
             <ListItemIcon>
-              <Extension />
+              <Tooltip title={t("home")} placement="right">
+                <Home />
+              </Tooltip>
             </ListItemIcon>
-          </Tooltip>
-          <ListItemText>{t("plugins")}</ListItemText>
+            <ListItemText>{t("home")}</ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/plugins">
+            <Tooltip title={t("plugins")} placement="right">
+              <ListItemIcon>
+                <Extension />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText>{t("plugins")}</ListItemText>
+          </ListItemButton>
         </ListItem>
       </List>
       <Button variant="contained" component="label">

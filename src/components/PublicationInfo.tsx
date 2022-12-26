@@ -5,6 +5,7 @@ import {
   ListItemText,
   Dialog,
   Typography,
+  ListItemButton,
 } from "@mui/material";
 import React from "react";
 import { Publication } from "../plugintypes";
@@ -28,14 +29,16 @@ const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
 
   return (
     <>
-      <ListItem button={true} onClick={toggleDialogOpen}>
-        <ListItemAvatar>
-          <Avatar src={icon} variant="square" />
-        </ListItemAvatar>
-        <ListItemText
-          primary={publication.title}
-          secondary={publication.authors?.map((a) => a.name).join(", ")}
-        />
+      <ListItem disablePadding>
+        <ListItemButton onClick={toggleDialogOpen}>
+          <ListItemAvatar>
+            <Avatar src={icon} variant="square" />
+          </ListItemAvatar>
+          <ListItemText
+            primary={publication.title}
+            secondary={publication.authors?.map((a) => a.name).join(", ")}
+          />
+        </ListItemButton>
       </ListItem>
       <Dialog open={dialogOpen} onClose={toggleDialogOpen}>
         <img alt="cover" src={icon} />
