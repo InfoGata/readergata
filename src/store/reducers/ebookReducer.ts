@@ -18,7 +18,7 @@ const ebookSlice = createSlice({
   name: "ebook",
   initialState,
   reducers: {
-    setBook(state, action: PayloadAction<EBook>) {
+    setBook(state, action: PayloadAction<EBook | undefined>) {
       state.currentBook = action.payload;
     },
     setContents(state, action: PayloadAction<BookContent[]>) {

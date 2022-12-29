@@ -39,6 +39,10 @@ export interface EBook {
   sourceType: BookSourceType;
 }
 
+export interface Pdf {
+  source: string;
+}
+
 export interface BookContent {
   title: string;
   location?: string;

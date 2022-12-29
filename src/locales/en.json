@@ -13,7 +13,9 @@
     "submit": "Submit",
     "plugins": "Plugins",
     "home": "Home",
-    "offline": "You are offline"
+    "offline": "You are offline",
+    "next": "Next",
+    "previous": "Previous"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

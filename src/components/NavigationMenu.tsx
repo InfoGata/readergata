@@ -26,6 +26,7 @@ import {
 } from "@mui/icons-material";
 import { BookSourceType } from "../types";
 import { useTranslation } from "react-i18next";
+import { setPdf } from "../store/reducers/pdfReducer";
 
 const drawerWidth = 240;
 
@@ -52,6 +53,8 @@ const NavigationMenu: React.FC = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
+      setBook(undefined);
+      setPdf(undefined);
       if (file.type.includes("application/epub+zip")) {
         const bookData = await openFile(file);
         if (bookData) {
@@ -62,6 +65,9 @@ const NavigationMenu: React.FC = () => {
             })
           );
         }
+      } else if (file.type.includes("application/pdf")) {
+        const url = URL.createObjectURL(file);
+        dispatch(setPdf({ source: url }));
       } else {
         alert("Unsupported type");
       }
@@ -121,7 +127,12 @@ const NavigationMenu: React.FC = () => {
       </List>
       <Button variant="contained" component="label">
         {t("openFile")}
-        <input type="file" onChange={onFileChange} hidden />
+        <input
+          type="file"
+          onChange={onFileChange}
+          hidden
+          accept="application/pdf,application/epub+zip"
+        />
       </Button>
       <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
         {isFullscreen ? <FullscreenExit /> : <Fullscreen />}

@@ -11,13 +11,15 @@ const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
   props
 ) => {
   const { source } = props;
+  let search = `?source=${encodeURIComponent(source.source)}`;
+  search = source.type ? `${search}&type=${source.type}` : search;
 
   return (
     <Button
       component={Link}
       to={{
         pathname: "/viewer",
-        search: `?source=${encodeURIComponent(source.source)}`,
+        search: search,
       }}
     >
       {source.name ?? source.type}

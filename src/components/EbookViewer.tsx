@@ -4,53 +4,7 @@ import { setContents, setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType } from "../types";
 import { Backdrop, CircularProgress } from "@mui/material";
-
-const isCorrectMimeType = (response: Response): boolean => {
-  const mimeType = response.headers.get("Content-Type");
-
-  if (!mimeType) {
-    // If no content type, just return true
-    return true;
-  } else if (mimeType.includes("application/epub+zip")) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const proxy =
-  process.env.NODE_ENV === "production"
-    ? "https://cloudcors.audio-pwa.workers.dev?url="
-    : "http://localhost:36325/";
-
-const getValidUrl = async (url: string) => {
-  try {
-    // Fetch and check the mime type
-    const response = await fetch(url, { method: "HEAD" });
-    if (response.status === 404) {
-      // HEAD will sometimes return 404
-      // But GET returns successfully
-      return url;
-    }
-    return isCorrectMimeType(response) ? url : null;
-  } catch {
-    // Determine if error is because of cors
-    const noProtocol = url.replace(/(^\w+:|^)\/\//, "");
-    const proxyUrl = `${proxy}${noProtocol}`;
-    try {
-      const response = await fetch(proxyUrl, { method: "HEAD" });
-      if (response.status === 404) {
-        // HEAD will sometimes return 404
-        // But GET returns successfully
-        return proxyUrl;
-      }
-      return isCorrectMimeType(response) ? proxyUrl : null;
-    } catch {
-      alert("Could not get file");
-    }
-  }
-  return null;
-};
+import { getValidUrl } from "../utils";
 
 const EbookViewer: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -116,7 +70,10 @@ const EbookViewer: React.FC = () => {
         newBook.open(ebook.source, "binary");
       } else {
         // Url
-        const validUrl = await getValidUrl(ebook.source);
+        const validUrl = await getValidUrl(
+          ebook.source,
+          "application/epub+zip"
+        );
         if (validUrl) {
           const test = await fetch(validUrl);
           if (test.status !== 404) {

@@ -123,4 +123,51 @@ export const getThumbnailImage = (
     : sortedImages[0]?.url ?? thumbnail;
 };
 
+const isCorrectMimeType = (response: Response, type: string): boolean => {
+  const mimeType = response.headers.get("Content-Type");
+
+  if (!mimeType) {
+    // If no content type, just return true
+    return true;
+  } else if (mimeType.includes(type)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const proxy =
+  process.env.NODE_ENV === "production"
+    ? "https://cloudcors.audio-pwa.workers.dev?url="
+    : "http://localhost:36325/";
+
+export const getValidUrl = async (url: string, mimeType: string) => {
+  try {
+    // Fetch and check the mime type
+    const response = await fetch(url, { method: "HEAD" });
+    if (response.status === 404) {
+      // HEAD will sometimes return 404
+      // But GET returns successfully
+      return url;
+    }
+    return isCorrectMimeType(response, mimeType) ? url : null;
+  } catch {
+    // Determine if error is because of cors
+    const noProtocol = url.replace(/(^\w+:|^)\/\//, "");
+    const proxyUrl = `${proxy}${noProtocol}`;
+    try {
+      const response = await fetch(proxyUrl, { method: "HEAD" });
+      if (response.status === 404) {
+        // HEAD will sometimes return 404
+        // But GET returns successfully
+        return proxyUrl;
+      }
+      return isCorrectMimeType(response, mimeType) ? proxyUrl : null;
+    } catch {
+      alert("Could not get file");
+    }
+  }
+  return null;
+};
+
 export const searchThumbnailSize = 40;

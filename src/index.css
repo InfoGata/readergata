@@ -12,17 +12,28 @@ code {
     monospace;
 }
 
-
-.react-pdf__Page__canvas {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, 0%) !important;
+.Example__container__document {
+  margin: 1em 0;
 }
 
-.react-pdf__Page__textContent {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, 0%) !important;
+.Example__container__document .react-pdf__Document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Example__container__document .react-pdf__Page {
+  max-width: calc(100% - 2em);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  margin: 1em;
+}
+
+.Example__container__document .react-pdf__Page canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+.Example__container__document .react-pdf__message {
+  padding: 20px;
+  color: white;
 }

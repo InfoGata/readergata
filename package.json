@@ -17,6 +17,7 @@
     "@types/node": "^16.11.41",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
+    "@types/react-pdf": "^6.2.0",
     "axios": "^1.1.3",
     "babel-plugin-import": "^1.13.3",
     "dexie": "^3.2.2",
@@ -29,6 +30,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.0.0",
+    "react-pdf": "^6.2.1",
     "react-query": "^3.39.2",
     "react-redux": "^7.2.2",
     "react-router-dom": "^6.2.1",
@@ -38,6 +40,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "copy-worker": "node ./scripts/copy-worker.js",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
