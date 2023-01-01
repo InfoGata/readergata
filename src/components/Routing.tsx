@@ -8,7 +8,7 @@ import Viewer from "./Viewer";
 
 const Routing: React.FC = () => {
   return (
-    <Box component="main">
+    <Box component="main" sx={{ flexGrow: 1, p: 1, overflow: "auto" }}>
       <Toolbar />
       <Routes>
         <Route path="/" element={<Viewer />} />

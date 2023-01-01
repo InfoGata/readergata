@@ -1,6 +1,6 @@
-import { Button, Typography } from "@mui/material";
+import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { Button, Grid } from "@mui/material";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
@@ -14,9 +14,9 @@ const options = {
 };
 
 const PdfViewer: React.FC = (props) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const currentPdf = useAppSelector((state) => state.pdf.currentPdf);
-  const [numPages, setNumPages] = React.useState<number>();
+  // const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState(1);
   const [url, setUrl] = React.useState("");
 
@@ -39,7 +39,7 @@ const PdfViewer: React.FC = (props) => {
   }: {
     numPages: number;
   }) => {
-    setNumPages(nextNumPages);
+    // setNumPages(nextNumPages);
     setPageNumber(1);
   };
 
@@ -55,27 +55,50 @@ const PdfViewer: React.FC = (props) => {
     changePage(-1);
   };
 
+  const onItemClick = ({
+    pageNumber: itemPageNumber,
+  }: {
+    pageNumber: string;
+  }) => {
+    setPageNumber(Number(itemPageNumber));
+  };
+
   return (
-    <div className="Example_container_document">
-      {url && (
-        <Document
-          file={url}
-          onLoadSuccess={onDocumentLoadSuccess}
-          options={options}
-        >
-          <Page pageNumber={pageNumber} />
-        </Document>
-      )}
-      <Typography>
-        {pageNumber}/{numPages}
-      </Typography>
-      <Button variant="contained" onClick={prevPage}>
-        {t("previous")}
-      </Button>
-      <Button variant="contained" onClick={nextPage}>
-        {t("next")}
-      </Button>
-    </div>
+    <Grid
+      container
+      spacing={0}
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <Grid item xs={1}>
+        <Button
+          variant="outlined"
+          onClick={prevPage}
+          startIcon={<NavigateBefore />}
+          sx={{ position: "fixed", left: 0 }}
+        ></Button>
+      </Grid>
+      <Grid item xs={10}>
+        {url && (
+          <Document
+            file={url}
+            onLoadSuccess={onDocumentLoadSuccess}
+            options={options}
+            onItemClick={onItemClick}
+          >
+            <Page pageNumber={pageNumber} />
+          </Document>
+        )}
+      </Grid>
+      <Grid item xs={1}>
+        <Button
+          sx={{ position: "fixed", right: 0 }}
+          variant="outlined"
+          onClick={nextPage}
+          endIcon={<NavigateNext />}
+        ></Button>
+      </Grid>
+    </Grid>
   );
 };
 
