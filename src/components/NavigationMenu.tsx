@@ -24,7 +24,7 @@ import {
   FullscreenExit,
   Home,
 } from "@mui/icons-material";
-import { BookSourceType } from "../types";
+import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
 import { setPdf } from "../store/reducers/pdfReducer";
 
@@ -66,8 +66,8 @@ const NavigationMenu: React.FC = () => {
           );
         }
       } else if (file.type.includes("application/pdf")) {
-        const url = URL.createObjectURL(file);
-        dispatch(setPdf({ source: url }));
+        const pdfData = await openFile(file);
+        dispatch(setPdf({ source: pdfData, sourceType: PdfSourceType.Binary }));
       } else {
         alert("Unsupported type");
       }

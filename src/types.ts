@@ -39,8 +39,14 @@ export interface EBook {
   sourceType: BookSourceType;
 }
 
+export enum PdfSourceType {
+  Url,
+  Binary,
+}
+
 export interface Pdf {
   source: string;
+  sourceType: PdfSourceType;
 }
 
 export interface BookContent {

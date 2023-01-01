@@ -5,6 +5,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useAppSelector } from "../store/hooks";
+import { PdfSourceType } from "../types";
 import { getValidUrl } from "../utils";
 
 const options = {
@@ -18,17 +19,19 @@ const PdfViewer: React.FC = (props) => {
   const currentPdf = useAppSelector((state) => state.pdf.currentPdf);
   // const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState(1);
-  const [url, setUrl] = React.useState("");
+  const [file, setFile] = React.useState<string | { data: string }>("");
 
   React.useEffect(() => {
     const loadPdf = async () => {
-      if (currentPdf) {
+      if (currentPdf && currentPdf.sourceType === PdfSourceType.Url) {
         const newUrl = await getValidUrl(currentPdf.source, "application/pdf");
         if (newUrl) {
-          setUrl(newUrl);
+          setFile(newUrl);
         } else {
           alert("Could not open url");
         }
+      } else if (currentPdf && currentPdf.sourceType === PdfSourceType.Binary) {
+        setFile({ data: currentPdf.source });
       }
     };
     loadPdf();
@@ -79,9 +82,9 @@ const PdfViewer: React.FC = (props) => {
         ></Button>
       </Grid>
       <Grid item xs={10}>
-        {url && (
+        {file && (
           <Document
-            file={url}
+            file={file}
             onLoadSuccess={onDocumentLoadSuccess}
             options={options}
             onItemClick={onItemClick}

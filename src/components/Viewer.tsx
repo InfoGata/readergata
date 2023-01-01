@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBook } from "../store/reducers/ebookReducer";
 import { setPdf } from "../store/reducers/pdfReducer";
-import { BookSourceType, EBook } from "../types";
+import { BookSourceType, EBook, PdfSourceType } from "../types";
 import EbookViewer from "./EbookViewer";
 import PdfViewer from "./PdfViewer";
 
@@ -23,7 +23,7 @@ const Viewer: React.FC = () => {
       dispatch(setPdf(undefined));
       dispatch(setBook(undefined));
       if (type && type.includes("pdf")) {
-        dispatch(setPdf({ source }));
+        dispatch(setPdf({ source, sourceType: PdfSourceType.Url }));
       } else {
         const book: EBook = {
           source: source,
