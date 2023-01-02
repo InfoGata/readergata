@@ -15,9 +15,8 @@ const options = {
 };
 
 const PdfViewer: React.FC = (props) => {
-  // const { t } = useTranslation();
   const currentPdf = useAppSelector((state) => state.pdf.currentPdf);
-  // const [numPages, setNumPages] = React.useState<number>();
+  const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState(1);
   const [file, setFile] = React.useState<string | { data: string }>("");
 
@@ -42,7 +41,7 @@ const PdfViewer: React.FC = (props) => {
   }: {
     numPages: number;
   }) => {
-    // setNumPages(nextNumPages);
+    setNumPages(nextNumPages);
     setPageNumber(1);
   };
 
@@ -74,12 +73,14 @@ const PdfViewer: React.FC = (props) => {
       justifyContent="space-between"
     >
       <Grid item xs={1}>
-        <Button
-          variant="outlined"
-          onClick={prevPage}
-          startIcon={<NavigateBefore />}
-          sx={{ position: "fixed", left: 0 }}
-        ></Button>
+        {numPages && pageNumber - 1 > 0 && (
+          <Button
+            variant="outlined"
+            onClick={prevPage}
+            startIcon={<NavigateBefore />}
+            sx={{ position: "fixed", left: 0 }}
+          ></Button>
+        )}
       </Grid>
       <Grid item xs={10}>
         {file && (
@@ -94,12 +95,14 @@ const PdfViewer: React.FC = (props) => {
         )}
       </Grid>
       <Grid item xs={1}>
-        <Button
-          sx={{ position: "fixed", right: 0 }}
-          variant="outlined"
-          onClick={nextPage}
-          endIcon={<NavigateNext />}
-        ></Button>
+        {numPages && numPages > pageNumber + 1 && (
+          <Button
+            sx={{ position: "fixed", right: 0 }}
+            variant="outlined"
+            onClick={nextPage}
+            endIcon={<NavigateNext />}
+          ></Button>
+        )}
       </Grid>
     </Grid>
   );
