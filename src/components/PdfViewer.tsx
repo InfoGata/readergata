@@ -1,5 +1,5 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { Button, Grid } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
@@ -66,45 +66,34 @@ const PdfViewer: React.FC = (props) => {
   };
 
   return (
-    <Grid
-      container
-      spacing={0}
-      alignItems="center"
-      justifyContent="space-between"
-    >
-      <Grid item xs={1}>
-        {numPages && pageNumber - 1 > 0 && (
-          <Button
-            variant="outlined"
-            onClick={prevPage}
-            startIcon={<NavigateBefore />}
-            sx={{ position: "fixed", left: 0 }}
-          ></Button>
-        )}
-      </Grid>
-      <Grid item xs={10}>
-        {file && (
-          <Document
-            file={file}
-            onLoadSuccess={onDocumentLoadSuccess}
-            options={options}
-            onItemClick={onItemClick}
-          >
-            <Page pageNumber={pageNumber} />
-          </Document>
-        )}
-      </Grid>
-      <Grid item xs={1}>
-        {numPages && numPages > pageNumber + 1 && (
-          <Button
-            sx={{ position: "fixed", right: 0 }}
-            variant="outlined"
-            onClick={nextPage}
-            endIcon={<NavigateNext />}
-          ></Button>
-        )}
-      </Grid>
-    </Grid>
+    <Box display="flex" justifyContent="center" alignItems="center">
+      {numPages && pageNumber - 1 > 0 && (
+        <Button
+          variant="outlined"
+          onClick={prevPage}
+          startIcon={<NavigateBefore />}
+          sx={{ position: "fixed", left: 0, height: "100%" }}
+        ></Button>
+      )}
+      {file && (
+        <Document
+          file={file}
+          onLoadSuccess={onDocumentLoadSuccess}
+          options={options}
+          onItemClick={onItemClick}
+        >
+          <Page pageNumber={pageNumber} />
+        </Document>
+      )}
+      {numPages && numPages > pageNumber + 1 && (
+        <Button
+          sx={{ position: "fixed", right: 0, height: "100%" }}
+          variant="outlined"
+          onClick={nextPage}
+          endIcon={<NavigateNext />}
+        ></Button>
+      )}
+    </Box>
   );
 };
 

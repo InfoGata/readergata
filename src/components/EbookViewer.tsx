@@ -3,11 +3,11 @@ import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { setContents, setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType } from "../types";
-import { Backdrop, CircularProgress } from "@mui/material";
 import { getValidUrl } from "../utils";
+import { Box, Button } from "@mui/material";
+import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 
 const EbookViewer: React.FC = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -15,16 +15,24 @@ const EbookViewer: React.FC = () => {
   const location = useAppSelector((state) => state.ebook.location);
   const dispatch = useAppDispatch();
 
+  const onNext = React.useCallback(() => {
+    rendition?.next();
+  }, [rendition]);
+
+  const onPrev = React.useCallback(() => {
+    rendition?.prev();
+  }, [rendition]);
+
   const onKeyUp = React.useCallback(
     (event: KeyboardEvent) => {
       const key = event.key;
       if (key === "ArrowLeft") {
-        rendition?.prev();
+        onPrev();
       } else if (key === "ArrowRight") {
-        rendition?.next();
+        onNext();
       }
     },
-    [rendition]
+    [onPrev, onNext]
   );
 
   React.useEffect(() => {
@@ -42,20 +50,6 @@ const EbookViewer: React.FC = () => {
   }, [location, rendition]);
 
   React.useEffect(() => {
-    rendition?.on("click", (e: MouseEvent) => {
-      const clickLocation = e.screenX;
-      const third = (containerRef.current?.offsetWidth || 0) / 3;
-      // If click is on first third of page go to previous page
-      // else go to next page
-      if (clickLocation < third) {
-        rendition.prev();
-      } else if (clickLocation >= third) {
-        rendition.next();
-      }
-    });
-  }, [rendition]);
-
-  React.useEffect(() => {
     const loadEbook = async () => {
       if (book.current) {
         book.current.destroy();
@@ -64,7 +58,6 @@ const EbookViewer: React.FC = () => {
         return;
       }
 
-      setIsLoading(true);
       const newBook = Epub();
       if (ebook.sourceType === BookSourceType.Binary) {
         newBook.open(ebook.source, "binary");
@@ -79,7 +72,6 @@ const EbookViewer: React.FC = () => {
           if (test.status !== 404) {
             const arrayBuffer = await test.arrayBuffer();
             await newBook.open(arrayBuffer);
-            setIsLoading(false);
           } else {
             return;
           }
@@ -119,12 +111,22 @@ const EbookViewer: React.FC = () => {
     loadEbook();
   }, [ebook, dispatch]);
   return (
-    <>
-      <Backdrop open={isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+    <Box display="flex" justifyContent="center" alignItems="center">
+      <Button
+        variant="outlined"
+        startIcon={<NavigateBefore />}
+        onClick={onPrev}
+        sx={{ position: "fixed", left: 0, zIndex: 5, height: "100%" }}
+      ></Button>
+
       <div ref={containerRef}></div>
-    </>
+      <Button
+        onClick={onNext}
+        sx={{ position: "fixed", right: 0, zIndex: 5, height: "100%" }}
+        variant="outlined"
+        endIcon={<NavigateNext />}
+      ></Button>
+    </Box>
   );
 };
 
