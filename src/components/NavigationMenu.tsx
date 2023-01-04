@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setBook } from "../store/reducers/ebookReducer";
 import {
   setIsFullscreen,
@@ -48,6 +48,7 @@ const NavigationMenu: React.FC = () => {
   const onClose = () => dispatch(setNavigationOpen(false));
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -73,6 +74,7 @@ const NavigationMenu: React.FC = () => {
       }
     }
     dispatch(setNavigationOpen(false));
+    navigate("/viewer");
   };
 
   const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,6 +86,7 @@ const NavigationMenu: React.FC = () => {
           sourceType: BookSourceType.Url,
         })
       );
+      navigate("/viewer");
     }
   };
 

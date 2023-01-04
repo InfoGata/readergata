@@ -1,18 +1,19 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
-import { setContents, setTitle } from "../store/reducers/ebookReducer";
+import { setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType } from "../types";
 import { getValidUrl } from "../utils";
 import { Box, Button } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { setToc } from "../store/reducers/uiReducer";
 
 const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const ebook = useAppSelector((state) => state.ebook.currentBook);
-  const location = useAppSelector((state) => state.ebook.location);
+  const content = useAppSelector((state) => state.ui.content);
   const dispatch = useAppDispatch();
 
   const onNext = React.useCallback(() => {
@@ -44,10 +45,10 @@ const EbookViewer: React.FC = () => {
   }, [rendition, onKeyUp]);
 
   React.useEffect(() => {
-    if (location) {
-      rendition?.display(location);
+    if (content && content.location) {
+      rendition?.display(content.location);
     }
-  }, [location, rendition]);
+  }, [content, rendition]);
 
   React.useEffect(() => {
     const loadEbook = async () => {
@@ -100,7 +101,7 @@ const EbookViewer: React.FC = () => {
           }));
         };
         const contents = navItemToContent(navigation.toc);
-        dispatch(setContents(contents));
+        dispatch(setToc(contents));
       });
       newBook.loaded.metadata.then((metadata) => {
         dispatch(setTitle(metadata.title));

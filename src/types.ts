@@ -52,5 +52,6 @@ export interface Pdf {
 export interface BookContent {
   title: string;
   location?: string;
+  dest?: any;
   items: BookContent[];
 }

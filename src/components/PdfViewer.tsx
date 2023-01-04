@@ -1,12 +1,27 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import React from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page, pdfjs, DocumentProps } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import { useAppSelector } from "../store/hooks";
-import { PdfSourceType } from "../types";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setToc } from "../store/reducers/uiReducer";
+import { BookContent, PdfSourceType } from "../types";
 import { getValidUrl } from "../utils";
+
+type PDFDocumentProxy = Parameters<
+  NonNullable<DocumentProps["onLoadSuccess"]>
+>[0];
+type OutlineType = Awaited<ReturnType<PDFDocumentProxy["getOutline"]>>[0];
+
+const outlineToBookConent = (outline: OutlineType): BookContent => {
+  return {
+    title: outline.title,
+    location: typeof outline.dest === "string" ? outline.dest : undefined,
+    dest: typeof outline.dest !== "string" ? outline.dest : undefined,
+    items: outline.items.map(outlineToBookConent),
+  };
+};
 
 const options = {
   cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
@@ -14,11 +29,37 @@ const options = {
   standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts`,
 };
 
-const PdfViewer: React.FC = (props) => {
+const PdfViewer: React.FC = () => {
   const currentPdf = useAppSelector((state) => state.pdf.currentPdf);
   const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState(1);
   const [file, setFile] = React.useState<string | { data: string }>("");
+  const [pdf, setPdf] = React.useState<PDFDocumentProxy>();
+  const content = useAppSelector((state) => state.ui.content);
+  const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    const loadContent = async () => {
+      if (content && pdf) {
+        if (content.dest) {
+          const pageIndex = await pdf.getPageIndex(content.dest[0]);
+          if (pageIndex) {
+            setPageNumber(pageIndex + 1);
+          }
+        } else if (content.location) {
+          const dest = await pdf.getDestination(content.location);
+          if (dest) {
+            const pageIndex = await pdf.getPageIndex(dest[0]);
+            if (pageIndex) {
+              setPageNumber(pageIndex + 1);
+            }
+          }
+        }
+      }
+    };
+
+    loadContent();
+  }, [content, pdf]);
 
   React.useEffect(() => {
     const loadPdf = async () => {
@@ -35,15 +76,6 @@ const PdfViewer: React.FC = (props) => {
     };
     loadPdf();
   }, [currentPdf]);
-
-  const onDocumentLoadSuccess = ({
-    numPages: nextNumPages,
-  }: {
-    numPages: number;
-  }) => {
-    setNumPages(nextNumPages);
-    setPageNumber(1);
-  };
 
   const changePage = (offset: number) => {
     setPageNumber((prev) => prev + offset);
@@ -65,6 +97,15 @@ const PdfViewer: React.FC = (props) => {
     setPageNumber(Number(itemPageNumber));
   };
 
+  const onDocumentLoad = async (pdfProxy: PDFDocumentProxy) => {
+    setPdf(pdfProxy);
+    setNumPages(pdfProxy.numPages);
+    setPageNumber(1);
+    const outline = await pdfProxy.getOutline();
+    const contents = outline.map(outlineToBookConent);
+    dispatch(setToc(contents));
+  };
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
       {numPages && pageNumber - 1 > 0 && (
@@ -78,7 +119,7 @@ const PdfViewer: React.FC = (props) => {
       {file && (
         <Document
           file={file}
-          onLoadSuccess={onDocumentLoadSuccess}
+          onLoadSuccess={onDocumentLoad}
           options={options}
           onItemClick={onItemClick}
         >

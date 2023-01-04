@@ -1,16 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { BookContent } from "../../types";
 
 interface UiState {
   navigationOpen: boolean;
   isFullscreen: boolean;
   tocOpen: boolean;
   waitingServiceWorker?: ServiceWorker;
+  contents: BookContent[];
+  content?: BookContent;
 }
 
 let initialState: UiState = {
   navigationOpen: false,
   isFullscreen: false,
   tocOpen: false,
+  contents: [],
 };
 
 const uiSlice = createSlice({
@@ -29,10 +33,22 @@ const uiSlice = createSlice({
     updateReady(state, action: PayloadAction<ServiceWorker>) {
       state.waitingServiceWorker = action.payload;
     },
+    setToc(state, action: PayloadAction<BookContent[]>) {
+      state.contents = action.payload;
+    },
+    setContent(state, action: PayloadAction<BookContent>) {
+      state.content = action.payload;
+    },
   },
 });
 
-export const { setNavigationOpen, setIsFullscreen, setTocOpen, updateReady } =
-  uiSlice.actions;
+export const {
+  setNavigationOpen,
+  setIsFullscreen,
+  setTocOpen,
+  updateReady,
+  setToc,
+  setContent,
+} = uiSlice.actions;
 
 export default uiSlice.reducer;
