@@ -102,8 +102,10 @@ const PdfViewer: React.FC = () => {
     setNumPages(pdfProxy.numPages);
     setPageNumber(1);
     const outline = await pdfProxy.getOutline();
-    const contents = outline.map(outlineToBookConent);
-    dispatch(setToc(contents));
+    if (outline) {
+      const contents = outline.map(outlineToBookConent);
+      dispatch(setToc(contents));
+    }
   };
 
   return (
