@@ -2,11 +2,37 @@ import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { BookContent, BookSourceType } from "../types";
+import { BookContent, BookSourceType, EBook } from "../types";
 import { getValidUrl } from "../utils";
-import { Box, Button } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { setToc } from "../store/reducers/uiReducer";
+
+// https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
+const resolveURL = (url: string, relativeTo: string) => {
+  const baseUrl = "https://example.com/";
+  return new URL(url, baseUrl + relativeTo).href.replace(baseUrl, "");
+};
+
+const openBook = async (ebook: EBook): Promise<Book | undefined> => {
+  const newBook = Epub();
+  try {
+    if (ebook.sourceType === BookSourceType.Binary) {
+      newBook.open(ebook.source, "binary");
+      return newBook;
+    } else {
+      const validUrl = await getValidUrl(ebook.source, "application/epub+zip");
+      if (validUrl) {
+        const test = await fetch(validUrl);
+        if (test.status !== 404) {
+          const arrayBuffer = await test.arrayBuffer();
+          await newBook.open(arrayBuffer);
+          return newBook;
+        }
+      }
+    }
+  } catch {}
+};
 
 const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
@@ -14,6 +40,7 @@ const EbookViewer: React.FC = () => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const ebook = useAppSelector((state) => state.ebook.currentBook);
   const content = useAppSelector((state) => state.ui.content);
+  const isLoading = React.useRef(false);
   const dispatch = useAppDispatch();
 
   const onNext = React.useCallback(() => {
@@ -52,6 +79,8 @@ const EbookViewer: React.FC = () => {
 
   React.useEffect(() => {
     const loadEbook = async () => {
+      if (isLoading.current) return;
+
       if (book.current) {
         book.current.destroy();
       }
@@ -59,26 +88,12 @@ const EbookViewer: React.FC = () => {
         return;
       }
 
-      const newBook = Epub();
-      if (ebook.sourceType === BookSourceType.Binary) {
-        newBook.open(ebook.source, "binary");
-      } else {
-        // Url
-        const validUrl = await getValidUrl(
-          ebook.source,
-          "application/epub+zip"
-        );
-        if (validUrl) {
-          const test = await fetch(validUrl);
-          if (test.status !== 404) {
-            const arrayBuffer = await test.arrayBuffer();
-            await newBook.open(arrayBuffer);
-          } else {
-            return;
-          }
-        } else {
-          return;
-        }
+      isLoading.current = true;
+      const newBook = await openBook(ebook);
+      isLoading.current = true;
+      if (!newBook) {
+        isLoading.current = false;
+        return;
       }
 
       const viewer = containerRef?.current;
@@ -93,10 +108,11 @@ const EbookViewer: React.FC = () => {
       newBook.loaded.navigation.then((navigation) => {
         const navItemToContent = (items: NavItem[]): BookContent[] => {
           if (items.length === 0) return [];
+          const path = newBook.packaging.navPath || newBook.packaging.ncxPath;
 
           return items.map((t) => ({
             title: t.label,
-            location: t.href,
+            location: resolveURL(t.href, path),
             items: navItemToContent(t.subitems || []),
           }));
         };
@@ -108,11 +124,15 @@ const EbookViewer: React.FC = () => {
       });
 
       book.current = newBook;
+      isLoading.current = false;
     };
     loadEbook();
   }, [ebook, dispatch]);
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
+      <Backdrop open={isLoading.current}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Button
         variant="outlined"
         startIcon={<NavigateBefore />}
