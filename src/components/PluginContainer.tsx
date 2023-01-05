@@ -27,16 +27,6 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const { t } = useTranslation("plugins");
   const { updatePlugin } = usePlugins();
-  const [hasFeed, setHasFeed] = React.useState(false);
-
-  React.useEffect(() => {
-    const getHasFeed = async () => {
-      if (await plugin.hasDefined.onGetFeed()) {
-        setHasFeed(true);
-      }
-    };
-    getHasFeed();
-  }, [plugin]);
 
   const onDelete = async () => {
     const confirmDelete = window.confirm(t("confirmDelete"));
@@ -86,11 +76,6 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
       {plugin.hasOptions && (
         <Button component={Link} to={`/plugins/${plugin.id}/options`}>
           {t("options")}
-        </Button>
-      )}
-      {hasFeed && (
-        <Button component={Link} to={`/plugins/${plugin.id}/feed`}>
-          {t("openFeed")}
         </Button>
       )}
       <Button onClick={onDelete}>{t("deletePlugin")}</Button>

@@ -23,6 +23,7 @@ import {
   Fullscreen,
   FullscreenExit,
   Home,
+  LibraryBooks,
 } from "@mui/icons-material";
 import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
@@ -125,6 +126,16 @@ const NavigationMenu: React.FC = () => {
               </ListItemIcon>
             </Tooltip>
             <ListItemText>{t("plugins")}</ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/library">
+            <Tooltip title={t("library")} placement="right">
+              <ListItemIcon>
+                <LibraryBooks />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText>{t("library")}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
