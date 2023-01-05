@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BookContent } from "../../types";
+import { BookContent, SearchResult } from "../../types";
 
 interface UiState {
   navigationOpen: boolean;
@@ -8,6 +8,9 @@ interface UiState {
   waitingServiceWorker?: ServiceWorker;
   contents: BookContent[];
   content?: BookContent;
+  searchQuery: string;
+  searchResults: SearchResult[];
+  currentSearchResult?: SearchResult;
 }
 
 let initialState: UiState = {
@@ -15,6 +18,8 @@ let initialState: UiState = {
   isFullscreen: false,
   tocOpen: false,
   contents: [],
+  searchQuery: "",
+  searchResults: [],
 };
 
 const uiSlice = createSlice({
@@ -39,6 +44,18 @@ const uiSlice = createSlice({
     setContent(state, action: PayloadAction<BookContent>) {
       state.content = action.payload;
     },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+    },
+    setSearchResults(state, action: PayloadAction<SearchResult[]>) {
+      state.searchResults = action.payload;
+    },
+    setCurrentSearchResult(
+      state,
+      action: PayloadAction<SearchResult | undefined>
+    ) {
+      state.currentSearchResult = action.payload;
+    },
   },
 });
 
@@ -49,6 +66,9 @@ export const {
   updateReady,
   setToc,
   setContent,
+  setSearchQuery,
+  setSearchResults,
+  setCurrentSearchResult,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

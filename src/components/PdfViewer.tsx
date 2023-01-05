@@ -5,8 +5,12 @@ import { Document, Page, pdfjs, DocumentProps } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setToc } from "../store/reducers/uiReducer";
-import { BookContent, PdfSourceType } from "../types";
+import {
+  setCurrentSearchResult,
+  setSearchResults,
+  setToc,
+} from "../store/reducers/uiReducer";
+import { BookContent, PdfSourceType, SearchResult } from "../types";
 import { getValidUrl } from "../utils";
 
 type PDFDocumentProxy = Parameters<
@@ -35,7 +39,12 @@ const PdfViewer: React.FC = () => {
   const [pageNumber, setPageNumber] = React.useState(1);
   const [file, setFile] = React.useState<string | { data: string }>("");
   const [pdf, setPdf] = React.useState<PDFDocumentProxy>();
+  const [pageText, setPageText] = React.useState<string[]>([]);
+  const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
+  const currentSearchResult = useAppSelector(
+    (state) => state.ui.currentSearchResult
+  );
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
@@ -60,6 +69,35 @@ const PdfViewer: React.FC = () => {
 
     loadContent();
   }, [content, pdf]);
+
+  React.useEffect(() => {
+    if (currentSearchResult) {
+      setPageNumber(Number(currentSearchResult.location));
+      dispatch(setCurrentSearchResult(undefined));
+    }
+  }, [currentSearchResult, dispatch]);
+
+  React.useEffect(() => {
+    if (searchQuery) {
+      const regex = new RegExp(searchQuery, "i");
+      const excerptLimit = 150;
+      const results: SearchResult[] = [];
+
+      pageText.forEach((text, index) => {
+        const textIndex = text.search(regex);
+        if (textIndex > -1) {
+          const page = index + 1;
+          const excerpt = text.substring(
+            textIndex - excerptLimit / 2,
+            textIndex + excerptLimit / 2
+          );
+          results.push({ location: page.toString(), text: `...${excerpt}...` });
+        }
+      });
+
+      dispatch(setSearchResults(results));
+    }
+  }, [searchQuery, pageText, dispatch]);
 
   React.useEffect(() => {
     const loadPdf = async () => {
@@ -106,6 +144,22 @@ const PdfViewer: React.FC = () => {
       const contents = outline.map(outlineToBookConent);
       dispatch(setToc(contents));
     }
+    // Load all text content
+    const pagePromises = Array.from(
+      { length: pdfProxy.numPages },
+      (_, pageIndex) => {
+        return pdfProxy.getPage(pageIndex + 1).then((pageData) => {
+          return pageData.getTextContent().then((textContent) => {
+            return textContent.items
+              .map((i) => ("str" in i ? i.str : undefined))
+              .join(" ");
+          });
+        });
+      }
+    );
+
+    const pageText = await Promise.all(pagePromises);
+    setPageText(pageText);
   };
 
   return (

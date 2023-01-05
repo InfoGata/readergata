@@ -4,6 +4,7 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { setNavigationOpen, setTocOpen } from "./store/reducers/uiReducer";
 import { Toc } from "@mui/icons-material";
+import SearchBook from "./components/SearchBook";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ const TopBar: React.FC = () => {
             {title}
           </Typography>
         </Grid>
+        <SearchBook />
         <IconButton
           color="inherit"
           aria-label="menu"

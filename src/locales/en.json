@@ -14,7 +14,8 @@
     "plugins": "Plugins",
     "home": "Home",
     "offline": "You are offline",
-    "library": "Library"
+    "library": "Library",
+    "search": "Search"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

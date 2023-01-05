@@ -2,11 +2,16 @@ import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
 import { setTitle } from "../store/reducers/ebookReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { BookContent, BookSourceType, EBook } from "../types";
+import { BookContent, BookSourceType, EBook, SearchResult } from "../types";
 import { getValidUrl } from "../utils";
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { setToc } from "../store/reducers/uiReducer";
+import {
+  setCurrentSearchResult,
+  setSearchResults,
+  setToc,
+} from "../store/reducers/uiReducer";
+import Section from "epubjs/types/section";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {
@@ -34,14 +39,56 @@ const openBook = async (ebook: EBook): Promise<Book | undefined> => {
   } catch {}
 };
 
+const findInSection = async (book: Book, q: string, section: Section) => {
+  await section.load(book.load.bind(book));
+  const results = await section.search(q);
+  section.unload();
+  return results;
+};
+
+const search = async (book: Book, query: string) => {
+  const arr = await Promise.all(
+    book.spine.spineItems.map((section) => findInSection(book, query, section))
+  );
+  const results = arr.reduce((a, b) => a.concat(b), []);
+  return results;
+};
+
 const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const ebook = useAppSelector((state) => state.ebook.currentBook);
+  const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
+  const currentSearchResult = useAppSelector(
+    (state) => state.ui.currentSearchResult
+  );
   const isLoading = React.useRef(false);
   const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    const searchBook = async () => {
+      if (searchQuery && book.current) {
+        const results = await search(book.current, searchQuery);
+        const searchResults = results.map(
+          (s): SearchResult => ({
+            location: s.cfi,
+            text: s.excerpt,
+          })
+        );
+        dispatch(setSearchResults(searchResults));
+      }
+    };
+    searchBook();
+  }, [searchQuery, dispatch]);
+
+  React.useEffect(() => {
+    if (currentSearchResult) {
+      rendition?.display(currentSearchResult.location);
+      dispatch(setCurrentSearchResult(undefined));
+    }
+  }, [rendition, currentSearchResult, dispatch]);
 
   const onNext = React.useCallback(() => {
     rendition?.next();
@@ -65,6 +112,8 @@ const EbookViewer: React.FC = () => {
 
   React.useEffect(() => {
     document.body.addEventListener("keyup", onKeyUp);
+
+    return () => document.body.removeEventListener("keyup", onKeyUp);
   }, [onKeyUp]);
 
   React.useEffect(() => {
@@ -128,6 +177,7 @@ const EbookViewer: React.FC = () => {
     };
     loadEbook();
   }, [ebook, dispatch]);
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
       <Backdrop open={isLoading.current}>

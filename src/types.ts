@@ -55,3 +55,8 @@ export interface BookContent {
   dest?: any;
   items: BookContent[];
 }
+
+export interface SearchResult {
+  location?: string;
+  text: string;
+}
