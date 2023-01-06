@@ -1,12 +1,16 @@
 import {
   Button,
   Drawer,
+  FormControl,
+  FormControlLabel,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Radio,
+  RadioGroup,
   TextField,
   Tooltip,
 } from "@mui/material";
@@ -45,6 +49,7 @@ const openFile = (file: File): Promise<string> => {
 const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
   const dispatch = useAppDispatch();
+  const [urlType, setUrlType] = React.useState("epub");
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const onClose = () => dispatch(setNavigationOpen(false));
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
@@ -81,12 +86,16 @@ const NavigationMenu: React.FC = () => {
   const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputUrl) {
-      dispatch(
-        setBook({
-          source: inputUrl,
-          sourceType: BookSourceType.Url,
-        })
-      );
+      if (urlType === "epub") {
+        dispatch(
+          setBook({
+            source: inputUrl,
+            sourceType: BookSourceType.Url,
+          })
+        );
+      } else if (urlType === "pdf") {
+        dispatch(setPdf({ source: inputUrl, sourceType: PdfSourceType.Url }));
+      }
       navigate("/viewer");
     }
   };
@@ -94,6 +103,10 @@ const NavigationMenu: React.FC = () => {
   const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputUrl(value);
+  };
+
+  const onRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUrlType((event.target as HTMLInputElement).value);
   };
 
   return (
@@ -152,12 +165,24 @@ const NavigationMenu: React.FC = () => {
         {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
       </IconButton>
       <form onSubmit={onUrlSubmit}>
-        <TextField
-          value={inputUrl}
-          onChange={onInputUrlChange}
-          placeholder="Epub url"
-          name="url"
-        />
+        <FormControl>
+          <TextField
+            value={inputUrl}
+            onChange={onInputUrlChange}
+            placeholder="URL"
+            name="url"
+          />
+          <RadioGroup
+            row
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="controlled-radio-buttons-group"
+            value={urlType}
+            onChange={onRadioChange}
+          >
+            <FormControlLabel value="epub" control={<Radio />} label="Epub" />
+            <FormControlLabel value="pdf" control={<Radio />} label="PDF" />
+          </RadioGroup>
+        </FormControl>
         <Button variant="contained" type="submit">
           {t("submit")}
         </Button>
