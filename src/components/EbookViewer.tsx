@@ -68,20 +68,35 @@ const EbookViewer: React.FC = () => {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
+    let searchResults: SearchResult[] = [];
     const searchBook = async () => {
       if (searchQuery && book.current) {
         const results = await search(book.current, searchQuery);
-        const searchResults = results.map(
+        searchResults = results.map(
           (s): SearchResult => ({
             location: s.cfi,
             text: s.excerpt,
           })
         );
         dispatch(setSearchResults(searchResults));
+
+        searchResults.forEach((r) => {
+          if (r.location) {
+            rendition?.annotations.highlight(r.location);
+          }
+        });
       }
     };
     searchBook();
-  }, [searchQuery, dispatch]);
+
+    return () => {
+      searchResults.forEach((r) => {
+        if (r.location) {
+          rendition?.annotations.remove(r.location, "highlight");
+        }
+      });
+    };
+  }, [searchQuery, dispatch, rendition]);
 
   React.useEffect(() => {
     if (currentSearchResult) {

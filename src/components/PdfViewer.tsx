@@ -1,7 +1,13 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import React from "react";
-import { Document, Page, pdfjs, DocumentProps } from "react-pdf";
+import {
+  Document,
+  Page,
+  pdfjs,
+  DocumentProps,
+  TextLayerItemInternal,
+} from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -26,6 +32,11 @@ const outlineToBookConent = (outline: OutlineType): BookContent => {
     items: outline.items.map(outlineToBookConent),
   };
 };
+
+function highlightPattern(text: string, pattern: string) {
+  const regex = new RegExp(pattern, "i");
+  return text.replace(regex, (value) => `<mark>${value}</mark>`);
+}
 
 const options = {
   cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
@@ -162,6 +173,12 @@ const PdfViewer: React.FC = () => {
     setPageText(pageText);
   };
 
+  const textRenderer = React.useCallback(
+    (textItem: TextLayerItemInternal) =>
+      highlightPattern(textItem.str, searchQuery),
+    [searchQuery]
+  );
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
       {numPages && pageNumber - 1 > 0 && (
@@ -179,7 +196,7 @@ const PdfViewer: React.FC = () => {
           options={options}
           onItemClick={onItemClick}
         >
-          <Page pageNumber={pageNumber} />
+          <Page pageNumber={pageNumber} customTextRenderer={textRenderer} />
         </Document>
       )}
       {numPages && numPages > pageNumber + 1 && (
