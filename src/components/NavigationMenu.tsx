@@ -103,6 +103,18 @@ const NavigationMenu: React.FC = () => {
   const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputUrl(value);
+    try {
+      const url = new URL(value);
+      const ext = url.pathname.split(".").pop();
+      switch (ext) {
+        case "epub":
+          setUrlType("epub");
+          break;
+        case "pdf":
+          setUrlType("pdf");
+          break;
+      }
+    } catch {}
   };
 
   const onRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
