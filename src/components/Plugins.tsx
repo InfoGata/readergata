@@ -11,6 +11,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { PluginInfo } from "../plugintypes";
 import { useTranslation } from "react-i18next";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
+import AddPluginUrlDialog from "./AddPluginUrlDialog";
 
 const FileInput = styled("input")({
   display: "none",
@@ -23,6 +24,16 @@ const Plugins: React.FC = () => {
   const [pendingPlugin, setPendingPlugin] = React.useState<PluginInfo | null>(
     null
   );
+  const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(false);
+  const [openUrlDialog, setOpenUrlDialog] = React.useState(false);
+
+  const onCloseUrlDialog = () => setOpenUrlDialog(false);
+  const onOpenUrlDialog = () => setOpenUrlDialog(true);
+
+  const onConfirmUrlDialog = (plugin: PluginInfo) => {
+    onCloseUrlDialog();
+    setPendingPlugin(plugin);
+  };
 
   const onConfirmPluginClose = () => {
     setPendingPlugin(null);
@@ -50,12 +61,18 @@ const Plugins: React.FC = () => {
       key={plugin.id}
       plugin={plugin}
       deletePlugin={deletePlugin}
+      isCheckingUpdate={isCheckingUpdate}
     />
   ));
 
   React.useEffect(() => {
     dispatch(setNavigationOpen(false));
   }, [dispatch]);
+
+  const onCheckUpdates = () => {
+    setIsCheckingUpdate(true);
+  };
+
   return (
     <Grid sx={{ "& button": { m: 1 }, "& label": { m: 1 } }}>
       <Grid>
@@ -71,6 +88,18 @@ const Plugins: React.FC = () => {
           </Button>
         </label>
       </Grid>
+      <Grid>
+        <Button variant="contained" onClick={onOpenUrlDialog}>
+          {t("loadPluginFromUrl")}
+        </Button>
+      </Grid>
+      {plugins.length > 0 && (
+        <Grid>
+          <Button disabled={isCheckingUpdate} onClick={onCheckUpdates}>
+            {t("checkForUpdates")}
+          </Button>
+        </Grid>
+      )}
       {pluginsFailed && (
         <Grid>
           <Button
@@ -85,6 +114,11 @@ const Plugins: React.FC = () => {
         open={Boolean(pendingPlugin)}
         plugins={pendingPlugin ? [pendingPlugin] : []}
         handleClose={onConfirmPluginClose}
+      />
+      <AddPluginUrlDialog
+        open={openUrlDialog}
+        handleConfirm={onConfirmUrlDialog}
+        handleClose={onCloseUrlDialog}
       />
     </Grid>
   );

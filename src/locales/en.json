@@ -1,5 +1,6 @@
 {
   "common": {
+    "greeting": "Hello",
     "manifestNoScript": "Error: Manifest does not contain script",
     "fileNotFound": "Error: Couldn't find {{name}}",
     "cantGetFile": "Error: Couldn't get {{name}}",
@@ -15,7 +16,9 @@
     "home": "Home",
     "offline": "You are offline",
     "library": "Library",
-    "search": "Search"
+    "search": "Search",
+    "addPluginSuccess": "Successfully added plugin",
+    "addPlugin": "Add"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
@@ -26,11 +29,27 @@
     "updateFromFile": "Update from file",
     "deletePlugin": "Delete",
     "reloadPlugin": "Reload",
+    "pluginDetails": "Details",
     "loadPluginFromFolder": "Load Plugin From Folder",
     "installManifestUrl": "Install Manifest Url",
     "updateManifestUrl": "Update Manifest Url",
     "openFeed": "Open Feed",
     "failedPlugins": "Failed to load plugins",
-    "clickReload": "Click to reload plugins"
+    "clickReload": "Click to reload plugins",
+    "pluginDetailsTitle": "Plugin Details",
+    "pluginDescription": "Plugin Description",
+    "version": "Version",
+    "scriptSize": "Script Size",
+    "optionsPageSize": "Options Page Size",
+    "homepage": "Home Page",
+    "updateUrl": "Update Url",
+    "updatePlugin": "Update",
+    "installPluginFromUrl": "Install plugin using a link to a plugin's manifest.json",
+    "advancedOptions": "Advanced Options",
+    "headerKey": "Header Key",
+    "headerValue": "Header Value",
+    "manifestUrl": "manifest.json url",
+    "loadPluginFromUrl": "Load Plugin From Url",
+    "checkForUpdates": "Check for Updates"
   }
 }

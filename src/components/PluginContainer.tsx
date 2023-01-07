@@ -7,8 +7,13 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { FileType } from "../types";
-import { directoryProps, getPlugin } from "../utils";
+import { FileType, Manifest } from "../types";
+import {
+  directoryProps,
+  getFileText,
+  getFileTypeFromPluginUrl,
+  getPlugin,
+} from "../utils";
 import { PluginFrameContainer, usePlugins } from "../PluginsContext";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
@@ -20,13 +25,33 @@ const FileInput = styled("input")({
 interface PluginContainerProps {
   plugin: PluginFrameContainer;
   deletePlugin: (plugin: PluginFrameContainer) => Promise<void>;
+  isCheckingUpdate: boolean;
 }
 
 const PluginContainer: React.FC<PluginContainerProps> = (props) => {
-  const { plugin, deletePlugin } = props;
+  const { plugin, deletePlugin, isCheckingUpdate } = props;
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const { t } = useTranslation("plugins");
   const { updatePlugin } = usePlugins();
+  const [hasUpdate, setHasUpdate] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkUpdate = async () => {
+      if (isCheckingUpdate && plugin.manifestUrl) {
+        const fileType = getFileTypeFromPluginUrl(plugin.manifestUrl);
+        const manifestText = await getFileText(fileType, "manifest.json");
+        if (manifestText) {
+          const manifest = JSON.parse(manifestText) as Manifest;
+          if (manifest.version !== plugin.version) {
+            setHasUpdate(true);
+          } else {
+            setHasUpdate(false);
+          }
+        }
+      }
+    };
+    checkUpdate();
+  }, [isCheckingUpdate, plugin]);
 
   const onDelete = async () => {
     const confirmDelete = window.confirm(t("confirmDelete"));
@@ -65,6 +90,19 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
     setBackdropOpen(false);
   };
 
+  const onUpdate = async () => {
+    if (plugin?.manifestUrl) {
+      const fileType = getFileTypeFromPluginUrl(plugin.manifestUrl);
+      const newPlugin = await getPlugin(fileType);
+
+      if (newPlugin && plugin.id) {
+        newPlugin.id = plugin.id;
+        newPlugin.manifestUrl = plugin.manifestUrl;
+        await updatePlugin(newPlugin, plugin.id);
+      }
+    }
+  };
+
   return (
     <Grid>
       <Backdrop open={backdropOpen}>
@@ -88,9 +126,13 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
         />
         <Button component="span">{t("updateFromFile")}</Button>
       </label>
+      <Button component={Link} to={`/plugins/${plugin.id}`}>
+        {t("pluginDetails")}
+      </Button>
       {plugin.fileList && (
         <Button onClick={onReload}>{t("reloadPlugin")}</Button>
       )}
+      {hasUpdate && <Button onClick={onUpdate}>{t("updatePlugin")}</Button>}
     </Grid>
   );
 };
