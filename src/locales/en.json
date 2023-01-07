@@ -50,6 +50,9 @@
     "headerValue": "Header Value",
     "manifestUrl": "manifest.json url",
     "loadPluginFromUrl": "Load Plugin From Url",
-    "checkForUpdates": "Check for Updates"
+    "checkForUpdates": "Check for Updates",
+    "manifestMissingFromUrl": "The filename 'manifest.json' must be in the url",
+    "failedToInstall": "Failed to Install plugin from {{manifestUrl}}",
+    "installingPlugin": "Installing Plugin from {{manifestUrl}}"
   }
 }
