@@ -1,4 +1,5 @@
 import { Box, Toolbar } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
@@ -11,8 +12,17 @@ import Plugins from "./Plugins";
 import Viewer from "./Viewer";
 
 const Routing: React.FC = () => {
+  const theme = useTheme();
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 1, overflow: "auto" }}>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        p: 1,
+        overflow: "auto",
+        minHeight: `calc(100vh - ${theme.spacing(3)})`,
+      }}
+    >
       <Toolbar />
       <Routes>
         <Route path="/" element={<Home />} />
