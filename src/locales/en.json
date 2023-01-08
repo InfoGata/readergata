@@ -18,7 +18,9 @@
     "library": "Library",
     "search": "Search",
     "addPluginSuccess": "Successfully added plugin",
-    "addPlugin": "Add"
+    "addPlugin": "Add",
+    "reader": "Reader",
+    "orDragFiles": "Or drag and drop a file"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

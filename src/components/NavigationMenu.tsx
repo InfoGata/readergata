@@ -28,23 +28,14 @@ import {
   FullscreenExit,
   Home,
   LibraryBooks,
+  MenuBook,
 } from "@mui/icons-material";
 import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
 import { setPdf } from "../store/reducers/pdfReducer";
+import OpenFileButton from "./OpenFileButton";
 
 const drawerWidth = 240;
-
-const openFile = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (res) => {
-      resolve(res.target?.result as string);
-    };
-    reader.onerror = (err) => reject(err);
-    reader.readAsBinaryString(file);
-  });
-};
 
 const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
@@ -55,33 +46,6 @@ const NavigationMenu: React.FC = () => {
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      setBook(undefined);
-      setPdf(undefined);
-      if (file.type.includes("application/epub+zip")) {
-        const bookData = await openFile(file);
-        if (bookData) {
-          dispatch(
-            setBook({
-              source: bookData,
-              sourceType: BookSourceType.Binary,
-            })
-          );
-        }
-      } else if (file.type.includes("application/pdf")) {
-        const pdfData = await openFile(file);
-        dispatch(setPdf({ source: pdfData, sourceType: PdfSourceType.Binary }));
-      } else {
-        alert("Unsupported type");
-      }
-    }
-    dispatch(setNavigationOpen(false));
-    navigate("/viewer");
-  };
 
   const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -144,6 +108,16 @@ const NavigationMenu: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
+          <ListItemButton component={Link} to="/viewer">
+            <ListItemIcon>
+              <Tooltip title={t("reader")} placement="right">
+                <MenuBook />
+              </Tooltip>
+            </ListItemIcon>
+            <ListItemText>{t("reader")}</ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
           <ListItemButton component={Link} to="/plugins">
             <Tooltip title={t("plugins")} placement="right">
               <ListItemIcon>
@@ -164,15 +138,7 @@ const NavigationMenu: React.FC = () => {
           </ListItemButton>
         </ListItem>
       </List>
-      <Button variant="contained" component="label">
-        {t("openFile")}
-        <input
-          type="file"
-          onChange={onFileChange}
-          hidden
-          accept="application/pdf,application/epub+zip"
-        />
-      </Button>
+      <OpenFileButton />
       <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
         {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
       </IconButton>

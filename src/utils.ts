@@ -185,4 +185,15 @@ export async function filterAsync<T>(
   return array.filter((_value, index) => filterMap[index]);
 }
 
+export const openFile = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (res) => {
+      resolve(res.target?.result as string);
+    };
+    reader.onerror = (err) => reject(err);
+    reader.readAsBinaryString(file);
+  });
+};
+
 export const searchThumbnailSize = 40;

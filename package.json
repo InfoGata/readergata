@@ -31,6 +31,7 @@
     "plugin-frame": "^0.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-i18next": "^12.0.0",
     "react-pdf": "^6.2.1",
     "react-query": "^3.39.2",
