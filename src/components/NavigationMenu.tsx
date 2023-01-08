@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { setBook } from "../store/reducers/ebookReducer";
+import { setBook } from "../store/reducers/documentReducer";
 import {
   setIsFullscreen,
   setNavigationOpen,
@@ -32,7 +32,7 @@ import {
 } from "@mui/icons-material";
 import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
-import { setPdf } from "../store/reducers/pdfReducer";
+import { setPdf } from "../store/reducers/documentReducer";
 import OpenFileButton from "./OpenFileButton";
 
 const drawerWidth = 240;

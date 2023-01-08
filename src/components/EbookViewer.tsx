@@ -1,6 +1,6 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
-import { setTitle } from "../store/reducers/ebookReducer";
+import { setTitle } from "../store/reducers/documentReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType, EBook, SearchResult } from "../types";
 import { getValidUrl } from "../utils";
@@ -58,7 +58,7 @@ const EbookViewer: React.FC = () => {
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const ebook = useAppSelector((state) => state.ebook.currentBook);
+  const ebook = useAppSelector((state) => state.document.currentBook);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
   const currentSearchResult = useAppSelector(

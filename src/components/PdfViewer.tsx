@@ -45,7 +45,7 @@ const options = {
 };
 
 const PdfViewer: React.FC = () => {
-  const currentPdf = useAppSelector((state) => state.pdf.currentPdf);
+  const currentPdf = useAppSelector((state) => state.document.currentPdf);
   const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState(1);
   const [file, setFile] = React.useState<string | { data: string }>("");

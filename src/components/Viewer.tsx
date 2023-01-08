@@ -4,8 +4,8 @@ import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import OpenFileButton from "./OpenFileButton";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setBook } from "../store/reducers/ebookReducer";
-import { setPdf } from "../store/reducers/pdfReducer";
+import { setBook } from "../store/reducers/documentReducer";
+import { setPdf } from "../store/reducers/documentReducer";
 import { BookSourceType, EBook, PdfSourceType } from "../types";
 import EbookViewer from "./EbookViewer";
 import PdfViewer from "./PdfViewer";
@@ -14,8 +14,8 @@ import DragFileContainer from "./DragFileContainer";
 
 const Viewer: React.FC = () => {
   const location = useLocation();
-  const currentPdf = useAppSelector((state) => state.pdf.currentPdf);
-  const currentBook = useAppSelector((state) => state.ebook.currentBook);
+  const currentPdf = useAppSelector((state) => state.document.currentPdf);
+  const currentBook = useAppSelector((state) => state.document.currentBook);
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 

@@ -1,12 +1,10 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import ebookReducer from "./reducers/ebookReducer";
-import pdfReducer from "./reducers/pdfReducer";
+import documentReducer from "./reducers/documentReducer";
 import uiReducer from "./reducers/uiReducer";
 
 const rootReducer = combineReducers({
-  ebook: ebookReducer,
-  pdf: pdfReducer,
   ui: uiReducer,
+  document: documentReducer,
 });
 
 export default rootReducer;
