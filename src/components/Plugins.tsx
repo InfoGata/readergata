@@ -1,8 +1,6 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
-import { setNavigationOpen } from "../store/reducers/uiReducer";
 import { Button, Grid } from "@mui/material";
-import { useAppDispatch } from "../store/hooks";
 import { usePlugins } from "../PluginsContext";
 import PluginContainer from "./PluginContainer";
 import { directoryProps, getPlugin } from "../utils";
@@ -20,7 +18,6 @@ const FileInput = styled("input")({
 const Plugins: React.FC = () => {
   const { plugins, deletePlugin, pluginsFailed, reloadPlugins } = usePlugins();
   const { t } = useTranslation("plugins");
-  const dispatch = useAppDispatch();
   const [pendingPlugin, setPendingPlugin] = React.useState<PluginInfo | null>(
     null
   );
@@ -64,10 +61,6 @@ const Plugins: React.FC = () => {
       isCheckingUpdate={isCheckingUpdate}
     />
   ));
-
-  React.useEffect(() => {
-    dispatch(setNavigationOpen(false));
-  }, [dispatch]);
 
   const onCheckUpdates = () => {
     setIsCheckingUpdate(true);

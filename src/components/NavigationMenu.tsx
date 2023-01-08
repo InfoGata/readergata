@@ -96,7 +96,7 @@ const NavigationMenu: React.FC = () => {
       }}
       onClose={onClose}
     >
-      <List>
+      <List onClick={onClose}>
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/">
             <ListItemIcon>
