@@ -4,7 +4,7 @@ import { EBook, Pdf } from "../../types";
 interface DocumentState {
   currentPdf?: Pdf;
   currentBook?: EBook;
-  title?: string;
+  setCurrentLocation?: string;
 }
 
 let initialState: DocumentState = {};
@@ -21,12 +21,9 @@ const pdfSlice = createSlice({
       state.currentBook = action.payload;
       state.currentPdf = undefined;
     },
-    setTitle(state, action: PayloadAction<string>) {
-      state.title = action.payload;
-    },
   },
 });
 
-export const { setPdf, setBook, setTitle } = pdfSlice.actions;
+export const { setPdf, setBook } = pdfSlice.actions;
 
 export default pdfSlice.reducer;

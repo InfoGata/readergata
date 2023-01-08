@@ -1,6 +1,6 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem } from "epubjs";
-import { setTitle } from "../store/reducers/documentReducer";
+import { setTitle } from "../store/reducers/uiReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType, EBook, SearchResult } from "../types";
 import { getValidUrl } from "../utils";

@@ -10,7 +10,7 @@ const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const tocOpen = useAppSelector((state) => state.ui.tocOpen);
-  const title = useAppSelector((state) => state.document.title);
+  const title = useAppSelector((state) => state.ui.title);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
   const onTocToggle = () => dispatch(setTocOpen(!tocOpen));
 

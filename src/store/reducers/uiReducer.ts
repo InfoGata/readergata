@@ -11,6 +11,7 @@ interface UiState {
   searchQuery: string;
   searchResults: SearchResult[];
   currentSearchResult?: SearchResult;
+  title: string;
 }
 
 let initialState: UiState = {
@@ -20,6 +21,7 @@ let initialState: UiState = {
   contents: [],
   searchQuery: "",
   searchResults: [],
+  title: "",
 };
 
 const uiSlice = createSlice({
@@ -56,6 +58,9 @@ const uiSlice = createSlice({
     ) {
       state.currentSearchResult = action.payload;
     },
+    setTitle(state, action: PayloadAction<string>) {
+      state.title = action.payload;
+    },
   },
 });
 
@@ -69,6 +74,7 @@ export const {
   setSearchQuery,
   setSearchResults,
   setCurrentSearchResult,
+  setTitle,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;
