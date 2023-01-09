@@ -11,6 +11,7 @@ import {
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setCurrentLocation } from "../store/reducers/documentReducer";
 import {
   setCurrentSearchResult,
   setSearchResults,
@@ -47,16 +48,25 @@ const options = {
 const PdfViewer: React.FC = () => {
   const currentPdf = useAppSelector((state) => state.document.currentPdf);
   const [numPages, setNumPages] = React.useState<number>();
-  const [pageNumber, setPageNumber] = React.useState(1);
+  const [pageNumber, setPageNumber] = React.useState<number>();
   const [file, setFile] = React.useState<string | { data: string }>("");
   const [pdf, setPdf] = React.useState<PDFDocumentProxy>();
   const [pageText, setPageText] = React.useState<string[]>([]);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
+  const currentLocation = useAppSelector(
+    (state) => state.document.currentLocation
+  );
   const currentSearchResult = useAppSelector(
     (state) => state.ui.currentSearchResult
   );
   const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    if (pageNumber) {
+      dispatch(setCurrentLocation(pageNumber.toString()));
+    }
+  }, [pageNumber, dispatch]);
 
   React.useEffect(() => {
     const loadContent = async () => {
@@ -127,7 +137,7 @@ const PdfViewer: React.FC = () => {
   }, [currentPdf]);
 
   const changePage = (offset: number) => {
-    setPageNumber((prev) => prev + offset);
+    setPageNumber((prev) => (prev || 1) + offset);
   };
 
   const nextPage = () => {
@@ -149,7 +159,11 @@ const PdfViewer: React.FC = () => {
   const onDocumentLoad = async (pdfProxy: PDFDocumentProxy) => {
     setPdf(pdfProxy);
     setNumPages(pdfProxy.numPages);
-    setPageNumber(1);
+    if (currentLocation) {
+      setPageNumber(Number(currentLocation));
+    } else {
+      setPageNumber(1);
+    }
     const outline = await pdfProxy.getOutline();
     if (outline) {
       const contents = outline.map(outlineToBookConent);
@@ -181,7 +195,7 @@ const PdfViewer: React.FC = () => {
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
-      {numPages && pageNumber - 1 > 0 && (
+      {numPages && (pageNumber || 1) - 1 > 0 && (
         <Button
           variant="outlined"
           onClick={prevPage}
@@ -199,7 +213,7 @@ const PdfViewer: React.FC = () => {
           <Page pageNumber={pageNumber} customTextRenderer={textRenderer} />
         </Document>
       )}
-      {numPages && numPages > pageNumber + 1 && (
+      {numPages && numPages > (pageNumber || 1) + 1 && (
         <Button
           sx={{ position: "fixed", right: 0, height: "100%" }}
           variant="outlined"

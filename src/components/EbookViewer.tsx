@@ -1,5 +1,5 @@
 import React from "react";
-import Epub, { Rendition, Book, NavItem } from "epubjs";
+import Epub, { Rendition, Book, NavItem, Location } from "epubjs";
 import { setTitle } from "../store/reducers/uiReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType, EBook, SearchResult } from "../types";
@@ -12,6 +12,7 @@ import {
   setToc,
 } from "../store/reducers/uiReducer";
 import Section from "epubjs/types/section";
+import { setCurrentLocation } from "../store/reducers/documentReducer";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {
@@ -61,11 +62,24 @@ const EbookViewer: React.FC = () => {
   const ebook = useAppSelector((state) => state.document.currentBook);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
+  const currentLocation = useAppSelector(
+    (state) => state.document.currentLocation
+  );
   const currentSearchResult = useAppSelector(
     (state) => state.ui.currentSearchResult
   );
   const isLoading = React.useRef(false);
   const dispatch = useAppDispatch();
+  const isStartup = React.useRef(true);
+
+  React.useEffect(() => {
+    if (rendition && isStartup) {
+      if (currentLocation) {
+        rendition.display(currentLocation);
+      }
+      isStartup.current = false;
+    }
+  }, [rendition, currentLocation]);
 
   React.useEffect(() => {
     let searchResults: SearchResult[] = [];
@@ -135,6 +149,7 @@ const EbookViewer: React.FC = () => {
     rendition?.on("keyup", onKeyUp);
   }, [rendition, onKeyUp]);
 
+  // Table of conents click
   React.useEffect(() => {
     if (content && content.location) {
       rendition?.display(content.location);
@@ -165,6 +180,10 @@ const EbookViewer: React.FC = () => {
         const rend = newBook.renderTo(viewer, {
           width: "100vw",
           height: "90vh",
+        });
+        rend.on("relocated", (location: Location) => {
+          const newLocation = location.start.cfi;
+          dispatch(setCurrentLocation(newLocation));
         });
         rend.display();
         setRendition(rend);
