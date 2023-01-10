@@ -210,7 +210,10 @@ const PdfViewer: React.FC = () => {
           options={options}
           onItemClick={onItemClick}
         >
-          <Page pageNumber={pageNumber} customTextRenderer={textRenderer} />
+          <Page
+            pageNumber={pageNumber || Number(currentLocation) || 1}
+            customTextRenderer={textRenderer}
+          />
         </Document>
       )}
       {numPages && numPages > (pageNumber || 1) + 1 && (
