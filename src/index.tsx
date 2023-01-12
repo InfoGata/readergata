@@ -13,6 +13,13 @@ import "./i18n";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { updateReady } from "./store/reducers/uiReducer";
 import { PersistGate } from "redux-persist/integration/react";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+const theme = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -22,7 +29,9 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <App />
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>
