@@ -2,6 +2,8 @@ import { Box, Toolbar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import AboutPage from "./AboutPage";
+import Donate from "./Donate";
 import Home from "./Home";
 import Library from "./Library";
 import PluginDetails from "./PluginDetails";
@@ -32,6 +34,8 @@ const Routing: React.FC = () => {
         <Route path="/plugininstall" element={<PluginInstall />} />
         <Route path="/library" element={<Library />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/donate" element={<Donate />} />
         <Route path="/plugins/:pluginId/feed/:apiId" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId/feed" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId" element={<PluginDetails />} />

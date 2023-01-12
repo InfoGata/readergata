@@ -21,7 +21,11 @@
     "reader": "Reader",
     "orDragFiles": "Or drag and drop a pdf/epub file",
     "save": "Save",
-    "settings": "Settings"
+    "settings": "Settings",
+    "email": "Email",
+    "donate": "Donate",
+    "privacyPolicy": "Privacy Policy",
+    "about": "About"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

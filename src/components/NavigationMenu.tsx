@@ -27,6 +27,7 @@ import {
   Fullscreen,
   FullscreenExit,
   Home,
+  Info,
   LibraryBooks,
   MenuBook,
   Settings,
@@ -146,6 +147,16 @@ const NavigationMenu: React.FC = () => {
               </ListItemIcon>
             </Tooltip>
             <ListItemText>{t("settings")}</ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/about">
+            <Tooltip title={t("about")} placement="right">
+              <ListItemIcon>
+                <Info />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText>{t("about")}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
