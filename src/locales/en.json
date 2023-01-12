@@ -1,6 +1,5 @@
 {
   "common": {
-    "greeting": "Hello",
     "manifestNoScript": "Error: Manifest does not contain script",
     "fileNotFound": "Error: Couldn't find {{name}}",
     "cantGetFile": "Error: Couldn't get {{name}}",
@@ -20,7 +19,7 @@
     "addPluginSuccess": "Successfully added plugin",
     "addPlugin": "Add",
     "reader": "Reader",
-    "orDragFiles": "Or drag and drop a file",
+    "orDragFiles": "Or drag and drop a pdf/epub file",
     "save": "Save",
     "settings": "Settings"
   },
