@@ -15,6 +15,7 @@ import { setCurrentLocation } from "../store/reducers/documentReducer";
 import {
   setCurrentSearchResult,
   setSearchResults,
+  setTitle,
   setToc,
 } from "../store/reducers/uiReducer";
 import { BookContent, PdfSourceType, SearchResult } from "../types";
@@ -164,12 +165,26 @@ const PdfViewer: React.FC = () => {
     } else {
       setPageNumber(1);
     }
+
+    // Table of contents
     const outline = await pdfProxy.getOutline();
     if (outline) {
       const contents = outline.map(outlineToBookConent);
       dispatch(setToc(contents));
+    } else {
+      dispatch(setToc([]));
     }
-    // Load all text content
+
+    // Set Title
+    const metadata = await pdfProxy.getMetadata();
+    console.log(metadata);
+    if ("Title" in metadata.info && typeof metadata.info.Title === "string") {
+      dispatch(setTitle(metadata.info.Title));
+    } else {
+      dispatch(setTitle(""));
+    }
+
+    // Load all text content for searching
     const pagePromises = Array.from(
       { length: pdfProxy.numPages },
       (_, pageIndex) => {
