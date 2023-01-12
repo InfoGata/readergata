@@ -9,6 +9,7 @@ import PluginFeed from "./PluginFeed";
 import PluginInstall from "./PluginInstall";
 import PluginOptions from "./PluginOptions";
 import Plugins from "./Plugins";
+import Settings from "./Settings";
 import Viewer from "./Viewer";
 
 const Routing: React.FC = () => {
@@ -30,6 +31,7 @@ const Routing: React.FC = () => {
         <Route path="/plugins" element={<Plugins />} />
         <Route path="/plugininstall" element={<PluginInstall />} />
         <Route path="/library" element={<Library />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/plugins/:pluginId/feed/:apiId" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId/feed" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId" element={<PluginDetails />} />

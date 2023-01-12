@@ -29,6 +29,7 @@ export interface GetFeedRequest {
 }
 
 export interface Catalog {
+  id?: string;
   apiId?: string;
   pluginId?: string;
   name: string;

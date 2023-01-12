@@ -6,7 +6,7 @@ import createIdbStorage from "@piotr-cz/redux-persist-idb-storage";
 const persistConfig = {
   key: "root",
   storage: createIdbStorage(),
-  whitelist: ["document"],
+  whitelist: ["document", "settings"],
   serialize: false,
   deserialize: false,
 };

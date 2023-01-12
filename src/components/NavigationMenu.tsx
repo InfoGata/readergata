@@ -29,6 +29,7 @@ import {
   Home,
   LibraryBooks,
   MenuBook,
+  Settings,
 } from "@mui/icons-material";
 import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
@@ -135,6 +136,16 @@ const NavigationMenu: React.FC = () => {
               </ListItemIcon>
             </Tooltip>
             <ListItemText>{t("library")}</ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/settings">
+            <Tooltip title={t("settings")} placement="right">
+              <ListItemIcon>
+                <Settings />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText>{t("settings")}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>

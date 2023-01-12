@@ -20,7 +20,9 @@
     "addPluginSuccess": "Successfully added plugin",
     "addPlugin": "Add",
     "reader": "Reader",
-    "orDragFiles": "Or drag and drop a file"
+    "orDragFiles": "Or drag and drop a file",
+    "save": "Save",
+    "settings": "Settings"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

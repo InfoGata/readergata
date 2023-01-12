@@ -9,6 +9,7 @@ import {
 import { db } from "./database";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
+import { useAppSelector } from "./store/hooks";
 
 export interface PluginMethodInterface {
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
@@ -60,6 +61,10 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   >([]);
   const [pluginMessage, setPluginMessage] = React.useState<PluginMessage>();
 
+  const corsProxyUrl = useAppSelector((state) => state.settings.corsProxyUrl);
+  const corsProxyUrlRef = React.useRef(corsProxyUrl);
+  corsProxyUrlRef.current = corsProxyUrl;
+
   const loadingPlugin = React.useRef(false);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -72,6 +77,16 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         },
         createNotification: async (notification: NotificationMessage) => {
           enqueueSnackbar(notification.message, { variant: notification.type });
+        },
+        getCorsProxy: async () => {
+          if (
+            process.env.NODE_ENV === "production" ||
+            corsProxyUrlRef.current
+          ) {
+            return corsProxyUrlRef.current;
+          } else {
+            return "http://localhost:36325/";
+          }
         },
       };
 
