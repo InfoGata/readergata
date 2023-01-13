@@ -18,6 +18,8 @@ export interface PluginMethodInterface {
 
 interface ApplicationPluginInterface extends PluginInterface {
   postUiMessage(message: any): Promise<void>;
+  getCorsProxy(): Promise<string | undefined>;
+  createNotification(notification: NotificationMessage): Promise<void>;
 }
 
 interface PluginMessage {
