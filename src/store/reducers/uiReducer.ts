@@ -61,6 +61,12 @@ const uiSlice = createSlice({
     setTitle(state, action: PayloadAction<string>) {
       state.title = action.payload;
     },
+    clearBookData(state) {
+      state.title = "";
+      state.contents = [];
+      state.searchQuery = "";
+      state.searchResults = [];
+    },
   },
 });
 
@@ -75,6 +81,7 @@ export const {
   setSearchResults,
   setCurrentSearchResult,
   setTitle,
+  clearBookData,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

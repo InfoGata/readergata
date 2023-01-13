@@ -1,6 +1,6 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem, Location } from "epubjs";
-import { setTitle } from "../store/reducers/uiReducer";
+import { clearBookData, setTitle } from "../store/reducers/uiReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { BookContent, BookSourceType, EBook, SearchResult } from "../types";
 import { getValidUrl } from "../utils";
@@ -186,6 +186,7 @@ const EbookViewer: React.FC = () => {
           dispatch(setCurrentLocation(newLocation));
         });
         rend.display();
+        dispatch(clearBookData());
         setRendition(rend);
       }
       newBook.loaded.navigation.then((navigation) => {

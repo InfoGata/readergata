@@ -13,6 +13,7 @@ import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCurrentLocation } from "../store/reducers/documentReducer";
 import {
+  clearBookData,
   setCurrentSearchResult,
   setSearchResults,
   setTitle,
@@ -158,6 +159,7 @@ const PdfViewer: React.FC = () => {
   };
 
   const onDocumentLoad = async (pdfProxy: PDFDocumentProxy) => {
+    dispatch(clearBookData());
     setPdf(pdfProxy);
     setNumPages(pdfProxy.numPages);
     if (currentLocation) {
@@ -171,17 +173,12 @@ const PdfViewer: React.FC = () => {
     if (outline) {
       const contents = outline.map(outlineToBookConent);
       dispatch(setToc(contents));
-    } else {
-      dispatch(setToc([]));
     }
 
     // Set Title
     const metadata = await pdfProxy.getMetadata();
-    console.log(metadata);
     if ("Title" in metadata.info && typeof metadata.info.Title === "string") {
       dispatch(setTitle(metadata.info.Title));
-    } else {
-      dispatch(setTitle(""));
     }
 
     // Load all text content for searching
