@@ -24,8 +24,7 @@ const AboutPage: React.FC = () => {
   const twitterAt = "@info_gata";
   const mastodonUrl = "https://mastodon.online/@InfoGata";
   const mastodonAt = "@InfoGata@mastodon.online";
-  // TODO: Change github url
-  const githubUrl = "https://github.com/InfoGata/readergata";
+  const gitUrl = "https://gitlab.com/elijahgreen/readergata";
   return (
     <Box>
       <List dense>
@@ -40,13 +39,13 @@ const AboutPage: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton component="a" href={githubUrl} target="_blank">
+          <ListItemButton component="a" href={gitUrl} target="_blank">
             <ListItemAvatar>
               <Avatar>
                 <FontAwesomeIcon icon={faGitAlt} />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="Github" secondary={githubUrl} />
+            <ListItemText primary="GitLab" secondary={gitUrl} />
           </ListItemButton>
         </ListItem>
         <ListItem>
