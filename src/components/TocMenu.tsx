@@ -2,9 +2,8 @@ import { Drawer } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setTocOpen } from "../store/reducers/uiReducer";
+import { drawerWidth } from "../utils";
 import TableOfContents from "./TableOfContents";
-
-const drawerWidth = 240;
 
 const TocMenu: React.FC = () => {
   const tocOpen = useAppSelector((state) => state.ui.tocOpen);

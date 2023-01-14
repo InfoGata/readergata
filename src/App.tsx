@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import useFullScreen from "./hooks/useFullScreen";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import useOffline from "./hooks/useOffline";
+import SearchMenu from "./components/SearchMenu";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,7 @@ const App: React.FC = () => {
               <NavigationMenu />
               <Routing />
               <TocMenu />
+              <SearchMenu />
             </Box>
           </PluginsProvider>
         </Router>

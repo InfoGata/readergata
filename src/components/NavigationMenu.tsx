@@ -36,8 +36,7 @@ import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
 import { setPdf } from "../store/reducers/documentReducer";
 import OpenFileButton from "./OpenFileButton";
-
-const drawerWidth = 240;
+import { drawerWidth } from "../utils";
 
 const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");

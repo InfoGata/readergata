@@ -197,3 +197,5 @@ export const openFile = (file: File): Promise<string> => {
 };
 
 export const searchThumbnailSize = 40;
+
+export const drawerWidth = 240;
