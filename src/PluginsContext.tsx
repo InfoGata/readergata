@@ -10,6 +10,7 @@ import { db } from "./database";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "./store/hooks";
+import { getPluginSubdomain } from "./utils";
 
 export interface PluginMethodInterface {
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
@@ -107,7 +108,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         },
       };
 
-      const srcUrl = `${window.location.protocol}//${plugin.id}.${window.location.host}/pluginframe.html`;
+      const srcUrl = `${getPluginSubdomain(plugin.id)}/pluginframe.html`;
       const host = new PluginFrameContainer(api, {
         completeMethods,
         frameSrc: new URL(srcUrl),

@@ -196,6 +196,17 @@ export const openFile = (file: File): Promise<string> => {
   });
 };
 
+export const getPluginSubdomain = (id?: string): string => {
+  if (process.env.NODE_ENV === "production") {
+    const domain = process.env.REACT_APP_DOMAIN || "readergata.com";
+    const protocol = domain.startsWith("localhost")
+      ? window.location.protocol
+      : "https:";
+    return `${protocol}//${id}.${domain}`;
+  }
+  return `${window.location.protocol}//${id}.${window.location.host}`;
+};
+
 export const searchThumbnailSize = 40;
 
 export const drawerWidth = 240;
