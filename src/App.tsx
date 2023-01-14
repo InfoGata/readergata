@@ -13,6 +13,7 @@ import useFullScreen from "./hooks/useFullScreen";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import useOffline from "./hooks/useOffline";
 import SearchMenu from "./components/SearchMenu";
+import MatomoRouterProvider from "./components/MatomoRouterProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,16 +45,18 @@ const App: React.FC = () => {
     >
       <QueryClientProvider client={queryClient}>
         <Router>
-          <PluginsProvider>
-            <Box sx={{ display: "flex" }}>
-              <CssBaseline />
-              <TopBar />
-              <NavigationMenu />
-              <Routing />
-              <TocMenu />
-              <SearchMenu />
-            </Box>
-          </PluginsProvider>
+          <MatomoRouterProvider>
+            <PluginsProvider>
+              <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <TopBar />
+                <NavigationMenu />
+                <Routing />
+                <TocMenu />
+                <SearchMenu />
+              </Box>
+            </PluginsProvider>
+          </MatomoRouterProvider>
         </Router>
       </QueryClientProvider>
     </SnackbarProvider>

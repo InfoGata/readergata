@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "",
   "dependencies": {
+    "@datapunt/matomo-tracker-react": "^0.5.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@fontsource/roboto": "^4.5.8",
