@@ -100,7 +100,7 @@ const AboutPage: React.FC = () => {
       <iframe
         title="out-opt"
         style={{ border: 0, height: "200px", width: "600px" }}
-        src="https://matomo.infogata.com/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=121212&fontColor=000000&fontSize=16px"
+        src="https://matomo.infogata.com/index.php?module=CoreAdminHome&action=optOut&language=en&fontSize=16px"
       ></iframe>
     </Box>
   );
