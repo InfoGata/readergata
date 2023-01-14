@@ -2,7 +2,7 @@
 
 A plugin based reading app.
 
-<!--https://www.readergata.com-->
+https://www.readergata.com
 
 ## Running locally
 
