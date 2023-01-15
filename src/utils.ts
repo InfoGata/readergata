@@ -2,6 +2,7 @@ import { ImageInfo, PluginInfo } from "./plugintypes";
 import { DirectoryFile, FileType, Manifest } from "./types";
 import i18next from "./i18n";
 import thumbnail from "./thumbnail.png";
+import store from "./store/store";
 
 export async function getPlugin(
   fileType: FileType
@@ -138,7 +139,7 @@ const isCorrectMimeType = (response: Response, type: string): boolean => {
 
 const proxy =
   process.env.NODE_ENV === "production"
-    ? "https://cloudcors.audio-pwa.workers.dev?url="
+    ? "https://cloudcors-readergata.audio-pwa.workers.dev?url="
     : "http://localhost:36325/";
 
 export const getValidUrl = async (url: string, mimeType: string) => {
@@ -154,7 +155,8 @@ export const getValidUrl = async (url: string, mimeType: string) => {
   } catch {
     // Determine if error is because of cors
     const noProtocol = url.replace(/(^\w+:|^)\/\//, "");
-    const proxyUrl = `${proxy}${noProtocol}`;
+    const userProxy = store.getState().settings.corsProxyUrl;
+    const proxyUrl = `${userProxy || proxy}${noProtocol}`;
     try {
       const response = await fetch(proxyUrl, { method: "HEAD" });
       if (response.status === 404) {
