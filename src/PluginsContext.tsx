@@ -3,6 +3,8 @@ import React from "react";
 import {
   Feed,
   GetFeedRequest,
+  GetPublicationRequest,
+  GetPublicationResponse,
   NotificationMessage,
   PluginInfo,
 } from "./plugintypes";
@@ -10,14 +12,22 @@ import { db } from "./database";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "./store/hooks";
-import { getPluginSubdomain } from "./utils";
+import { getPluginSubdomain, hasExtension } from "./utils";
+import { NetworkRequest } from "./types";
 
 export interface PluginMethodInterface {
+  onGetPublication(
+    request: GetPublicationRequest
+  ): Promise<GetPublicationResponse>;
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
   onUiMessage(message: any): Promise<void>;
 }
 
 interface ApplicationPluginInterface extends PluginInterface {
+  networkRequest(
+    input: RequestInfo,
+    init?: RequestInit
+  ): Promise<NetworkRequest>;
   postUiMessage(message: any): Promise<void>;
   getCorsProxy(): Promise<string | undefined>;
   createNotification(notification: NotificationMessage): Promise<void>;
@@ -75,6 +85,37 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const loadPlugin = React.useCallback(
     async (plugin: PluginInfo, pluginFiles?: FileList) => {
       const api: ApplicationPluginInterface = {
+        networkRequest: async (input: RequestInfo, init?: RequestInit) => {
+          if (hasExtension()) {
+            return await window.InfoGata.networkRequest(input, init);
+          }
+
+          const response = await fetch(input, init);
+
+          const body = await response.blob();
+
+          const responseHeaders = Object.fromEntries(
+            response.headers.entries()
+          );
+
+          // Remove forbidden header
+          if (responseHeaders["set-cookie"]) {
+            delete responseHeaders["set-cookie"];
+          }
+
+          const result = {
+            body: body,
+            headers: responseHeaders,
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+          };
+          return result;
+        },
+        isNetworkRequestCorsDisabled: async () => {
+          const isDisabled = hasExtension();
+          return isDisabled;
+        },
         postUiMessage: async (message: any) => {
           setPluginMessage({ pluginId: plugin.id, message });
         },

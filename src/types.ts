@@ -1,3 +1,29 @@
+export interface NetworkRequest {
+  body: Blob;
+  headers: { [k: string]: string };
+  status: number;
+  statusText: string;
+  url: string;
+}
+
+declare global {
+  interface Window {
+    InfoGata: InfoGataExtension;
+  }
+  namespace NodeJS {
+    interface ProcessEnv {
+      REACT_APP_DOMAIN: string;
+    }
+  }
+}
+
+export interface InfoGataExtension {
+  networkRequest: (
+    input: RequestInfo,
+    init?: RequestInit
+  ) => Promise<NetworkRequest>;
+}
+
 export interface DirectoryFile extends File {
   webkitRelativePath: string;
 }
@@ -28,25 +54,19 @@ export interface ManifestOptions {
   sameOrigin?: boolean;
 }
 
-export enum BookSourceType {
+export enum PublicationSourceType {
   Url,
   Binary,
-  Base64,
 }
 
 export interface EBook {
   source: string;
-  sourceType: BookSourceType;
-}
-
-export enum PdfSourceType {
-  Url,
-  Binary,
+  sourceType: PublicationSourceType;
 }
 
 export interface Pdf {
   source: string;
-  sourceType: PdfSourceType;
+  sourceType: PublicationSourceType;
 }
 
 export interface BookContent {

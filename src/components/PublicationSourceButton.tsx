@@ -5,14 +5,16 @@ import { PublicationSource } from "../plugintypes";
 
 interface PublicationSourceButtonProps {
   source: PublicationSource;
+  pluginId?: string;
 }
 
 const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
   props
 ) => {
-  const { source } = props;
+  const { source, pluginId } = props;
   let search = `?source=${encodeURIComponent(source.source)}`;
   search = source.type ? `${search}&type=${source.type}` : search;
+  search = pluginId ? `${search}&pluginId=${pluginId}` : search;
 
   return (
     <Button

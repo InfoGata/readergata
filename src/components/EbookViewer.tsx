@@ -2,7 +2,12 @@ import React from "react";
 import Epub, { Rendition, Book, NavItem, Location } from "epubjs";
 import { clearBookData, setTitle } from "../store/reducers/uiReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { BookContent, BookSourceType, EBook, SearchResult } from "../types";
+import {
+  BookContent,
+  EBook,
+  PublicationSourceType,
+  SearchResult,
+} from "../types";
 import { getValidUrl } from "../utils";
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
@@ -23,7 +28,7 @@ const resolveURL = (url: string, relativeTo: string) => {
 const openBook = async (ebook: EBook): Promise<Book | undefined> => {
   const newBook = Epub();
   try {
-    if (ebook.sourceType === BookSourceType.Binary) {
+    if (ebook.sourceType === PublicationSourceType.Binary) {
       newBook.open(ebook.source, "binary");
       return newBook;
     } else {

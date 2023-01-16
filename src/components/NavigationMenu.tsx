@@ -32,11 +32,11 @@ import {
   MenuBook,
   Settings,
 } from "@mui/icons-material";
-import { BookSourceType, PdfSourceType } from "../types";
 import { useTranslation } from "react-i18next";
 import { setPdf } from "../store/reducers/documentReducer";
 import OpenFileButton from "./OpenFileButton";
 import { drawerWidth } from "../utils";
+import { PublicationSourceType } from "../types";
 
 const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
@@ -55,11 +55,13 @@ const NavigationMenu: React.FC = () => {
         dispatch(
           setBook({
             source: inputUrl,
-            sourceType: BookSourceType.Url,
+            sourceType: PublicationSourceType.Url,
           })
         );
       } else if (urlType === "pdf") {
-        dispatch(setPdf({ source: inputUrl, sourceType: PdfSourceType.Url }));
+        dispatch(
+          setPdf({ source: inputUrl, sourceType: PublicationSourceType.Url })
+        );
       }
       navigate("/viewer");
     }

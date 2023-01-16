@@ -46,7 +46,11 @@ const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
         <Typography variant="h5">{authors}</Typography>
         <Typography variant="body1">{publication.summary}</Typography>
         {publication.sources?.map((s, i) => (
-          <PublicationSourceButton key={i} source={s} />
+          <PublicationSourceButton
+            key={i}
+            source={s}
+            pluginId={publication.pluginId}
+          />
         ))}
       </Dialog>
     </>

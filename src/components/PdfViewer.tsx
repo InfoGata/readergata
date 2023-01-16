@@ -19,7 +19,7 @@ import {
   setTitle,
   setToc,
 } from "../store/reducers/uiReducer";
-import { BookContent, PdfSourceType, SearchResult } from "../types";
+import { BookContent, PublicationSourceType, SearchResult } from "../types";
 import { getValidUrl } from "../utils";
 
 type PDFDocumentProxy = Parameters<
@@ -124,14 +124,17 @@ const PdfViewer: React.FC = () => {
 
   React.useEffect(() => {
     const loadPdf = async () => {
-      if (currentPdf && currentPdf.sourceType === PdfSourceType.Url) {
+      if (currentPdf && currentPdf.sourceType === PublicationSourceType.Url) {
         const newUrl = await getValidUrl(currentPdf.source, "application/pdf");
         if (newUrl) {
           setFile(newUrl);
         } else {
           alert("Could not open url");
         }
-      } else if (currentPdf && currentPdf.sourceType === PdfSourceType.Binary) {
+      } else if (
+        currentPdf &&
+        currentPdf.sourceType === PublicationSourceType.Binary
+      ) {
         setFile({ data: currentPdf.source });
       }
     };

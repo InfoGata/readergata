@@ -142,6 +142,10 @@ const proxy =
     ? "https://cloudcors-readergata.audio-pwa.workers.dev?url="
     : "http://localhost:36325/";
 
+export const hasExtension = () => {
+  return typeof window.InfoGata !== "undefined";
+};
+
 export const getValidUrl = async (url: string, mimeType: string) => {
   try {
     // Fetch and check the mime type

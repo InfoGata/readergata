@@ -28,6 +28,16 @@ export interface GetFeedRequest {
   apiId?: string;
 }
 
+export interface GetPublicationRequest {
+  source: string;
+}
+
+export type PublicationSourceType = "pdf" | "epub";
+
+export interface GetPublicationResponse {
+  data: string;
+}
+
 export interface Catalog {
   id?: string;
   apiId?: string;

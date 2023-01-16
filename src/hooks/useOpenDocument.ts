@@ -3,7 +3,7 @@ import { useAppDispatch } from "../store/hooks";
 import { setBook } from "../store/reducers/documentReducer";
 import { setPdf } from "../store/reducers/documentReducer";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
-import { BookSourceType, PdfSourceType } from "../types";
+import { PublicationSourceType } from "../types";
 import { openFile } from "../utils";
 
 const useOpenDocument = () => {
@@ -17,13 +17,15 @@ const useOpenDocument = () => {
         dispatch(
           setBook({
             source: bookData,
-            sourceType: BookSourceType.Binary,
+            sourceType: PublicationSourceType.Binary,
           })
         );
       }
     } else if (file.type.includes("application/pdf")) {
       const pdfData = await openFile(file);
-      dispatch(setPdf({ source: pdfData, sourceType: PdfSourceType.Binary }));
+      dispatch(
+        setPdf({ source: pdfData, sourceType: PublicationSourceType.Binary })
+      );
     }
     dispatch(setNavigationOpen(false));
     navigate("/viewer");
