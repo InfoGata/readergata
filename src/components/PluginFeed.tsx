@@ -14,7 +14,7 @@ import { usePlugins } from "../PluginsContext";
 import PublicationInfo from "./PublicationInfo";
 
 const PluginFeed: React.FC = () => {
-  const { plugins } = usePlugins();
+  const { plugins, pluginsLoaded } = usePlugins();
   const { pluginId } = useParams<"pluginId">();
   const { apiId } = useParams<"apiId">();
   const plugin = plugins.find((p) => p.id === pluginId);
@@ -26,7 +26,9 @@ const PluginFeed: React.FC = () => {
     }
   };
 
-  const query = useQuery(["pluginFeed", pluginId, apiId], getFeed);
+  const query = useQuery(["pluginFeed", pluginId, apiId], getFeed, {
+    enabled: pluginsLoaded && !!plugin,
+  });
 
   return (
     <Grid>
