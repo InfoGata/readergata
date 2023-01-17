@@ -12,13 +12,24 @@ import PdfViewer from "./PdfViewer";
 import { useTranslation } from "react-i18next";
 import DragFileContainer from "./DragFileContainer";
 import { usePlugins } from "../PluginsContext";
+import { SourceType } from "../plugintypes";
+
+const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
+  switch (sourceType) {
+    case "binary":
+      return PublicationSourceType.Binary;
+    case "url":
+      return PublicationSourceType.Url;
+  }
+  return PublicationSourceType.Binary;
+};
 
 const Viewer: React.FC = () => {
   const location = useLocation();
   const currentPdf = useAppSelector((state) => state.document.currentPdf);
   const currentBook = useAppSelector((state) => state.document.currentBook);
   const { t } = useTranslation();
-  const { plugins } = usePlugins();
+  const { plugins, pluginsLoaded } = usePlugins();
   const dispatch = useAppDispatch();
 
   const params = new URLSearchParams(location.search);
@@ -33,8 +44,8 @@ const Viewer: React.FC = () => {
       let sourceType = PublicationSourceType.Url;
       if (plugin && (await plugin.hasDefined.onGetPublication())) {
         const publication = await plugin.remote.onGetPublication({ source });
-        src = publication.data;
-        sourceType = PublicationSourceType.Binary;
+        src = publication.source;
+        sourceType = sourceTypeToPulicationSourceType(publication.sourceType);
       }
 
       if (type && type.includes("pdf")) {
@@ -49,7 +60,9 @@ const Viewer: React.FC = () => {
     }
   };
 
-  useQuery(["viewer", source, type, pluginId], getBookFromUrl);
+  useQuery(["viewer", source, type, pluginId], getBookFromUrl, {
+    enabled: pluginsLoaded,
+  });
 
   return (
     <DragFileContainer>

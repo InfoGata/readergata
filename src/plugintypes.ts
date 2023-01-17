@@ -32,10 +32,18 @@ export interface GetPublicationRequest {
   source: string;
 }
 
-export type PublicationSourceType = "pdf" | "epub";
+export type SourceType = "url" | "binary";
 
 export interface GetPublicationResponse {
-  data: string;
+  /**
+   * Binary data or url for the pdf/epub
+   */
+  source: string;
+  /**
+   * Whether source is a url or binary data
+   * If undefined, source will be treated as binary data
+   */
+  sourceType?: SourceType;
 }
 
 export interface Catalog {
