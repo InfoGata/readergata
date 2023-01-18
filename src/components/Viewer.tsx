@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Backdrop, CircularProgress, Grid, Typography } from "@mui/material";
 import React from "react";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
@@ -60,12 +60,15 @@ const Viewer: React.FC = () => {
     }
   };
 
-  useQuery(["viewer", source, type, pluginId], getBookFromUrl, {
+  const query = useQuery(["viewer", source, type, pluginId], getBookFromUrl, {
     enabled: pluginsLoaded,
   });
 
   return (
     <DragFileContainer>
+      <Backdrop open={query.isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {currentBook ? (
         <EbookViewer />
       ) : currentPdf ? (
