@@ -1,0 +1,14 @@
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://www.readergata.com https://preview.readergata.com file://* http://localhost http://10.0.2.2:3000"
+        }
+      ]
+    }
+  ]
+}
