@@ -94,7 +94,6 @@ const NavigationMenu: React.FC = () => {
       anchor="left"
       open={navigationOpen}
       sx={{
-        display: { xs: "none", sm: "block" },
         "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
       }}
       onClose={onClose}
