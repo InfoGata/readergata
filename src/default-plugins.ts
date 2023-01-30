@@ -19,3 +19,5 @@ export const defaultPlugins: PluginDescription[] = [
     url: "https://cdn.jsdelivr.net/gh/InfoGata/opds-readergata@latest/manifest.json",
   },
 ];
+
+export const defaultPluginMap = new Map(defaultPlugins.map((p) => [p.id, p]));

@@ -10,7 +10,9 @@ import {
 import React from "react";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
+import useFindPlugin from "../hooks/useFindPlugin";
 import { usePlugins } from "../PluginsContext";
+import ConfirmPluginDialog from "./ConfirmPluginDialog";
 import PublicationInfo from "./PublicationInfo";
 
 const PluginFeed: React.FC = () => {
@@ -18,6 +20,12 @@ const PluginFeed: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();
   const { apiId } = useParams<"apiId">();
   const plugin = plugins.find((p) => p.id === pluginId);
+
+  const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
+    pluginsLoaded,
+    pluginId,
+    plugin,
+  });
 
   const getFeed = async () => {
     if (plugin && (await plugin.hasDefined.onGetFeed())) {
@@ -32,7 +40,7 @@ const PluginFeed: React.FC = () => {
 
   return (
     <Grid>
-      <Backdrop open={query.isLoading}>
+      <Backdrop open={query.isLoading || isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <List>
@@ -53,6 +61,11 @@ const PluginFeed: React.FC = () => {
               </ListItem>
             ))}
       </List>
+      <ConfirmPluginDialog
+        open={Boolean(pendingPlugin)}
+        plugins={pendingPlugin ? [pendingPlugin] : []}
+        handleClose={removePendingPlugin}
+      />
     </Grid>
   );
 };
