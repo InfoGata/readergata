@@ -7,6 +7,7 @@ import {
   Typography,
   ListItemButton,
 } from "@mui/material";
+import DOMPurify from "dompurify";
 import React from "react";
 import { Publication } from "../plugintypes";
 import { getThumbnailImage, searchThumbnailSize } from "../utils";
@@ -18,6 +19,7 @@ interface PublicationInfoProps {
 
 const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
   const { publication } = props;
+  const sanitizer = DOMPurify.sanitize;
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const toggleDialogOpen = () => {
@@ -41,10 +43,15 @@ const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
         </ListItemButton>
       </ListItem>
       <Dialog open={dialogOpen} onClose={toggleDialogOpen}>
-        <img alt="cover" src={icon} />
-        <Typography variant="h3">{publication.title}</Typography>
-        <Typography variant="h5">{authors}</Typography>
-        <Typography variant="body1">{publication.summary}</Typography>
+        <img alt="cover" src={icon} height={225} width={125} />
+        <Typography variant="h4">{publication.title}</Typography>
+        <Typography variant="h6">{authors}</Typography>
+        <Typography
+          variant="body1"
+          dangerouslySetInnerHTML={{
+            __html: sanitizer(publication.summary || ""),
+          }}
+        />
         {publication.sources?.map((s, i) => (
           <PublicationSourceButton
             key={i}
