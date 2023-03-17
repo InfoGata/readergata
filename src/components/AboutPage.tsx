@@ -24,7 +24,7 @@ const AboutPage: React.FC = () => {
   const twitterAt = "@info_gata";
   const mastodonUrl = "https://mastodon.online/@InfoGata";
   const mastodonAt = "@InfoGata@mastodon.online";
-  const gitUrl = "https://gitlab.com/elijahgreen/readergata";
+  const gitUrl = "https://github.com/InfoGata/readergata";
   return (
     <Box>
       <List dense>
@@ -45,7 +45,7 @@ const AboutPage: React.FC = () => {
                 <FontAwesomeIcon icon={faGitAlt} />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="GitLab" secondary={gitUrl} />
+            <ListItemText primary="GitHub" secondary={gitUrl} />
           </ListItemButton>
         </ListItem>
         <ListItem>
