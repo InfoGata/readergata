@@ -137,10 +137,9 @@ const isCorrectMimeType = (response: Response, type: string): boolean => {
   }
 };
 
-const proxy =
-  process.env.NODE_ENV === "production"
-    ? "https://cloudcors-readergata.audio-pwa.workers.dev?url="
-    : "http://localhost:36325/";
+const proxy = import.meta.env.PROD
+  ? "https://cloudcors-readergata.audio-pwa.workers.dev?url="
+  : "http://localhost:36325/";
 
 export const hasExtension = () => {
   return typeof window.InfoGata !== "undefined";
@@ -203,8 +202,8 @@ export const openFile = (file: File): Promise<string> => {
 };
 
 export const getPluginSubdomain = (id?: string): string => {
-  if (process.env.NODE_ENV === "production") {
-    const domain = process.env.REACT_APP_DOMAIN || "readergata.com";
+  if (import.meta.env.PROD) {
+    const domain = import.meta.env.VITE_DOMAIN || "readergata.com";
     const protocol = domain.startsWith("localhost")
       ? window.location.protocol
       : "https:";

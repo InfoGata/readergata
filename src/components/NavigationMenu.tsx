@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { setBook } from "../store/reducers/documentReducer";
+import { setBook, setPdf } from "../store/reducers/documentReducer";
 import {
   setIsFullscreen,
   setNavigationOpen,
@@ -33,7 +33,6 @@ import {
   Settings,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { setPdf } from "../store/reducers/documentReducer";
 import OpenFileButton from "./OpenFileButton";
 import { drawerWidth } from "../utils";
 import { PublicationSourceType } from "../types";

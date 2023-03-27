@@ -6,7 +6,6 @@ interface UiState {
   isFullscreen: boolean;
   tocOpen: boolean;
   searchOpen: boolean;
-  waitingServiceWorker?: ServiceWorker;
   contents: BookContent[];
   content?: BookContent;
   searchQuery: string;
@@ -41,9 +40,6 @@ const uiSlice = createSlice({
     },
     setSearchOpen(state, action: PayloadAction<boolean>) {
       state.searchOpen = action.payload;
-    },
-    updateReady(state, action: PayloadAction<ServiceWorker>) {
-      state.waitingServiceWorker = action.payload;
     },
     setToc(state, action: PayloadAction<BookContent[]>) {
       state.contents = action.payload;
@@ -83,7 +79,6 @@ export const {
   setNavigationOpen,
   setIsFullscreen,
   setTocOpen,
-  updateReady,
   setToc,
   setContent,
   setSearchQuery,

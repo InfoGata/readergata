@@ -10,11 +10,6 @@ declare global {
   interface Window {
     InfoGata: InfoGataExtension;
   }
-  namespace NodeJS {
-    interface ProcessEnv {
-      REACT_APP_DOMAIN: string;
-    }
-  }
 }
 
 export interface InfoGataExtension {

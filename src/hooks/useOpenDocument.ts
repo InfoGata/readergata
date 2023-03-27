@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store/hooks";
-import { setBook } from "../store/reducers/documentReducer";
-import { setPdf } from "../store/reducers/documentReducer";
+import { setBook, setPdf } from "../store/reducers/documentReducer";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
 import { PublicationSourceType } from "../types";
 import { openFile } from "../utils";

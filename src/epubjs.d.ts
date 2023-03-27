@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import Section from "epubjs/types/section";
 
 declare module "epubjs/types/section" {

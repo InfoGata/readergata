@@ -1,6 +1,12 @@
 import React from "react";
 import Epub, { Rendition, Book, NavItem, Location } from "epubjs";
-import { clearBookData, setTitle } from "../store/reducers/uiReducer";
+import {
+  clearBookData,
+  setCurrentSearchResult,
+  setSearchResults,
+  setTitle,
+  setToc,
+} from "../store/reducers/uiReducer";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   BookContent,
@@ -11,11 +17,7 @@ import {
 import { getValidUrl } from "../utils";
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import {
-  setCurrentSearchResult,
-  setSearchResults,
-  setToc,
-} from "../store/reducers/uiReducer";
+// eslint-disable-next-line import/no-unresolved
 import Section from "epubjs/types/section";
 import { setCurrentLocation } from "../store/reducers/documentReducer";
 

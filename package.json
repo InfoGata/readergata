@@ -14,11 +14,9 @@
     "@mui/material": "^5.8.6",
     "@piotr-cz/redux-persist-idb-storage": "^1.1.3",
     "@reduxjs/toolkit": "^1.4.0",
-    "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/dompurify": "^2.4.0",
-    "@types/jest": "^27.5.2",
     "@types/node": "^16.11.41",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
@@ -43,44 +41,17 @@
     "react-router-dom": "^6.2.1",
     "redux-persist": "^6.0.0",
     "screenfull": "^5.0.2",
-    "source-map-explorer": "^2.4.2",
-    "typescript": "^4.9.4",
-    "web-vitals": "^2.1.4"
+    "typescript": "^4.9.4"
   },
   "scripts": {
     "copy-worker": "node ./scripts/copy-worker.js",
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx",
     "cors-server": "node servers/cors/server.js",
     "postinstall": "cd servers/cors && npm install",
     "dev": "concurrently --kill-others \"npm run cors-server\" \"npm start\""
-  },
-  "eslintConfig": {
-    "plugins": [
-      "jam3",
-      "i18next"
-    ],
-    "rules": {
-      "jam3/no-sanitizer-with-danger": 2,
-      "i18next/no-literal-string": [
-        2,
-        {
-          "words": {
-            "exclude": [
-              "[0-9!-/:-@[-`{-~]+",
-              "[A-Z_-]+"
-            ]
-          }
-        }
-      ]
-    },
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -97,11 +68,19 @@
   "devDependencies": {
     "@types/react-redux": "^7.1.11",
     "@types/webpack-env": "^1.16.0",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "@vitejs/plugin-react": "^3.1.0",
     "concurrently": "^5.3.0",
-    "customize-cra": "^1.0.0",
+    "eslint": "^8.36.0",
     "eslint-plugin-i18next": "^6.0.0-6",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jam3": "^0.2.3",
-    "react-app-rewired": "^2.1.8",
-    "react-scripts": "5.0.1"
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "vite": "^4.2.1",
+    "vite-plugin-svgr": "^2.4.0",
+    "vite-plugin-pwa": "^0.14.6"
   }
 }
