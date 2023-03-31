@@ -3,6 +3,7 @@ import { DirectoryFile, FileType, Manifest } from "./types";
 import i18next from "./i18n";
 import thumbnail from "./thumbnail.png";
 import store from "./store/store";
+import { customAlphabet } from "nanoid";
 
 export async function getPlugin(
   fileType: FileType
@@ -210,6 +211,15 @@ export const getPluginSubdomain = (id?: string): string => {
     return `${protocol}//${id}.${domain}`;
   }
   return `${window.location.protocol}//${id}.${window.location.host}`;
+};
+
+export const generatePluginId = () => {
+  // Cannot use '-' or '_' if they show up and beginning or end of id.
+  const nanoid = customAlphabet(
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    21
+  );
+  return nanoid();
 };
 
 export const searchThumbnailSize = 40;

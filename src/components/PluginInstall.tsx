@@ -1,11 +1,10 @@
 import { Backdrop, CircularProgress, Typography } from "@mui/material";
-import { nanoid } from "@reduxjs/toolkit";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PluginInfo } from "../plugintypes";
 import { FileType } from "../types";
-import { getPlugin } from "../utils";
+import { generatePluginId, getPlugin } from "../utils";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
 
 const PluginInstall: React.FC = () => {
@@ -48,7 +47,7 @@ const PluginInstall: React.FC = () => {
       const plugin = await getPlugin(fileType);
       if (plugin) {
         if (!plugin.id) {
-          plugin.id = nanoid();
+          plugin.id = generatePluginId();
         }
         setPendingPlugin(plugin);
         setIsLoading(false);
