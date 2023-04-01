@@ -1,5 +1,6 @@
 {
   "common": {
+    "greeting": "Hello",
     "manifestNoScript": "Error: Manifest does not contain script",
     "fileNotFound": "Error: Couldn't find {{name}}",
     "cantGetFile": "Error: Couldn't get {{name}}",
@@ -9,7 +10,7 @@
     "dismiss": "Dismiss",
     "newVersion": "A new version of this site is available",
     "reload": "Reload",
-    "openFile": "Open File",
+    "openFile": "Open pdf/epub File",
     "submit": "Submit",
     "plugins": "Plugins",
     "home": "Home",
@@ -19,7 +20,6 @@
     "addPluginSuccess": "Successfully added plugin",
     "addPlugin": "Add",
     "reader": "Reader",
-    "orDragFiles": "Or drag and drop a pdf/epub file",
     "save": "Save",
     "settings": "Settings",
     "email": "Email",

@@ -75,7 +75,6 @@ const Viewer: React.FC = () => {
       ) : (
         <Grid>
           <OpenFileButton />
-          <Typography>{t("orDragFiles")}</Typography>
         </Grid>
       )}
     </DragFileContainer>

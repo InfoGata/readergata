@@ -9,8 +9,8 @@ const Home: React.FC = () => {
   const { t } = useTranslation();
   return (
     <DragFileContainer>
+      <Typography variant="h4">{t("greeting")}</Typography>
       <OpenFileButton />
-      <Typography>{t("orDragFiles")}</Typography>
       <PluginCards />
     </DragFileContainer>
   );
