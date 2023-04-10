@@ -1,7 +1,8 @@
 import { Button } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { PluginFrameContainer, usePlugins } from "../PluginsContext";
+import usePlugins from "../hooks/usePlugins";
+import { PluginFrameContainer } from "../PluginsContext";
 import { filterAsync } from "../utils";
 
 const Library: React.FC = () => {

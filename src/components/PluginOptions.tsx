@@ -1,10 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { usePlugins } from "../PluginsContext";
 import { db } from "../database";
 import { Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { getPluginSubdomain } from "../utils";
+import usePlugins from "../hooks/usePlugins";
 
 const PluginOptions: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();

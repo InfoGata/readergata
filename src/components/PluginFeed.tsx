@@ -11,7 +11,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import useFindPlugin from "../hooks/useFindPlugin";
-import { usePlugins } from "../PluginsContext";
+import usePlugins from "../hooks/usePlugins";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
 import PublicationInfo from "./PublicationInfo";
 

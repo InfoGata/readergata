@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import { PluginInfo } from "../plugintypes";
-import { usePlugins } from "../PluginsContext";
 import { useTranslation } from "react-i18next";
+import usePlugins from "../hooks/usePlugins";
 
 interface ConfirmPluginDialogProps {
   open: boolean;

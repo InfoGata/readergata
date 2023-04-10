@@ -3,7 +3,6 @@ import { CssBaseline, Box, Button } from "@mui/material";
 import { BrowserRouter as Router } from "react-router-dom";
 import NavigationMenu from "./components/NavigationMenu";
 import TocMenu from "./components/TocMenu";
-import { PluginsProvider } from "./PluginsContext";
 import Routing from "./components/Routing";
 import { QueryClient, QueryClientProvider } from "react-query";
 import TopBar from "./TopBar";
@@ -14,6 +13,7 @@ import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import useOffline from "./hooks/useOffline";
 import SearchMenu from "./components/SearchMenu";
 import MatomoRouterProvider from "./components/MatomoRouterProvider";
+import PluginsProvider from "./providers/PluginsProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,7 +1,6 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 import { Button, Grid } from "@mui/material";
-import { usePlugins } from "../PluginsContext";
 import PluginContainer from "./PluginContainer";
 import { directoryProps, generatePluginId, getPlugin } from "../utils";
 import { FileType } from "../types";
@@ -9,6 +8,7 @@ import { PluginInfo } from "../plugintypes";
 import { useTranslation } from "react-i18next";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
 import AddPluginUrlDialog from "./AddPluginUrlDialog";
+import usePlugins from "../hooks/usePlugins";
 
 const FileInput = styled("input")({
   display: "none",

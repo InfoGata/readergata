@@ -11,8 +11,8 @@ import { useParams } from "react-router-dom";
 import { db } from "../database";
 import { PluginInfo } from "../plugintypes";
 import { getFileTypeFromPluginUrl, getPlugin } from "../utils";
-import { usePlugins } from "../PluginsContext";
 import { useTranslation } from "react-i18next";
+import usePlugins from "../hooks/usePlugins";
 
 const PluginDetails: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();

@@ -10,7 +10,6 @@ import {
   CircularProgress,
   Fade,
 } from "@mui/material";
-import { usePlugins } from "../PluginsContext";
 import {
   generatePluginId,
   getFileTypeFromPluginUrl,
@@ -20,6 +19,7 @@ import { useNavigate } from "react-router";
 import { useSnackbar } from "notistack";
 import { defaultPlugins, PluginDescription } from "../default-plugins";
 import { useTranslation } from "react-i18next";
+import usePlugins from "../hooks/usePlugins";
 
 const PluginCards: React.FC = () => {
   const { t } = useTranslation();

@@ -14,9 +14,10 @@ import {
   getFileTypeFromPluginUrl,
   getPlugin,
 } from "../utils";
-import { PluginFrameContainer, usePlugins } from "../PluginsContext";
+import { PluginFrameContainer } from "../PluginsContext";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import usePlugins from "../hooks/usePlugins";
 
 const FileInput = styled("input")({
   display: "none",

@@ -10,8 +10,8 @@ import EbookViewer from "./EbookViewer";
 import PdfViewer from "./PdfViewer";
 import { useTranslation } from "react-i18next";
 import DragFileContainer from "./DragFileContainer";
-import { usePlugins } from "../PluginsContext";
 import { SourceType } from "../plugintypes";
+import usePlugins from "../hooks/usePlugins";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {
