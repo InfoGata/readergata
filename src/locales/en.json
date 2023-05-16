@@ -61,5 +61,8 @@
     "manifestMissingFromUrl": "The filename 'manifest.json' must be in the url",
     "failedToInstall": "Failed to Install plugin from {{manifestUrl}}",
     "installingPlugin": "Installing Plugin from {{manifestUrl}}"
+  },
+  "settings": {
+    "disableAutoUpdatePlugins": "Disable plugins updating automatically"
   }
 }

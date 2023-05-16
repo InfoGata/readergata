@@ -10,9 +10,18 @@ import PluginsContext, {
 import { useAppSelector } from "../store/hooks";
 import { db } from "../database";
 import { useSnackbar } from "notistack";
-import { getPluginSubdomain, hasExtension } from "../utils";
-import { NetworkRequest } from "../types";
+import {
+  getFileText,
+  getFileTypeFromPluginUrl,
+  getPlugin,
+  getPluginSubdomain,
+  hasExtension,
+  mapAsync,
+} from "../utils";
+import { Manifest, NetworkRequest } from "../types";
 import { Feed, NotificationMessage, PluginInfo } from "../plugintypes";
+import semverValid from "semver/functions/parse";
+import semverGt from "semver/functions/gt";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(
@@ -27,6 +36,8 @@ interface ApplicationPluginInterface extends PluginInterface {
 const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const { t } = useTranslation("plugins");
   const [pluginsLoaded, setPluginsLoaded] = React.useState(false);
+  const hasUpdated = React.useRef(false);
+
   const [pluginsFailed, setPluginsFailed] = React.useState(false);
   const [pluginFrames, setPluginFrames] = React.useState<
     PluginFrameContainer[]
@@ -36,6 +47,9 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const corsProxyUrl = useAppSelector((state) => state.settings.corsProxyUrl);
   const corsProxyUrlRef = React.useRef(corsProxyUrl);
   corsProxyUrlRef.current = corsProxyUrl;
+  const disableAutoUpdatePlugins = useAppSelector(
+    (state) => state.settings.disableAutoUpdatePlugins
+  );
 
   const loadingPlugin = React.useRef(false);
 
@@ -161,17 +175,49 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     await db.plugins.add(plugin);
   };
 
-  const updatePlugin = async (
-    plugin: PluginInfo,
-    id: string,
-    pluginFiles?: FileList
-  ) => {
-    const oldPlugin = pluginFrames.find((p) => p.id === id);
-    oldPlugin?.destroy();
-    const pluginFrame = await loadPlugin(plugin, pluginFiles);
-    setPluginFrames(pluginFrames.map((p) => (p.id === id ? pluginFrame : p)));
-    await db.plugins.put(plugin);
-  };
+  const updatePlugin = React.useCallback(
+    async (plugin: PluginInfo, id: string, pluginFiles?: FileList) => {
+      const oldPlugin = pluginFrames.find((p) => p.id === id);
+      oldPlugin?.destroy();
+      const pluginFrame = await loadPlugin(plugin, pluginFiles);
+      setPluginFrames(pluginFrames.map((p) => (p.id === id ? pluginFrame : p)));
+      await db.plugins.put(plugin);
+    },
+    [loadPlugin, pluginFrames]
+  );
+
+  React.useEffect(() => {
+    const checkUpdate = async () => {
+      if (pluginsLoaded && !disableAutoUpdatePlugins && !hasUpdated.current) {
+        hasUpdated.current = true;
+        await mapAsync(pluginFrames, async (p) => {
+          if (p.manifestUrl) {
+            const fileType = getFileTypeFromPluginUrl(p.manifestUrl);
+            const manifestText = await getFileText(fileType, "manifest.json");
+            if (manifestText) {
+              const manifest = JSON.parse(manifestText) as Manifest;
+              if (
+                manifest.version &&
+                p.version &&
+                semverValid(manifest.version) &&
+                semverValid(p.version) &&
+                semverGt(manifest.version, p.version)
+              ) {
+                const newPlugin = await getPlugin(fileType);
+
+                if (newPlugin && p.id) {
+                  newPlugin.id = p.id;
+                  newPlugin.manifestUrl = p.manifestUrl;
+                  await updatePlugin(newPlugin, p.id);
+                }
+              }
+            }
+          }
+        });
+      }
+    };
+    checkUpdate();
+  }, [pluginsLoaded, pluginFrames, disableAutoUpdatePlugins, updatePlugin]);
 
   const deletePlugin = async (pluginFrame: PluginFrameContainer) => {
     const newPlugins = pluginFrames.filter((p) => p.id !== pluginFrame.id);
