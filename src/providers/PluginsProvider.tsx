@@ -117,6 +117,12 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           });
           return feed;
         },
+        onSearch: (feed: Feed) => {
+          feed?.items.forEach((i) => {
+            i.pluginId = plugin.id;
+          });
+          return feed;
+        },
       };
 
       const srcUrl = `${getPluginSubdomain(plugin.id)}/pluginframe.html`;
