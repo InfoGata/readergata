@@ -28,6 +28,12 @@ export interface GetFeedRequest {
   apiId?: string;
 }
 
+export interface SearchRequest {
+  apiId?: string;
+  query: string;
+  searchInfo?: string;
+}
+
 export interface GetPublicationRequest {
   source: string;
 }
@@ -63,7 +69,12 @@ export type PublicationFeed = {
   items: Publication[];
 };
 
-export type Feed = CatalogFeed | PublicationFeed;
+export type FeedInfo = {
+  hasSearch: boolean;
+  searchInfo?: string;
+};
+
+export type Feed = (CatalogFeed | PublicationFeed) & FeedInfo;
 
 export interface PluginInfo {
   id?: string;

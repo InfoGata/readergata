@@ -14,6 +14,7 @@ import Plugins from "./Plugins";
 import Privacy from "./Privacy";
 import Settings from "./Settings";
 import Viewer from "./Viewer";
+import PluginFeedSearch from "./PluginFeedSearch";
 
 const Routing: React.FC = () => {
   const theme = useTheme();
@@ -38,6 +39,10 @@ const Routing: React.FC = () => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/donate" element={<Donate />} />
+        <Route
+          path="/plugins/:pluginId/feed/search"
+          element={<PluginFeedSearch />}
+        />
         <Route path="/plugins/:pluginId/feed/:apiId" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId/feed" element={<PluginFeed />} />
         <Route path="/plugins/:pluginId" element={<PluginDetails />} />

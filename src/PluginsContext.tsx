@@ -6,6 +6,7 @@ import {
   GetPublicationRequest,
   GetPublicationResponse,
   PluginInfo,
+  SearchRequest,
 } from "./plugintypes";
 
 export interface PluginMethodInterface {
@@ -13,6 +14,7 @@ export interface PluginMethodInterface {
     request: GetPublicationRequest
   ): Promise<GetPublicationResponse>;
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
+  onSearch(request: SearchRequest): Promise<Feed>;
   onUiMessage(message: any): Promise<void>;
 }
 
