@@ -1,17 +1,17 @@
-import { Backdrop, CircularProgress, Grid, Typography } from "@mui/material";
+import { Backdrop, CircularProgress, Grid } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
-import OpenFileButton from "./OpenFileButton";
+import usePlugins from "../hooks/usePlugins";
+import { SourceType } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBook, setPdf } from "../store/reducers/documentReducer";
 import { EBook, PublicationSourceType } from "../types";
-import EbookViewer from "./EbookViewer";
-import PdfViewer from "./PdfViewer";
-import { useTranslation } from "react-i18next";
 import DragFileContainer from "./DragFileContainer";
-import { SourceType } from "../plugintypes";
-import usePlugins from "../hooks/usePlugins";
+import EbookViewer from "./EbookViewer";
+import OpenFileButton from "./OpenFileButton";
+import PdfViewer from "./PdfViewer";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {

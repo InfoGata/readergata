@@ -1,5 +1,8 @@
+import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
+import Epub, { Book, Location, NavItem, Rendition } from "epubjs";
 import React from "react";
-import Epub, { Rendition, Book, NavItem, Location } from "epubjs";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   clearBookData,
   setCurrentSearchResult,
@@ -7,7 +10,6 @@ import {
   setTitle,
   setToc,
 } from "../store/reducers/uiReducer";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   BookContent,
   EBook,
@@ -15,8 +17,6 @@ import {
   SearchResult,
 } from "../types";
 import { getValidUrl } from "../utils";
-import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 // eslint-disable-next-line import/no-unresolved
 import Section from "epubjs/types/section";
 import { setCurrentLocation } from "../store/reducers/documentReducer";

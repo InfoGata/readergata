@@ -5,8 +5,12 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { PluginFrameContainer } from "../PluginsContext";
+import usePlugins from "../hooks/usePlugins";
 import { FileType, Manifest } from "../types";
 import {
   directoryProps,
@@ -14,10 +18,6 @@ import {
   getFileTypeFromPluginUrl,
   getPlugin,
 } from "../utils";
-import { PluginFrameContainer } from "../PluginsContext";
-import { styled } from "@mui/material/styles";
-import { Link } from "react-router-dom";
-import usePlugins from "../hooks/usePlugins";
 
 const FileInput = styled("input")({
   display: "none",

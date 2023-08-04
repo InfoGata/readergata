@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import documentReducer from "./reducers/documentReducer";
-import uiReducer from "./reducers/uiReducer";
 import settingsReducer from "./reducers/settingsReducer";
+import uiReducer from "./reducers/uiReducer";
 
 const rootReducer = combineReducers({
   ui: uiReducer,

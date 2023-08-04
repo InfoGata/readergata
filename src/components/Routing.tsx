@@ -1,20 +1,20 @@
 import { Box, Toolbar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AboutPage from "./AboutPage";
 import Donate from "./Donate";
 import Home from "./Home";
 import Library from "./Library";
 import PluginDetails from "./PluginDetails";
 import PluginFeed from "./PluginFeed";
+import PluginFeedSearch from "./PluginFeedSearch";
 import PluginInstall from "./PluginInstall";
 import PluginOptions from "./PluginOptions";
 import Plugins from "./Plugins";
 import Privacy from "./Privacy";
 import Settings from "./Settings";
 import Viewer from "./Viewer";
-import PluginFeedSearch from "./PluginFeedSearch";
 
 const Routing: React.FC = () => {
   const theme = useTheme();

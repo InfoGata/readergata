@@ -1,18 +1,18 @@
-import React from "react";
-import { CssBaseline, Box, Button } from "@mui/material";
-import { BrowserRouter as Router } from "react-router-dom";
-import NavigationMenu from "./components/NavigationMenu";
-import TocMenu from "./components/TocMenu";
-import Routing from "./components/Routing";
-import { QueryClient, QueryClientProvider } from "react-query";
-import TopBar from "./TopBar";
+import { Box, Button, CssBaseline } from "@mui/material";
 import { SnackbarKey, SnackbarProvider } from "notistack";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import useFullScreen from "./hooks/useFullScreen";
-import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
-import useOffline from "./hooks/useOffline";
-import SearchMenu from "./components/SearchMenu";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter as Router } from "react-router-dom";
+import TopBar from "./TopBar";
 import MatomoRouterProvider from "./components/MatomoRouterProvider";
+import NavigationMenu from "./components/NavigationMenu";
+import Routing from "./components/Routing";
+import SearchMenu from "./components/SearchMenu";
+import TocMenu from "./components/TocMenu";
+import useFullScreen from "./hooks/useFullScreen";
+import useOffline from "./hooks/useOffline";
+import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import PluginsProvider from "./providers/PluginsProvider";
 
 const queryClient = new QueryClient({

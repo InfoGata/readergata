@@ -1,9 +1,9 @@
-import React from "react";
-import usePlugins from "../hooks/usePlugins";
 import { Backdrop, CircularProgress, Grid } from "@mui/material";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React from "react";
 import { useQuery } from "react-query";
+import { useLocation, useParams } from "react-router-dom";
 import useFindPlugin from "../hooks/useFindPlugin";
+import usePlugins from "../hooks/usePlugins";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
 import FeedContainer from "./FeedContainer";
 

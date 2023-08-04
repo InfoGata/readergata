@@ -1,9 +1,9 @@
-import { ImageInfo, PluginInfo } from "./plugintypes";
-import { DirectoryFile, FileType, Manifest } from "./types";
-import i18next from "./i18n";
-import thumbnail from "./thumbnail.png";
-import store from "./store/store";
 import { customAlphabet } from "nanoid";
+import i18next from "./i18n";
+import { ImageInfo, PluginInfo } from "./plugintypes";
+import store from "./store/store";
+import thumbnail from "./thumbnail.png";
+import { DirectoryFile, FileType, Manifest } from "./types";
 
 export async function getPlugin(
   fileType: FileType

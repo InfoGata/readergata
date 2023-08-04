@@ -1,15 +1,19 @@
+import { useSnackbar } from "notistack";
 import { PluginInterface } from "plugin-frame";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import semverGt from "semver/functions/gt";
+import semverValid from "semver/functions/parse";
 import PluginsContext, {
   PluginContextInterface,
   PluginFrameContainer,
   PluginMessage,
   PluginMethodInterface,
 } from "../PluginsContext";
-import { useAppSelector } from "../store/hooks";
 import { db } from "../database";
-import { useSnackbar } from "notistack";
+import { Feed, NotificationMessage, PluginInfo } from "../plugintypes";
+import { useAppSelector } from "../store/hooks";
+import { Manifest, NetworkRequest } from "../types";
 import {
   getFileText,
   getFileTypeFromPluginUrl,
@@ -18,10 +22,6 @@ import {
   hasExtension,
   mapAsync,
 } from "../utils";
-import { Manifest, NetworkRequest } from "../types";
-import { Feed, NotificationMessage, PluginInfo } from "../plugintypes";
-import semverValid from "semver/functions/parse";
-import semverGt from "semver/functions/gt";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(

@@ -1,5 +1,3 @@
-import React from "react";
-import { Feed } from "../plugintypes";
 import {
   Button,
   Grid,
@@ -9,10 +7,12 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import PublicationInfo from "./PublicationInfo";
 import { PluginFrameContainer } from "../PluginsContext";
+import { Feed } from "../plugintypes";
+import PublicationInfo from "./PublicationInfo";
 
 interface FeedContainerProps {
   feed: Feed;

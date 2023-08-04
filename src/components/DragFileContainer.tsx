@@ -1,7 +1,7 @@
-import React from "react";
 import { styled } from "@mui/material/styles";
-import useOpenDocument from "../hooks/useOpenDocument";
+import React from "react";
 import { useDropzone } from "react-dropzone";
+import useOpenDocument from "../hooks/useOpenDocument";
 
 const Container = styled("div")(() => {
   return {

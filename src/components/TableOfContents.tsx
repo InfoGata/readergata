@@ -1,8 +1,8 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
-import { BookContent } from "../types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setContent } from "../store/reducers/uiReducer";
+import { BookContent } from "../types";
 
 interface TocItemProps {
   content: BookContent;

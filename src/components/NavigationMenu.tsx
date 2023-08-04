@@ -1,4 +1,14 @@
 import {
+  Extension,
+  Fullscreen,
+  FullscreenExit,
+  Home,
+  Info,
+  LibraryBooks,
+  MenuBook,
+  Settings,
+} from "@mui/icons-material";
+import {
   Button,
   Drawer,
   FormControl,
@@ -15,27 +25,17 @@ import {
   Tooltip,
 } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBook, setPdf } from "../store/reducers/documentReducer";
 import {
   setIsFullscreen,
   setNavigationOpen,
 } from "../store/reducers/uiReducer";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import {
-  Extension,
-  Fullscreen,
-  FullscreenExit,
-  Home,
-  Info,
-  LibraryBooks,
-  MenuBook,
-  Settings,
-} from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import OpenFileButton from "./OpenFileButton";
-import { drawerWidth } from "../utils";
 import { PublicationSourceType } from "../types";
+import { drawerWidth } from "../utils";
+import OpenFileButton from "./OpenFileButton";
 
 const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");

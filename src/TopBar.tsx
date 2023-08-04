@@ -1,10 +1,10 @@
-import { AppBar, Grid, IconButton, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Grid, IconButton, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { setNavigationOpen } from "./store/reducers/uiReducer";
 import SearchButton from "./components/SearchButton";
 import TocButton from "./components/TocButton";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { setNavigationOpen } from "./store/reducers/uiReducer";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();

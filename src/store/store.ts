@@ -1,7 +1,7 @@
+import createIdbStorage from "@piotr-cz/redux-persist-idb-storage";
 import { configureStore, PreloadedState } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import rootReducer from "./rootReducer";
-import createIdbStorage from "@piotr-cz/redux-persist-idb-storage";
 
 const persistConfig = {
   key: "root",

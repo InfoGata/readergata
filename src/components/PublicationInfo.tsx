@@ -1,11 +1,11 @@
 import {
+  Avatar,
+  Dialog,
   ListItem,
   ListItemAvatar,
-  Avatar,
-  ListItemText,
-  Dialog,
-  Typography,
   ListItemButton,
+  ListItemText,
+  Typography,
 } from "@mui/material";
 import DOMPurify from "dompurify";
 import React from "react";
