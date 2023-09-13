@@ -62,11 +62,15 @@ const search = async (book: Book, query: string) => {
   return results;
 };
 
-const EbookViewer: React.FC = () => {
+interface EbookViewerProps {
+  ebook: EBook;
+}
+
+const EbookViewer: React.FC<EbookViewerProps> = (props) => {
+  const { ebook } = props;
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const ebook = useAppSelector((state) => state.document.currentBook);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
   const currentLocation = useAppSelector(

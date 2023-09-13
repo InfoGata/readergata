@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EBook, Pdf } from "../../types";
+import { EBook, Pdf, PublicationType } from "../../types";
 
 interface DocumentState {
-  currentPdf?: Pdf;
-  currentBook?: EBook;
+  currentPublication?: PublicationType;
   currentLocation?: string;
 }
 
@@ -13,14 +12,8 @@ const pdfSlice = createSlice({
   name: "document",
   initialState,
   reducers: {
-    setPdf(state, action: PayloadAction<Pdf | undefined>) {
-      state.currentPdf = action.payload;
-      state.currentBook = undefined;
-      state.currentLocation = undefined;
-    },
-    setBook(state, action: PayloadAction<EBook | undefined>) {
-      state.currentBook = action.payload;
-      state.currentPdf = undefined;
+    setPublication(state, action: PayloadAction<PublicationType | undefined>) {
+      state.currentPublication = action.payload;
       state.currentLocation = undefined;
     },
     setCurrentLocation(state, action: PayloadAction<string | undefined>) {
@@ -29,6 +22,6 @@ const pdfSlice = createSlice({
   },
 });
 
-export const { setPdf, setBook, setCurrentLocation } = pdfSlice.actions;
+export const { setCurrentLocation, setPublication } = pdfSlice.actions;
 
 export default pdfSlice.reducer;

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store/hooks";
-import { setBook, setPdf } from "../store/reducers/documentReducer";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
 import { PublicationSourceType } from "../types";
 import { openFile } from "../utils";
+import { setPublication } from "../store/reducers/documentReducer";
 
 const useOpenDocument = () => {
   const dispatch = useAppDispatch();
@@ -14,7 +14,8 @@ const useOpenDocument = () => {
       const bookData = await openFile(file);
       if (bookData) {
         dispatch(
-          setBook({
+          setPublication({
+            type: "ebook",
             source: bookData,
             sourceType: PublicationSourceType.Binary,
           })
@@ -23,7 +24,11 @@ const useOpenDocument = () => {
     } else if (file.type.includes("application/pdf")) {
       const pdfData = await openFile(file);
       dispatch(
-        setPdf({ source: pdfData, sourceType: PublicationSourceType.Binary })
+        setPublication({
+          type: "pdf",
+          source: pdfData,
+          sourceType: PublicationSourceType.Binary,
+        })
       );
     }
     dispatch(setNavigationOpen(false));

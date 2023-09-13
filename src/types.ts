@@ -55,14 +55,18 @@ export enum PublicationSourceType {
 }
 
 export interface EBook {
+  type: "ebook";
   source: string;
   sourceType: PublicationSourceType;
 }
 
 export interface Pdf {
+  type: "pdf";
   source: string;
   sourceType: PublicationSourceType;
 }
+
+export type PublicationType = EBook | Pdf;
 
 export interface BookContent {
   title: string;

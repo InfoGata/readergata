@@ -19,7 +19,12 @@ import {
   setTitle,
   setToc,
 } from "../store/reducers/uiReducer";
-import { BookContent, PublicationSourceType, SearchResult } from "../types";
+import {
+  BookContent,
+  Pdf,
+  PublicationSourceType,
+  SearchResult,
+} from "../types";
 import { getValidUrl } from "../utils";
 
 type PDFDocumentProxy = Parameters<
@@ -47,8 +52,12 @@ const options = {
   standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts`,
 };
 
-const PdfViewer: React.FC = () => {
-  const currentPdf = useAppSelector((state) => state.document.currentPdf);
+interface PdfViewerProps {
+  currentPdf: Pdf;
+}
+
+const PdfViewer: React.FC<PdfViewerProps> = (props) => {
+  const { currentPdf } = props;
   const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState<number>();
   const [file, setFile] = React.useState<string | { data: string }>("");

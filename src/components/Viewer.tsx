@@ -6,12 +6,13 @@ import { useLocation } from "react-router-dom";
 import usePlugins from "../hooks/usePlugins";
 import { SourceType } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setBook, setPdf } from "../store/reducers/documentReducer";
 import { EBook, PublicationSourceType } from "../types";
 import DragFileContainer from "./DragFileContainer";
 import EbookViewer from "./EbookViewer";
 import OpenFileButton from "./OpenFileButton";
 import PdfViewer from "./PdfViewer";
+import { setPublication } from "../store/reducers/documentReducer";
+import { stat } from "fs";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {
@@ -25,11 +26,12 @@ const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
 
 const Viewer: React.FC = () => {
   const location = useLocation();
-  const currentPdf = useAppSelector((state) => state.document.currentPdf);
-  const currentBook = useAppSelector((state) => state.document.currentBook);
   const { t } = useTranslation();
   const { plugins, pluginsLoaded } = usePlugins();
   const dispatch = useAppDispatch();
+  const currentPublication = useAppSelector(
+    (state) => state.document.currentPublication
+  );
 
   const params = new URLSearchParams(location.search);
   const source = params.get("source");
@@ -48,13 +50,16 @@ const Viewer: React.FC = () => {
       }
 
       if (type && type.includes("pdf")) {
-        dispatch(setPdf({ source: src, sourceType: sourceType }));
+        dispatch(
+          setPublication({ type: "pdf", source: src, sourceType: sourceType })
+        );
       } else {
         const book: EBook = {
+          type: "ebook",
           source: src,
           sourceType: sourceType,
         };
-        dispatch(setBook(book));
+        dispatch(setPublication(book));
       }
     }
   };
@@ -68,14 +73,14 @@ const Viewer: React.FC = () => {
       <Backdrop open={query.isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      {currentBook ? (
-        <EbookViewer />
-      ) : currentPdf ? (
-        <PdfViewer />
-      ) : (
+      {!currentPublication ? (
         <Grid>
           <OpenFileButton />
         </Grid>
+      ) : currentPublication.type === "ebook" ? (
+        <EbookViewer ebook={currentPublication} />
+      ) : (
+        <PdfViewer currentPdf={currentPublication} />
       )}
     </DragFileContainer>
   );

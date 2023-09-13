@@ -28,7 +28,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setBook, setPdf } from "../store/reducers/documentReducer";
 import {
   setIsFullscreen,
   setNavigationOpen,
@@ -36,6 +35,7 @@ import {
 import { PublicationSourceType } from "../types";
 import { drawerWidth } from "../utils";
 import OpenFileButton from "./OpenFileButton";
+import { setPublication } from "../store/reducers/documentReducer";
 
 const NavigationMenu: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
@@ -52,14 +52,19 @@ const NavigationMenu: React.FC = () => {
     if (inputUrl) {
       if (urlType === "epub") {
         dispatch(
-          setBook({
+          setPublication({
+            type: "ebook",
             source: inputUrl,
             sourceType: PublicationSourceType.Url,
           })
         );
       } else if (urlType === "pdf") {
         dispatch(
-          setPdf({ source: inputUrl, sourceType: PublicationSourceType.Url })
+          setPublication({
+            type: "pdf",
+            source: inputUrl,
+            sourceType: PublicationSourceType.Url,
+          })
         );
       }
       navigate("/viewer");
