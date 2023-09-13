@@ -1,10 +1,11 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
-import Epub, { Book, Location, NavItem, Rendition } from "epubjs";
+import Epub, { Book, EpubCFI, Location, NavItem, Rendition } from "epubjs";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   clearBookData,
+  setCurrentChapter,
   setCurrentSearchResult,
   setSearchResults,
   setTitle,
@@ -25,6 +26,17 @@ import { setCurrentLocation } from "../store/reducers/documentReducer";
 const resolveURL = (url: string, relativeTo: string) => {
   const baseUrl = "https://example.com/";
   return new URL(url, baseUrl + relativeTo).href.replace(baseUrl, "");
+};
+
+const navItemToContent = (book: Book, items: NavItem[]): BookContent[] => {
+  if (items.length === 0) return [];
+  const path = book.packaging.navPath || book.packaging.ncxPath;
+
+  return items.map((t) => ({
+    title: t.label,
+    location: resolveURL(t.href, path),
+    items: navItemToContent(book, t.subitems || []),
+  }));
 };
 
 const openBook = async (ebook: EBook): Promise<Book | undefined> => {
@@ -61,6 +73,46 @@ const search = async (book: Book, query: string) => {
   const results = arr.reduce((a, b) => a.concat(b), []);
   return results;
 };
+
+// https://github.com/futurepress/epub.js/issues/759#issuecomment-1399499918
+function flatten(chapters: any) {
+  return [].concat.apply(
+    [],
+    chapters.map((chapter: NavItem) =>
+      [].concat.apply([chapter], flatten(chapter.subitems))
+    )
+  );
+}
+
+export function getCfiFromHref(book: Book, href: string) {
+  const [_, id] = href.split("#");
+  const section = book.spine.get(href);
+  const el = (
+    id ? section.document.getElementById(id) : section.document.body
+  ) as Element;
+  return section.cfiFromElement(el);
+}
+
+export function getChapter(book: Book, location: Location) {
+  const locationHref = location.start.href;
+
+  let match = flatten(book.navigation.toc)
+    .filter((chapter: NavItem) => {
+      return book
+        .canonical(chapter.href)
+        .includes(book.canonical(locationHref));
+    }, null)
+    .reduce((result: NavItem | null, chapter: NavItem) => {
+      const locationAfterChapter =
+        EpubCFI.prototype.compare(
+          location.start.cfi,
+          getCfiFromHref(book, chapter.href)
+        ) > 0;
+      return locationAfterChapter ? chapter : result;
+    }, null);
+
+  return match;
+}
 
 interface EbookViewerProps {
   ebook: EBook;
@@ -160,7 +212,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
     rendition?.on("keyup", onKeyUp);
   }, [rendition, onKeyUp]);
 
-  // Table of conents click
+  // Table of contents click
   React.useEffect(() => {
     if (content && content.location) {
       rendition?.display(content.location);
@@ -195,23 +247,21 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
         rend.on("relocated", (location: Location) => {
           const newLocation = location.start.cfi;
           dispatch(setCurrentLocation(newLocation));
+
+          const currentChapter = getChapter(newBook, location);
+          if (currentChapter) {
+            const currentContent = navItemToContent(newBook, [currentChapter]);
+            if (currentContent.length > 0) {
+              dispatch(setCurrentChapter(currentContent[0]));
+            }
+          }
         });
         rend.display();
         dispatch(clearBookData());
         setRendition(rend);
       }
       newBook.loaded.navigation.then((navigation) => {
-        const navItemToContent = (items: NavItem[]): BookContent[] => {
-          if (items.length === 0) return [];
-          const path = newBook.packaging.navPath || newBook.packaging.ncxPath;
-
-          return items.map((t) => ({
-            title: t.label,
-            location: resolveURL(t.href, path),
-            items: navItemToContent(t.subitems || []),
-          }));
-        };
-        const contents = navItemToContent(navigation.toc);
+        const contents = navItemToContent(newBook, navigation.toc);
         dispatch(setToc(contents));
       });
       newBook.loaded.metadata.then((metadata) => {

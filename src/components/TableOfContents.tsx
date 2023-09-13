@@ -7,20 +7,30 @@ import { BookContent } from "../types";
 interface TocItemProps {
   content: BookContent;
   isNested: boolean;
+  currentChapter?: BookContent;
 }
 
 const TocItem: React.FC<TocItemProps> = (props) => {
   const dispatch = useAppDispatch();
-  const { content, isNested } = props;
+  const { content, isNested, currentChapter } = props;
   const onClick = () => {
     if (content) {
       dispatch(setContent(content));
     }
   };
+  let title = content.title;
+  if (content.pageNumber) {
+    title += `- ${content.pageNumber}`;
+  }
+  let selected =
+    !!currentChapter?.location && currentChapter.location === content.location;
+  selected ||=
+    !!currentChapter?.pageNumber &&
+    currentChapter.pageNumber === content.pageNumber;
   return (
     <ListItem onClick={onClick}>
-      <ListItemButton sx={isNested ? { pl: 4 } : undefined}>
-        <ListItemText primary={content.title} />
+      <ListItemButton sx={isNested ? { pl: 4 } : undefined} selected={selected}>
+        <ListItemText primary={title} />
       </ListItemButton>
     </ListItem>
   );
@@ -28,6 +38,7 @@ const TocItem: React.FC<TocItemProps> = (props) => {
 
 const TableOfContents: React.FC = () => {
   const bookContents = useAppSelector((state) => state.ui.contents);
+  const currentChapter = useAppSelector((state) => state.ui.currentChapter);
   const getBookContents = (
     contents: BookContent[],
     isNested = false
@@ -37,7 +48,12 @@ const TableOfContents: React.FC = () => {
     }
 
     return contents.flatMap((c) => [
-      <TocItem key={c.title} content={c} isNested={isNested} />,
+      <TocItem
+        key={`${c.title}-${c.pageNumber}`}
+        content={c}
+        isNested={isNested}
+        currentChapter={currentChapter}
+      />,
       ...getBookContents(c.items, true),
     ]);
   };

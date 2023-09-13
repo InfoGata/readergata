@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EBook, Pdf, PublicationType } from "../../types";
+import { PublicationType } from "../../types";
 
 interface DocumentState {
   currentPublication?: PublicationType;

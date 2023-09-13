@@ -4,6 +4,7 @@ import React from "react";
 import {
   Document,
   DocumentProps,
+  PDFPageProxy,
   Page,
   TextLayerItemInternal,
   pdfjs,
@@ -14,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCurrentLocation } from "../store/reducers/documentReducer";
 import {
   clearBookData,
+  setCurrentChapter,
   setCurrentSearchResult,
   setSearchResults,
   setTitle,
@@ -25,19 +27,29 @@ import {
   PublicationSourceType,
   SearchResult,
 } from "../types";
-import { getValidUrl } from "../utils";
+import { getValidUrl, mapAsync } from "../utils";
 
 type PDFDocumentProxy = Parameters<
   NonNullable<DocumentProps["onLoadSuccess"]>
 >[0];
 type OutlineType = Awaited<ReturnType<PDFDocumentProxy["getOutline"]>>[0];
 
-const outlineToBookConent = (outline: OutlineType): BookContent => {
+const outlineToBookConent = async (
+  outline: OutlineType,
+  pdf: PDFDocumentProxy
+): Promise<BookContent> => {
+  let destination =
+    outline.dest !== "string"
+      ? outline.dest
+      : await pdf.getDestination(outline.dest);
   return {
     title: outline.title,
-    location: typeof outline.dest === "string" ? outline.dest : undefined,
-    dest: typeof outline.dest !== "string" ? outline.dest : undefined,
-    items: outline.items.map(outlineToBookConent),
+    items: await mapAsync(outline.items, (element) =>
+      outlineToBookConent(element, pdf)
+    ),
+    pageNumber: destination
+      ? (await pdf.getPageIndex(destination[0])) + 1
+      : undefined,
   };
 };
 
@@ -61,9 +73,9 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
   const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState<number>();
   const [file, setFile] = React.useState<string | { data: string }>("");
-  const [pdf, setPdf] = React.useState<PDFDocumentProxy>();
   const [pageText, setPageText] = React.useState<string[]>([]);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
+  const toc = useAppSelector((state) => state.ui.contents);
   const content = useAppSelector((state) => state.ui.content);
   const currentLocation = useAppSelector(
     (state) => state.document.currentLocation
@@ -81,26 +93,13 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
 
   React.useEffect(() => {
     const loadContent = async () => {
-      if (content && pdf) {
-        if (content.dest) {
-          const pageIndex = await pdf.getPageIndex(content.dest[0]);
-          if (pageIndex) {
-            setPageNumber(pageIndex + 1);
-          }
-        } else if (content.location) {
-          const dest = await pdf.getDestination(content.location);
-          if (dest) {
-            const pageIndex = await pdf.getPageIndex(dest[0]);
-            if (pageIndex) {
-              setPageNumber(pageIndex + 1);
-            }
-          }
-        }
+      if (content && content.pageNumber) {
+        setPageNumber(content.pageNumber);
       }
     };
 
     loadContent();
-  }, [content, pdf]);
+  }, [content]);
 
   React.useEffect(() => {
     if (currentSearchResult) {
@@ -172,7 +171,6 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
 
   const onDocumentLoad = async (pdfProxy: PDFDocumentProxy) => {
     dispatch(clearBookData());
-    setPdf(pdfProxy);
     setNumPages(pdfProxy.numPages);
     if (currentLocation) {
       setPageNumber(Number(currentLocation));
@@ -183,7 +181,9 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
     // Table of contents
     const outline = await pdfProxy.getOutline();
     if (outline) {
-      const contents = outline.map(outlineToBookConent);
+      const contents = await mapAsync(outline, async (o) =>
+        outlineToBookConent(o, pdfProxy)
+      );
       dispatch(setToc(contents));
     }
 
@@ -217,6 +217,23 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
     [searchQuery]
   );
 
+  const onPageRender = async (page: PDFPageProxy) => {
+    const renderedPageNum = page.pageNumber;
+    if (toc.length > 0) {
+      const flatContents = toc.flatMap((t) => [t, ...t.items]);
+      let currentContent = flatContents[0];
+      for (let i = 1; i < flatContents.length; i++) {
+        currentContent = flatContents[i];
+        if (renderedPageNum > (currentContent.pageNumber ?? 0)) {
+          continue;
+        } else {
+          break;
+        }
+      }
+      dispatch(setCurrentChapter(currentContent));
+    }
+  };
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
       {numPages && (pageNumber || 1) - 1 > 0 && (
@@ -237,6 +254,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
           <Page
             pageNumber={pageNumber || Number(currentLocation) || 1}
             customTextRenderer={textRenderer}
+            onRenderSuccess={onPageRender}
           />
         </Document>
       )}

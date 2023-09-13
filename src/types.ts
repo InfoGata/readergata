@@ -71,11 +71,23 @@ export type PublicationType = EBook | Pdf;
 export interface BookContent {
   title: string;
   location?: string;
-  dest?: any;
   items: BookContent[];
+  pageNumber?: number;
 }
 
 export interface SearchResult {
   location?: string;
   text: string;
+}
+
+export interface DocumentData {
+  url?: string;
+  bookmarks?: Bookmark[];
+  xxhash64?: string;
+  fileSize?: number;
+}
+
+export interface Bookmark {
+  title: string;
+  location: string;
 }

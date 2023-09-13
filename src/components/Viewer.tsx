@@ -12,7 +12,6 @@ import EbookViewer from "./EbookViewer";
 import OpenFileButton from "./OpenFileButton";
 import PdfViewer from "./PdfViewer";
 import { setPublication } from "../store/reducers/documentReducer";
-import { stat } from "fs";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {

@@ -6,8 +6,10 @@ interface UiState {
   isFullscreen: boolean;
   tocOpen: boolean;
   searchOpen: boolean;
+  bookmarksOpen: boolean;
   contents: BookContent[];
   content?: BookContent;
+  currentChapter?: BookContent;
   searchQuery: string;
   searchResults: SearchResult[];
   currentSearchResult?: SearchResult;
@@ -19,6 +21,7 @@ let initialState: UiState = {
   isFullscreen: false,
   tocOpen: false,
   searchOpen: false,
+  bookmarksOpen: false,
   contents: [],
   searchQuery: "",
   searchResults: [],
@@ -41,6 +44,9 @@ const uiSlice = createSlice({
     setSearchOpen(state, action: PayloadAction<boolean>) {
       state.searchOpen = action.payload;
     },
+    setBookmarksOpen(state, action: PayloadAction<boolean>) {
+      state.bookmarksOpen = action.payload;
+    },
     setToc(state, action: PayloadAction<BookContent[]>) {
       state.contents = action.payload;
     },
@@ -61,6 +67,9 @@ const uiSlice = createSlice({
     },
     setTitle(state, action: PayloadAction<string>) {
       state.title = action.payload;
+    },
+    setCurrentChapter(state, action: PayloadAction<BookContent>) {
+      state.currentChapter = action.payload;
     },
     clearBookData(state) {
       state.title = "";
@@ -88,6 +97,8 @@ export const {
   clearBookData,
   setSearchOpen,
   clearSearch,
+  setBookmarksOpen,
+  setCurrentChapter,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;
