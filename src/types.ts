@@ -54,16 +54,18 @@ export enum PublicationSourceType {
   Binary,
 }
 
-export interface EBook {
-  type: "ebook";
+export interface Publication {
   source: string;
   sourceType: PublicationSourceType;
+  hash?: string;
 }
 
-export interface Pdf {
+export interface EBook extends Publication {
+  type: "ebook";
+}
+
+export interface Pdf extends Publication {
   type: "pdf";
-  source: string;
-  sourceType: PublicationSourceType;
 }
 
 export type PublicationType = EBook | Pdf;
@@ -82,7 +84,7 @@ export interface SearchResult {
 
 export interface DocumentData {
   url?: string;
-  bookmarks?: Bookmark[];
+  bookmarks: Bookmark[];
   xxhash64?: string;
   fileSize?: number;
 }

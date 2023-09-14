@@ -5,6 +5,7 @@ import SearchButton from "./components/SearchButton";
 import TocButton from "./components/TocButton";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { setNavigationOpen } from "./store/reducers/uiReducer";
+import BookmarksButton from "./components/BookmarksButton";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ const TopBar: React.FC = () => {
           </Typography>
         </Grid>
         <SearchButton />
+        <BookmarksButton />
         <TocButton />
       </Toolbar>
     </AppBar>

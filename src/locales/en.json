@@ -25,7 +25,8 @@
     "email": "Email",
     "donate": "Donate",
     "privacyPolicy": "Privacy Policy",
-    "about": "About"
+    "about": "About",
+    "addBookmark": "Add Bookmark"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

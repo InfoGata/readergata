@@ -3,7 +3,30 @@ import i18next from "./i18n";
 import { ImageInfo, PluginInfo } from "./plugintypes";
 import store from "./store/store";
 import thumbnail from "./thumbnail.png";
-import { DirectoryFile, FileType, Manifest } from "./types";
+import {
+  DirectoryFile,
+  FileType,
+  Manifest,
+  PublicationSourceType,
+  PublicationType,
+} from "./types";
+import { db } from "./database";
+
+export const getDocumentData = (publication?: PublicationType) => {
+  if (publication) {
+    let table = db.documentData;
+    switch (publication.sourceType) {
+      case PublicationSourceType.Url:
+        return table.where("url").equals(publication.source);
+      case PublicationSourceType.Binary:
+        if (publication.hash) {
+          return table
+            .where(["xxhash64", "fileSize"])
+            .equals([publication.hash, publication.source.length]);
+        }
+    }
+  }
+};
 
 export async function getPlugin(
   fileType: FileType

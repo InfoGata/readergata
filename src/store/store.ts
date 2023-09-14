@@ -1,5 +1,10 @@
 import createIdbStorage from "@piotr-cz/redux-persist-idb-storage";
-import { configureStore, PreloadedState } from "@reduxjs/toolkit";
+import {
+  AnyAction,
+  configureStore,
+  PreloadedState,
+  ThunkAction,
+} from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import rootReducer from "./rootReducer";
 
@@ -37,5 +42,11 @@ export const persistor = persistStore(store);
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  AppState,
+  undefined,
+  AnyAction
+>;
 
 export default store;

@@ -14,6 +14,7 @@ import useFullScreen from "./hooks/useFullScreen";
 import useOffline from "./hooks/useOffline";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import PluginsProvider from "./providers/PluginsProvider";
+import BookmarksMenu from "./components/BookmarksMenu";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +55,7 @@ const App: React.FC = () => {
                 <Routing />
                 <TocMenu />
                 <SearchMenu />
+                <BookmarksMenu />
               </Box>
             </PluginsProvider>
           </MatomoRouterProvider>
