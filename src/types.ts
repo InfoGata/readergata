@@ -92,6 +92,6 @@ export interface DocumentData {
 }
 
 export interface Bookmark {
-  title: string;
+  title?: string;
   location: string;
 }

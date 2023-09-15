@@ -30,7 +30,7 @@ const BookmarksMenu: React.FC = () => {
 
   const addBookmark = () => {
     let collection = getDocumentData(currentPublication);
-    if (currentLocation && currentChapter && collection) {
+    if (currentLocation && collection) {
       collection.modify((data) => {
         data.bookmarks.push({
           title: currentChapter?.title,
