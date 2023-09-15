@@ -87,6 +87,7 @@ export interface DocumentData {
   bookmarks: Bookmark[];
   xxhash64?: string;
   fileSize?: number;
+  currentLocation?: string;
 }
 
 export interface Bookmark {

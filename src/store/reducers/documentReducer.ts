@@ -1,5 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { PublicationSourceType, PublicationType } from "../../types";
+import {
+  DocumentData,
+  PublicationSourceType,
+  PublicationType,
+} from "../../types";
 import { AppThunk } from "../store";
 import { db } from "../../database";
 import { xxhash64 } from "hash-wasm";
@@ -12,7 +16,7 @@ interface DocumentState {
 
 let initialState: DocumentState = {};
 
-const pdfSlice = createSlice({
+const documentSlice = createSlice({
   name: "document",
   initialState,
   reducers: {
@@ -26,22 +30,27 @@ const pdfSlice = createSlice({
   },
 });
 
-const ensureDocumentDataExists = async (publication: PublicationType) => {
+const ensureDocumentDataExists = async (
+  publication: PublicationType
+): Promise<DocumentData | undefined> => {
   let documentData = await getDocumentData(publication)?.first();
   if (!documentData) {
     switch (publication.sourceType) {
       case PublicationSourceType.Binary:
-        await db.documentData.add({
+        documentData = {
           bookmarks: [],
           xxhash64: publication.hash,
           fileSize: publication.source.length,
-        });
+        };
+        await db.documentData.add(documentData);
         break;
       case PublicationSourceType.Url:
-        await db.documentData.add({ bookmarks: [], url: publication.source });
+        documentData = { bookmarks: [], url: publication.source };
+        await db.documentData.add(documentData);
         break;
     }
   }
+  return documentData;
 };
 
 export const setPublication =
@@ -51,10 +60,29 @@ export const setPublication =
       let hash = await xxhash64(publication.source);
       publication.hash = hash;
     }
-    await ensureDocumentDataExists(publication);
-    dispatch(pdfSlice.actions.setPublication(publication));
+    let documentData = await ensureDocumentDataExists(publication);
+    dispatch(documentSlice.actions.setPublication(publication));
+    if (documentData?.currentLocation) {
+      dispatch(
+        documentSlice.actions.setCurrentLocation(documentData.currentLocation)
+      );
+    }
   };
 
-export const { setCurrentLocation } = pdfSlice.actions;
+export const setCurrentLocation =
+  (location: string | undefined): AppThunk =>
+  async (dispatch, getState) => {
+    const state = getState();
+    let currentPublication = state.document.currentPublication;
+    if (currentPublication) {
+      let documentData = getDocumentData(currentPublication);
+      if (documentData) {
+        documentData.modify((data) => {
+          data.currentLocation = location;
+        });
+      }
+    }
+    dispatch(documentSlice.actions.setCurrentLocation(location));
+  };
 
-export default pdfSlice.reducer;
+export default documentSlice.reducer;
