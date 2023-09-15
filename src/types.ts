@@ -83,6 +83,7 @@ export interface SearchResult {
 }
 
 export interface DocumentData {
+  id?: string;
   url?: string;
   bookmarks: Bookmark[];
   xxhash64?: string;

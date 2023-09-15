@@ -13,7 +13,7 @@ class ReaderDatabase extends Dexie {
       plugins: "id",
     });
     this.version(2).stores({
-      documentData: "++id, url, [xxhash64+fileSize]",
+      documentData: "id, url, [xxhash64+fileSize]",
     });
     this.plugins = this.table("plugins");
     this.documentData = this.table("documentData");

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 import {
   DocumentData,
   PublicationSourceType,
@@ -35,9 +35,11 @@ const ensureDocumentDataExists = async (
 ): Promise<DocumentData | undefined> => {
   let documentData = await getDocumentData(publication)?.first();
   if (!documentData) {
+    let id = nanoid();
     switch (publication.sourceType) {
       case PublicationSourceType.Binary:
         documentData = {
+          id,
           bookmarks: [],
           xxhash64: publication.hash,
           fileSize: publication.source.length,
@@ -45,7 +47,7 @@ const ensureDocumentDataExists = async (
         await db.documentData.add(documentData);
         break;
       case PublicationSourceType.Url:
-        documentData = { bookmarks: [], url: publication.source };
+        documentData = { id, bookmarks: [], url: publication.source };
         await db.documentData.add(documentData);
         break;
     }
