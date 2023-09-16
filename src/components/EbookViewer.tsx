@@ -20,7 +20,10 @@ import {
 import { getValidUrl } from "../utils";
 // eslint-disable-next-line import/no-unresolved
 import Section from "epubjs/types/section";
-import { setCurrentLocation } from "../store/reducers/documentReducer";
+import {
+  setCurrentLocation,
+  setPublicationData,
+} from "../store/reducers/documentReducer";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {
@@ -265,7 +268,10 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
         dispatch(setToc(contents));
       });
       newBook.loaded.metadata.then((metadata) => {
-        dispatch(setTitle(metadata.title));
+        const author = metadata.creator;
+        const title = metadata.title;
+        dispatch(setTitle(title));
+        dispatch(setPublicationData({ title, author }));
       });
 
       book.current = newBook;

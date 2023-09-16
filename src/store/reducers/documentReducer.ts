@@ -87,4 +87,23 @@ export const setCurrentLocation =
     dispatch(documentSlice.actions.setCurrentLocation(location));
   };
 
+export const setPublicationData =
+  (data: Partial<DocumentData>): AppThunk =>
+  async (_dispatch, getState) => {
+    const state = getState();
+    const currentPublication = state.document.currentPublication;
+    let documentDataCollection = getDocumentData(currentPublication);
+    if (!documentDataCollection) {
+      return;
+    }
+
+    let documentData = await documentDataCollection.first();
+    if (documentData && !documentData.title && data.title) {
+      documentDataCollection.modify((oldData) => {
+        oldData.title = data.title;
+        oldData.author = data.author;
+      });
+    }
+  };
+
 export default documentSlice.reducer;

@@ -12,7 +12,10 @@ import {
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setCurrentLocation } from "../store/reducers/documentReducer";
+import {
+  setCurrentLocation,
+  setPublicationData,
+} from "../store/reducers/documentReducer";
 import {
   clearBookData,
   setCurrentChapter,
@@ -189,8 +192,17 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
 
     // Set Title
     const metadata = await pdfProxy.getMetadata();
+    let title: string | undefined;
+    let author: string | undefined;
     if ("Title" in metadata.info && typeof metadata.info.Title === "string") {
+      title = metadata.info.Title;
       dispatch(setTitle(metadata.info.Title));
+    }
+    if ("Author" in metadata.info && typeof metadata.info.Author === "string") {
+      author = metadata.info.Author;
+    }
+    if (title || author) {
+      dispatch(setPublicationData({ title, author }));
     }
 
     // Load all text content for searching
