@@ -22,7 +22,8 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src"
+    "src",
+    "electron/preload/*.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

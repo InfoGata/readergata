@@ -1,6 +1,13 @@
-import { app, BrowserWindow, session } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  OpenDialogOptions,
+} from "electron";
 import { join } from "path";
 import { optimizer, is } from "@electron-toolkit/utils";
+import fs from "fs";
 
 function UpsertKeyValue(obj: any, keyToChange: string, value: string[]) {
   const keyToChangeLower = keyToChange.toLowerCase();
@@ -26,6 +33,23 @@ function createWindow() {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
     },
+  });
+
+  ipcMain.handle("open-file-dialog", async () => {
+    const dialogConfig: OpenDialogOptions = {
+      title: "Select a file",
+      properties: ["openFile"],
+      filters: [{ name: "Text Files", extensions: ["txt"] }],
+    };
+    const files = await dialog.showOpenDialog(dialogConfig);
+    if (files.filePaths.length === 0) {
+      return;
+    }
+
+    const file = files.filePaths[0];
+    const content = fs.readFileSync(file).toString();
+    mainWindow.setRepresentedFilename(file);
+    return content;
   });
 
   mainWindow.on("ready-to-show", () => {
@@ -56,29 +80,6 @@ function createWindow() {
         }
       }
       callback({
-        responseHeaders,
-      });
-    }
-  );
-
-  // Twitch Plugin CSP fails unless it is removed due to a frame-ancestors violation
-  session.defaultSession.webRequest.onHeadersReceived(
-    {
-      urls: [
-        "https://www.twitch.tv/*",
-        "https://player.twitch.tv/*",
-        "https://embed.twitch.tv/*",
-      ],
-    },
-    (details, callback) => {
-      const { responseHeaders } = details;
-
-      if (responseHeaders) {
-        delete responseHeaders["Content-Security-Policy"];
-      }
-
-      callback({
-        cancel: false,
         responseHeaders,
       });
     }
