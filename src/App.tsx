@@ -3,7 +3,7 @@ import { SnackbarKey, SnackbarProvider } from "notistack";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import TopBar from "./TopBar";
 import MatomoRouterProvider from "./components/MatomoRouterProvider";
 import NavigationMenu from "./components/NavigationMenu";
@@ -15,6 +15,9 @@ import useOffline from "./hooks/useOffline";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import PluginsProvider from "./providers/PluginsProvider";
 import BookmarksMenu from "./components/BookmarksMenu";
+import isElectron from "is-electron";
+
+const Router = isElectron() ? HashRouter : BrowserRouter;
 
 const queryClient = new QueryClient({
   defaultOptions: {
