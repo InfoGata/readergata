@@ -1,7 +1,6 @@
 import { Search } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSearchOpen } from "../store/reducers/uiReducer";
 
@@ -9,9 +8,8 @@ const SearchButton: React.FC = () => {
   const dispatch = useAppDispatch();
   const searchOpen = useAppSelector((state) => state.ui.searchOpen);
   const onSearchToggle = () => dispatch(setSearchOpen(!searchOpen));
-  const location = useLocation();
 
-  return location.pathname === "/viewer" ? (
+  return (
     <IconButton
       color="inherit"
       aria-label="menu"
@@ -22,7 +20,7 @@ const SearchButton: React.FC = () => {
     >
       <Search />
     </IconButton>
-  ) : null;
+  );
 };
 
 export default SearchButton;

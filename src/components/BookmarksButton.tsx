@@ -1,7 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBookmarksOpen } from "../store/reducers/uiReducer";
-import { useLocation } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { Bookmarks } from "@mui/icons-material";
 
@@ -9,9 +8,8 @@ const BookmarksButton: React.FC = () => {
   const dispatch = useAppDispatch();
   const bookmarksOpen = useAppSelector((state) => state.ui.bookmarksOpen);
   const onBookmarksToggle = () => dispatch(setBookmarksOpen(!bookmarksOpen));
-  const location = useLocation();
 
-  return location.pathname === "/viewer" ? (
+  return (
     <IconButton
       color="inherit"
       aria-label="bookmarks"
@@ -22,7 +20,7 @@ const BookmarksButton: React.FC = () => {
     >
       <Bookmarks />
     </IconButton>
-  ) : null;
+  );
 };
 
 export default BookmarksButton;

@@ -1,7 +1,6 @@
 import { Toc } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setTocOpen } from "../store/reducers/uiReducer";
 
@@ -9,9 +8,8 @@ const TocButton: React.FC = () => {
   const dispatch = useAppDispatch();
   const tocOpen = useAppSelector((state) => state.ui.tocOpen);
   const onTocToggle = () => dispatch(setTocOpen(!tocOpen));
-  const location = useLocation();
 
-  return location.pathname === "/viewer" ? (
+  return (
     <IconButton
       color="inherit"
       aria-label="menu"
@@ -22,7 +20,7 @@ const TocButton: React.FC = () => {
     >
       <Toc />
     </IconButton>
-  ) : null;
+  );
 };
 
 export default TocButton;

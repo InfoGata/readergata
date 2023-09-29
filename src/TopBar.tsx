@@ -7,11 +7,13 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { setNavigationOpen } from "./store/reducers/uiReducer";
 import BookmarksButton from "./components/BookmarksButton";
 import Title from "./components/Title";
+import { useLocation } from "react-router-dom";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
+  const location = useLocation();
 
   return (
     <AppBar color="default" position="fixed">
@@ -26,10 +28,14 @@ const TopBar: React.FC = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Title />
-        <SearchButton />
-        <BookmarksButton />
-        <TocButton />
+        {location.pathname === "/viewer" ? (
+          <>
+            <Title />
+            <SearchButton />
+            <BookmarksButton />
+            <TocButton />
+          </>
+        ) : null}
       </Toolbar>
     </AppBar>
   );
