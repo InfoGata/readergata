@@ -17,7 +17,7 @@ import {
   PublicationSourceType,
   SearchResult,
 } from "../types";
-import { getValidUrl } from "../utils";
+import { debounce, getValidUrl } from "../utils";
 // eslint-disable-next-line import/no-unresolved
 import Section from "epubjs/types/section";
 import {
@@ -259,6 +259,16 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
             }
           }
         });
+        rend.on(
+          "selected",
+          debounce((cfiRange: Range) => {
+            const selCfi = new EpubCFI(cfiRange);
+            selCfi.collapse();
+            const compare =
+              EpubCFI.prototype.compare(selCfi, rend.location.end.cfi) >= 0;
+            if (compare) rend?.next();
+          }, 500)
+        );
         rend.display();
         dispatch(clearBookData());
         setRendition(rend);

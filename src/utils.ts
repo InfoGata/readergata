@@ -243,6 +243,20 @@ export const generatePluginId = () => {
   return nanoid();
 };
 
+export const debounce = (f: Function, wait: number, immediate?: boolean) => {
+  let timeout: NodeJS.Timeout | undefined;
+  return (...args: any[]) => {
+    const later = () => {
+      timeout = undefined;
+      if (!immediate) f(...args);
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) f(...args);
+  };
+};
+
 export const searchThumbnailSize = 40;
 
 export const drawerWidth = 240;
