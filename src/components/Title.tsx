@@ -7,8 +7,6 @@ const Title: React.FC = () => {
   const currentPublication = useAppSelector(
     (state) => state.document.currentPublication
   );
-  console.log(title);
-  console.log(currentPublication?.fileName);
 
   return (
     <Grid container justifyContent="center">

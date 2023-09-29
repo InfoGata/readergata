@@ -25,7 +25,6 @@ const OpenUrlForm: React.FC = () => {
     if (inputUrl) {
       const url = new URL(inputUrl);
       const fileName = url.pathname.split("/").pop();
-      console.log(fileName);
       if (urlType === "epub") {
         dispatch(
           setPublication({
