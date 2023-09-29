@@ -9,88 +9,33 @@ import {
   Settings,
 } from "@mui/icons-material";
 import {
-  Button,
   Drawer,
-  FormControl,
-  FormControlLabel,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Radio,
-  RadioGroup,
-  TextField,
   Tooltip,
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import OpenUrlForm from "./OpenUrlForm";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setIsFullscreen,
   setNavigationOpen,
 } from "../store/reducers/uiReducer";
-import { PublicationSourceType } from "../types";
 import { drawerWidth } from "../utils";
 import OpenFileButton from "./OpenFileButton";
-import { setPublication } from "../store/reducers/documentReducer";
 
 const NavigationMenu: React.FC = () => {
-  const [inputUrl, setInputUrl] = React.useState("");
   const dispatch = useAppDispatch();
-  const [urlType, setUrlType] = React.useState("epub");
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
   const onClose = () => dispatch(setNavigationOpen(false));
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
   const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const onUrlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (inputUrl) {
-      if (urlType === "epub") {
-        dispatch(
-          setPublication({
-            type: "ebook",
-            source: inputUrl,
-            sourceType: PublicationSourceType.Url,
-          })
-        );
-      } else if (urlType === "pdf") {
-        dispatch(
-          setPublication({
-            type: "pdf",
-            source: inputUrl,
-            sourceType: PublicationSourceType.Url,
-          })
-        );
-      }
-      navigate("/viewer");
-    }
-  };
-
-  const onInputUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputUrl(value);
-    try {
-      const url = new URL(value);
-      const ext = url.pathname.split(".").pop();
-      switch (ext) {
-        case "epub":
-          setUrlType("epub");
-          break;
-        case "pdf":
-          setUrlType("pdf");
-          break;
-      }
-    } catch {}
-  };
-
-  const onRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUrlType((event.target as HTMLInputElement).value);
-  };
 
   return (
     <Drawer
@@ -168,29 +113,7 @@ const NavigationMenu: React.FC = () => {
       <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
         {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
       </IconButton>
-      <form onSubmit={onUrlSubmit}>
-        <FormControl>
-          <TextField
-            value={inputUrl}
-            onChange={onInputUrlChange}
-            placeholder="URL"
-            name="url"
-          />
-          <RadioGroup
-            row
-            aria-labelledby="demo-controlled-radio-buttons-group"
-            name="controlled-radio-buttons-group"
-            value={urlType}
-            onChange={onRadioChange}
-          >
-            <FormControlLabel value="epub" control={<Radio />} label="Epub" />
-            <FormControlLabel value="pdf" control={<Radio />} label="PDF" />
-          </RadioGroup>
-        </FormControl>
-        <Button variant="contained" type="submit">
-          {t("submit")}
-        </Button>
-      </form>
+      <OpenUrlForm />
     </Drawer>
   );
 };

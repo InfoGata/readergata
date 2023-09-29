@@ -1,7 +1,6 @@
 import { customAlphabet } from "nanoid";
 import i18next from "./i18n";
 import { ImageInfo, PluginInfo } from "./plugintypes";
-import store from "./store/store";
 import thumbnail from "./thumbnail.png";
 import {
   DirectoryFile,
@@ -182,8 +181,7 @@ export const getValidUrl = async (url: string, mimeType: string) => {
   } catch {
     // Determine if error is because of cors
     const noProtocol = url.replace(/(^\w+:|^)\/\//, "");
-    const userProxy = store.getState().settings.corsProxyUrl;
-    const proxyUrl = `${userProxy || proxy}${noProtocol}`;
+    const proxyUrl = `${proxy}${noProtocol}`;
     try {
       const response = await fetch(proxyUrl, { method: "HEAD" });
       if (response.status === 404) {

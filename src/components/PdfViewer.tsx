@@ -196,6 +196,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
     let author: string | undefined;
     if ("Title" in metadata.info && typeof metadata.info.Title === "string") {
       title = metadata.info.Title;
+      console.log(title);
       dispatch(setTitle(metadata.info.Title));
     }
     if ("Author" in metadata.info && typeof metadata.info.Author === "string") {
