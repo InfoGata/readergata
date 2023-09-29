@@ -6,11 +6,11 @@ import TocButton from "./components/TocButton";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { setNavigationOpen } from "./store/reducers/uiReducer";
 import BookmarksButton from "./components/BookmarksButton";
+import Title from "./components/Title";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
-  const title = useAppSelector((state) => state.ui.title);
   const onNavigationToggle = () => dispatch(setNavigationOpen(!navigationOpen));
 
   return (
@@ -26,11 +26,7 @@ const TopBar: React.FC = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Grid container justifyContent="center">
-          <Typography variant="subtitle1" noWrap>
-            {title}
-          </Typography>
-        </Grid>
+        <Title />
         <SearchButton />
         <BookmarksButton />
         <TocButton />
