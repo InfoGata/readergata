@@ -27,6 +27,10 @@ const documentSlice = createSlice({
     setCurrentLocation(state, action: PayloadAction<string | undefined>) {
       state.currentLocation = action.payload;
     },
+    clearPublication(state) {
+      state.currentLocation = undefined;
+      state.currentPublication = undefined;
+    },
   },
 });
 
@@ -43,11 +47,17 @@ const ensureDocumentDataExists = async (
           bookmarks: [],
           xxhash64: publication.hash,
           fileSize: publication.source.length,
+          fileName: publication.fileName,
         };
         await db.documentData.add(documentData);
         break;
       case PublicationSourceType.Url:
-        documentData = { id, bookmarks: [], url: publication.source };
+        documentData = {
+          id,
+          bookmarks: [],
+          url: publication.source,
+          fileName: publication.fileName,
+        };
         await db.documentData.add(documentData);
         break;
     }
@@ -106,4 +116,5 @@ export const setPublicationData =
     }
   };
 
+export const { clearPublication } = documentSlice.actions;
 export default documentSlice.reducer;

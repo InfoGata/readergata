@@ -58,6 +58,7 @@ export interface Publication {
   source: string;
   sourceType: PublicationSourceType;
   hash?: string;
+  fileName?: string;
 }
 
 export interface EBook extends Publication {
@@ -91,6 +92,7 @@ export interface DocumentData {
   currentLocation?: string;
   title?: string;
   author?: string;
+  fileName?: string;
 }
 
 export interface Bookmark {

@@ -26,7 +26,8 @@
     "donate": "Donate",
     "privacyPolicy": "Privacy Policy",
     "about": "About",
-    "addBookmark": "Add Bookmark"
+    "addBookmark": "Add Bookmark",
+    "remove": "Remove"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

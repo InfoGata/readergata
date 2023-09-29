@@ -18,6 +18,7 @@ const useOpenDocument = () => {
             type: "ebook",
             source: bookData,
             sourceType: PublicationSourceType.Binary,
+            fileName: file.name,
           })
         );
       }
@@ -28,6 +29,7 @@ const useOpenDocument = () => {
           type: "pdf",
           source: pdfData,
           sourceType: PublicationSourceType.Binary,
+          fileName: file.name,
         })
       );
     }

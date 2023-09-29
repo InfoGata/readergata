@@ -5,7 +5,7 @@ import { DocumentData } from "./types";
 
 class ReaderDatabase extends Dexie {
   plugins: Dexie.Table<PluginInfo, string>;
-  documentData: Dexie.Table<DocumentData, number>;
+  documentData: Dexie.Table<DocumentData, string>;
 
   constructor() {
     super("ReaderDatabase");
