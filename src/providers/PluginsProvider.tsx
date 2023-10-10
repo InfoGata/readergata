@@ -200,7 +200,11 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         await mapAsync(pluginFrames, async (p) => {
           if (p.manifestUrl) {
             const fileType = getFileTypeFromPluginUrl(p.manifestUrl);
-            const manifestText = await getFileText(fileType, "manifest.json");
+            const manifestText = await getFileText(
+              fileType,
+              "manifest.json",
+              true
+            );
             if (manifestText) {
               const manifest = JSON.parse(manifestText) as Manifest;
               if (
