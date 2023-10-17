@@ -15,6 +15,7 @@
     "@mui/material": "^5.8.6",
     "@piotr-cz/redux-persist-idb-storage": "^1.1.3",
     "@reduxjs/toolkit": "^1.4.0",
+    "@sentry/browser": "^7.74.0",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/dompurify": "^2.4.0",

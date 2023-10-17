@@ -11,6 +11,11 @@ import App from "./App";
 import "./i18n";
 import "./index.css";
 import store, { persistor } from "./store/store";
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+  dsn: "https://691bc946c63849509dc61a61eaee4a5f@app.glitchtip.com/4800",
+});
 
 const theme = createTheme({
   palette: {
