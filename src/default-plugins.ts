@@ -3,6 +3,7 @@ export interface PluginDescription {
   name: string;
   url: string;
   description: string;
+  preinstall?: boolean;
 }
 
 export const defaultPlugins: PluginDescription[] = [

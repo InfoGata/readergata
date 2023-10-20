@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface SettingsState {
   corsProxyUrl?: string;
   disableAutoUpdatePlugins?: boolean;
+  pluginsPreinstalled?: boolean;
 }
 
 const initialState: SettingsState = {};
@@ -23,10 +24,16 @@ const settingsSlice = createSlice({
         autoUpdatePlugins: !state.disableAutoUpdatePlugins,
       };
     },
+    setPluginsPreInstalled: (state) => {
+      return { ...state, pluginsPreinstalled: true };
+    },
   },
 });
 
-export const { saveCorsProxyUrl, toggleDisableAutoUpdatePlugins } =
-  settingsSlice.actions;
+export const {
+  saveCorsProxyUrl,
+  toggleDisableAutoUpdatePlugins,
+  setPluginsPreInstalled,
+} = settingsSlice.actions;
 
 export default settingsSlice.reducer;

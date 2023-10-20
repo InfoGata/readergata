@@ -1,3 +1,4 @@
+import isElectron from "is-electron";
 import { useSnackbar } from "notistack";
 import { PluginInterface } from "plugin-frame";
 import React from "react";
@@ -11,8 +12,10 @@ import PluginsContext, {
   PluginMethodInterface,
 } from "../PluginsContext";
 import { db } from "../database";
+import { defaultPlugins } from "../default-plugins";
 import { Feed, NotificationMessage, PluginInfo } from "../plugintypes";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
 import { Manifest, NetworkRequest } from "../types";
 import {
   getFileText,
@@ -22,7 +25,6 @@ import {
   hasExtension,
   mapAsync,
 } from "../utils";
-import isElectron from "is-electron";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(
@@ -38,8 +40,8 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const { t } = useTranslation("plugins");
   const [pluginsLoaded, setPluginsLoaded] = React.useState(false);
   const hasUpdated = React.useRef(false);
-
   const [pluginsFailed, setPluginsFailed] = React.useState(false);
+  const dispatch = useAppDispatch();
   const [pluginFrames, setPluginFrames] = React.useState<
     PluginFrameContainer[]
   >([]);
@@ -55,6 +57,10 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const loadingPlugin = React.useRef(false);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const pluginsPreinstalled = useAppSelector(
+    (state) => state.settings.pluginsPreinstalled
+  );
 
   const loadPlugin = React.useCallback(
     async (plugin: PluginInfo, pluginFiles?: FileList) => {
@@ -174,13 +180,21 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
   const addPlugin = async (plugin: PluginInfo) => {
     if (pluginFrames.some((p) => p.id === plugin.id)) {
+      enqueueSnackbar(`A plugin with Id ${plugin.id} is already installed`);
       return;
     }
 
-    const pluginFrame = await loadPlugin(plugin);
-    setPluginFrames([...pluginFrames, pluginFrame]);
-    await db.plugins.add(plugin);
+    await loadAndAddPlugin(plugin);
   };
+
+  const loadAndAddPlugin = React.useCallback(
+    async (plugin: PluginInfo) => {
+      const pluginFrame = await loadPlugin(plugin);
+      setPluginFrames((prev) => [...prev, pluginFrame]);
+      await db.plugins.add(plugin);
+    },
+    [loadPlugin]
+  );
 
   const updatePlugin = React.useCallback(
     async (plugin: PluginInfo, id: string, pluginFiles?: FileList) => {
@@ -192,6 +206,31 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     },
     [loadPlugin, pluginFrames]
   );
+
+  React.useEffect(() => {
+    const preinstall = async () => {
+      if (pluginsLoaded && !pluginsPreinstalled) {
+        // Make sure preinstall plugins aren't already installed
+        const presinstallPlugins = defaultPlugins.filter(
+          (dp) => !!dp.preinstall
+        );
+        const plugs = await db.plugins.toArray();
+        const newPlugins = presinstallPlugins.filter(
+          (preinstall) => !plugs.some((pf) => pf.id === preinstall.id)
+        );
+        await mapAsync(newPlugins, async (newPlugin) => {
+          const fileType = getFileTypeFromPluginUrl(newPlugin.url);
+          const plugin = await getPlugin(fileType, true);
+          if (!plugin) return;
+
+          await loadAndAddPlugin(plugin);
+        });
+        dispatch(setPluginsPreInstalled());
+      }
+    };
+
+    preinstall();
+  }, [dispatch, pluginsLoaded, pluginsPreinstalled, loadAndAddPlugin]);
 
   React.useEffect(() => {
     const checkUpdate = async () => {
