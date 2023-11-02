@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
@@ -6,12 +6,13 @@ import { useLocation } from "react-router-dom";
 import usePlugins from "../hooks/usePlugins";
 import { SourceType } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setPublication } from "../store/reducers/documentReducer";
 import { EBook, PublicationSourceType } from "../types";
 import DragFileContainer from "./DragFileContainer";
 import EbookViewer from "./EbookViewer";
 import OpenFileButton from "./OpenFileButton";
 import PdfViewer from "./PdfViewer";
-import { setPublication } from "../store/reducers/documentReducer";
+import Spinner from "./Spinner";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {
@@ -69,9 +70,7 @@ const Viewer: React.FC = () => {
 
   return (
     <DragFileContainer>
-      <Backdrop open={query.isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <Spinner open={query.isLoading} />
       {!currentPublication ? (
         <Grid>
           <OpenFileButton />

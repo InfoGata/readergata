@@ -1,10 +1,11 @@
-import { Backdrop, CircularProgress, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { db } from "../database";
 import usePlugins from "../hooks/usePlugins";
 import { getPluginSubdomain } from "../utils";
+import Spinner from "./Spinner";
 
 const PluginOptions: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();
@@ -50,11 +51,7 @@ const PluginOptions: React.FC = () => {
   }, [plugin]);
 
   if (!pluginsLoaded) {
-    return (
-      <Backdrop open={true}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
+    return <Spinner />;
   }
   if (!plugin) return <>{t("common:notFound")}</>;
 

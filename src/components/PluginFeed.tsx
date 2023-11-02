@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import useFindPlugin from "../hooks/useFindPlugin";
 import usePlugins from "../hooks/usePlugins";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
 import FeedContainer from "./FeedContainer";
+import Spinner from "./Spinner";
 
 const PluginFeed: React.FC = () => {
   const { plugins, pluginsLoaded } = usePlugins();
@@ -32,9 +33,7 @@ const PluginFeed: React.FC = () => {
 
   return (
     <Grid>
-      <Backdrop open={query.isLoading || isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <Spinner open={query.isLoading || isLoading} />
       {query.data && (
         <FeedContainer
           feed={query.data}
