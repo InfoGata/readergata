@@ -1,15 +1,14 @@
 import { customAlphabet } from "nanoid";
+import { db } from "./database";
 import i18next from "./i18n";
-import { ImageInfo, PluginInfo } from "./plugintypes";
+import { ImageInfo, Manifest, PluginInfo } from "./plugintypes";
 import thumbnail from "./thumbnail.png";
 import {
   DirectoryFile,
   FileType,
-  Manifest,
   PublicationSourceType,
   PublicationType,
 } from "./types";
-import { db } from "./database";
 
 export const getDocumentData = (publication?: PublicationType) => {
   if (publication) {
@@ -54,6 +53,7 @@ export async function getPlugin(
     version: manifest.version,
     manifestUrl: manifest.updateUrl || fileType.url?.url,
     homepage: manifest.homepage,
+    manifest,
   };
 
   if (manifest.options) {

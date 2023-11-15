@@ -13,10 +13,15 @@ import PluginsContext, {
 } from "../PluginsContext";
 import { db } from "../database";
 import { defaultPlugins } from "../default-plugins";
-import { Feed, NotificationMessage, PluginInfo } from "../plugintypes";
+import {
+  Feed,
+  Manifest,
+  NotificationMessage,
+  PluginInfo,
+} from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
-import { Manifest, NetworkRequest } from "../types";
+import { NetworkRequest } from "../types";
 import {
   getFileText,
   getFileTypeFromPluginUrl,
