@@ -28,6 +28,7 @@ export interface InfoGataExtension {
     auth: ManifestAuthentication,
     pluginId: string
   ) => Promise<void>;
+  getVersion?: () => Promise<string>;
 }
 
 export interface DirectoryFile extends File {

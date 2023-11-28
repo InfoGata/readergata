@@ -6,15 +6,19 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { db } from "../database";
 import usePlugins from "../hooks/usePlugins";
 import { PluginInfo } from "../plugintypes";
-import { corsIsDisabled, getFileTypeFromPluginUrl, getPlugin } from "../utils";
-import { useLiveQuery } from "dexie-react-hooks";
 import { NotifyLoginMessage } from "../types";
+import {
+  getFileTypeFromPluginUrl,
+  getPlugin,
+  hasAuthentication,
+} from "../utils";
 
 const PluginDetails: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();
@@ -25,7 +29,15 @@ const PluginDetails: React.FC = () => {
   const plugin = plugins.find((p) => p.id === pluginId);
   const { t } = useTranslation(["plugins", "common"]);
   const pluginAuth = useLiveQuery(() => db.pluginAuths.get(pluginId || ""));
-  const hasLogin = corsIsDisabled() && !!pluginInfo?.manifest?.authentication;
+  const [hasAuth, setHasAuth] = React.useState(false);
+
+  React.useEffect(() => {
+    const getHasAuth = async () => {
+      const platformHasAuth = await hasAuthentication();
+      setHasAuth(platformHasAuth && !!pluginInfo?.manifest?.authentication);
+    };
+    getHasAuth();
+  }, [pluginInfo]);
 
   const iframeListener = React.useCallback(
     async (event: MessageEvent<NotifyLoginMessage>) => {
@@ -166,7 +178,7 @@ const PluginDetails: React.FC = () => {
               </ListItem>
             )}
           </List>
-          {hasLogin && (
+          {hasAuth && (
             <ListItem disablePadding>
               {pluginAuth ? (
                 <ListItemButton onClick={onLogout}>

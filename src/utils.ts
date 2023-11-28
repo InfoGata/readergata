@@ -10,6 +10,7 @@ import {
   PublicationSourceType,
   PublicationType,
 } from "./types";
+import semverGte from "semver/functions/gte";
 
 export const getDocumentData = (publication?: PublicationType) => {
   if (publication) {
@@ -179,6 +180,15 @@ export const hasExtension = () => {
 
 export const corsIsDisabled = () => {
   return hasExtension() || isElectron();
+};
+
+export const hasAuthentication = async () => {
+  const minVersion = "1.1.0";
+  if (hasExtension() && window.InfoGata.getVersion) {
+    const version = await window.InfoGata.getVersion();
+    return semverGte(version, minVersion);
+  }
+  return false;
 };
 
 export const getValidUrl = async (url: string, mimeType: string) => {
