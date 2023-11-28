@@ -102,7 +102,17 @@ export interface Manifest {
   options?: string | ManifestOptions;
   homepage?: string;
   updateUrl?: string;
+  authentication?: ManifestAuthentication;
 }
+
+export interface ManifestAuthentication {
+  loginUrl: string;
+  cookiesToFind?: string[];
+  loginButton?: string;
+  headersToFind?: string[];
+  completionUrl?: string;
+}
+
 export interface ManifestOptions {
   page: string;
   sameOrigin?: boolean;

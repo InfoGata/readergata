@@ -1,10 +1,11 @@
 import Dexie from "dexie";
 
 import { PluginInfo } from "./plugintypes";
-import { DocumentData } from "./types";
+import { DocumentData, PluginAuthentication } from "./types";
 
 class ReaderDatabase extends Dexie {
   plugins: Dexie.Table<PluginInfo, string>;
+  pluginAuths: Dexie.Table<PluginAuthentication, string>;
   documentData: Dexie.Table<DocumentData, string>;
 
   constructor() {
@@ -15,8 +16,12 @@ class ReaderDatabase extends Dexie {
     this.version(2).stores({
       documentData: "id, url, [xxhash64+fileSize]",
     });
+    this.version(3).stores({
+      pluginAuths: "pluginId",
+    });
     this.plugins = this.table("plugins");
     this.documentData = this.table("documentData");
+    this.pluginAuths = this.table("pluginAuths");
   }
 }
 

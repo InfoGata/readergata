@@ -16,6 +16,7 @@ export interface PluginMethodInterface {
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
   onSearch(request: SearchRequest): Promise<Feed>;
   onUiMessage(message: any): Promise<void>;
+  onPostLogin(): Promise<void>;
 }
 
 export interface PluginMessage {

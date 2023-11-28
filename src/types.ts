@@ -1,9 +1,15 @@
+import { ManifestAuthentication } from "./plugintypes";
+
 export interface NetworkRequest {
   body: Blob | ArrayBuffer;
   headers: { [k: string]: string };
   status: number;
   statusText: string;
   url: string;
+}
+
+export interface NetworkRequestOptions {
+  auth?: ManifestAuthentication;
 }
 
 declare global {
@@ -15,13 +21,29 @@ declare global {
 export interface InfoGataExtension {
   networkRequest: (
     input: RequestInfo,
-    init?: RequestInit
+    init?: RequestInit,
+    options?: NetworkRequestOptions
   ) => Promise<NetworkRequest>;
+  openLoginWindow?: (
+    auth: ManifestAuthentication,
+    pluginId: string
+  ) => Promise<void>;
 }
 
 export interface DirectoryFile extends File {
   webkitRelativePath: string;
 }
+
+export interface PluginAuthentication {
+  pluginId: string;
+  headers: Record<string, string>;
+}
+
+export type NotifyLoginMessage = {
+  type: "infogata-extension-notify-login";
+  pluginId: string;
+  headers: Record<string, string>;
+};
 
 export interface UrlInfo {
   url: string;

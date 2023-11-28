@@ -1,4 +1,3 @@
-import isElectron from "is-electron";
 import { useSnackbar } from "notistack";
 import { PluginInterface } from "plugin-frame";
 import React from "react";
@@ -23,6 +22,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
 import { NetworkRequest } from "../types";
 import {
+  corsIsDisabled,
   getFileText,
   getFileTypeFromPluginUrl,
   getPlugin,
@@ -39,6 +39,7 @@ interface ApplicationPluginInterface extends PluginInterface {
   postUiMessage(message: any): Promise<void>;
   getCorsProxy(): Promise<string | undefined>;
   createNotification(notification: NotificationMessage): Promise<void>;
+  isLoggedIn(): Promise<boolean>;
 }
 
 const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
@@ -73,11 +74,27 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     async (plugin: PluginInfo, pluginFiles?: FileList) => {
       const api: ApplicationPluginInterface = {
         networkRequest: async (input: RequestInfo, init?: RequestInit) => {
-          if (hasExtension()) {
-            return await window.InfoGata.networkRequest(input, init);
+          const pluginAuth = plugin?.id
+            ? await db.pluginAuths.get(plugin.id)
+            : undefined;
+          const newInit = init ?? {};
+          if (!pluginAuth) {
+            newInit.credentials = "omit";
+          } else if (Object.keys(pluginAuth.headers).length > 0) {
+            const headers = new Headers(newInit.headers);
+            for (const prop in pluginAuth.headers) {
+              headers.set(prop, pluginAuth.headers[prop]);
+            }
+            newInit.headers = headers;
           }
 
-          const response = await fetch(input, init);
+          if (hasExtension()) {
+            return await window.InfoGata.networkRequest(input, newInit, {
+              auth: plugin.manifest?.authentication,
+            });
+          }
+
+          const response = await fetch(input, newInit);
 
           const body = await response.blob();
 
@@ -100,8 +117,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           return result;
         },
         isNetworkRequestCorsDisabled: async () => {
-          const isDisabled = hasExtension() || isElectron();
-          return isDisabled;
+          return corsIsDisabled();
         },
         postUiMessage: async (message: any) => {
           setPluginMessage({ pluginId: plugin.id, message });
@@ -115,6 +131,12 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           } else {
             return "http://localhost:36325/";
           }
+        },
+        isLoggedIn: async () => {
+          if (plugin.manifest?.authentication && plugin.id) {
+            return !!db.pluginAuths.get(plugin.id);
+          }
+          return false;
         },
       };
 

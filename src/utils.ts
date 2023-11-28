@@ -1,3 +1,4 @@
+import isElectron from "is-electron";
 import { customAlphabet } from "nanoid";
 import { db } from "./database";
 import i18next from "./i18n";
@@ -174,6 +175,10 @@ const proxy = import.meta.env.PROD
 
 export const hasExtension = () => {
   return typeof window.InfoGata !== "undefined";
+};
+
+export const corsIsDisabled = () => {
+  return hasExtension() || isElectron();
 };
 
 export const getValidUrl = async (url: string, mimeType: string) => {
