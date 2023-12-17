@@ -110,6 +110,7 @@ export interface ManifestAuthentication {
   cookiesToFind?: string[];
   loginButton?: string;
   headersToFind?: string[];
+  domainHeadersToFind: Record<string, string[]>;
   completionUrl?: string;
 }
 

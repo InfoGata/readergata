@@ -38,12 +38,14 @@ export interface DirectoryFile extends File {
 export interface PluginAuthentication {
   pluginId: string;
   headers: Record<string, string>;
+  domainHeaders?: Record<string, Record<string, string>>;
 }
 
 export type NotifyLoginMessage = {
   type: "infogata-extension-notify-login";
   pluginId: string;
   headers: Record<string, string>;
+  domainHeaders: Record<string, Record<string, string>>;
 };
 
 export interface UrlInfo {

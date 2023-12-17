@@ -50,6 +50,7 @@ const PluginDetails: React.FC = () => {
           db.pluginAuths.put({
             pluginId: plugin.id || "",
             headers: event.data.headers,
+            domainHeaders: event.data.domainHeaders,
           });
           if (await plugin?.hasDefined.onPostLogin()) {
             await plugin.remote.onPostLogin();
