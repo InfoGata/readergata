@@ -32,10 +32,7 @@ import {
 } from "../utils";
 
 interface ApplicationPluginInterface extends PluginInterface {
-  networkRequest(
-    input: RequestInfo,
-    init?: RequestInit
-  ): Promise<NetworkRequest>;
+  networkRequest(input: string, init?: RequestInit): Promise<NetworkRequest>;
   postUiMessage(message: any): Promise<void>;
   getCorsProxy(): Promise<string | undefined>;
   createNotification(notification: NotificationMessage): Promise<void>;
@@ -73,7 +70,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const loadPlugin = React.useCallback(
     async (plugin: PluginInfo, pluginFiles?: FileList) => {
       const api: ApplicationPluginInterface = {
-        networkRequest: async (input: RequestInfo, init?: RequestInit) => {
+        networkRequest: async (input: string, init?: RequestInit) => {
           const pluginAuth = plugin?.id
             ? await db.pluginAuths.get(plugin.id)
             : undefined;
