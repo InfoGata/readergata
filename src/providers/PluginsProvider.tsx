@@ -28,6 +28,7 @@ import {
   getPlugin,
   getPluginSubdomain,
   hasExtension,
+  isAuthorizedDomain,
   mapAsync,
 } from "../utils";
 
@@ -75,14 +76,38 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             ? await db.pluginAuths.get(plugin.id)
             : undefined;
           const newInit = init ?? {};
-          if (!pluginAuth) {
+
+          if (
+            !plugin?.manifest?.authentication ||
+            !isAuthorizedDomain(
+              input,
+              plugin.manifest.authentication.loginUrl,
+              plugin.manifest.authentication.domainHeadersToFind
+            )
+          ) {
             newInit.credentials = "omit";
-          } else if (Object.keys(pluginAuth.headers).length > 0) {
-            const headers = new Headers(newInit.headers);
-            for (const prop in pluginAuth.headers) {
-              headers.set(prop, pluginAuth.headers[prop]);
+          }
+
+          if (pluginAuth) {
+            if (Object.keys(pluginAuth.headers).length > 0) {
+              const headers = new Headers(newInit.headers);
+              for (const prop in pluginAuth.headers) {
+                headers.set(prop, pluginAuth.headers[prop]);
+              }
+              newInit.headers = Object.fromEntries(headers.entries());
+            } else if (Object.keys(pluginAuth.domainHeaders ?? {}).length > 0) {
+              const url = new URL(input);
+              const domainHeaderKey = Object.keys(
+                pluginAuth.domainHeaders!
+              ).find((dh) => url.host.endsWith(dh));
+              if (domainHeaderKey) {
+                const headers = new Headers(newInit.headers);
+                for (const prop in pluginAuth.domainHeaders![domainHeaderKey]) {
+                  headers.set(prop, pluginAuth.headers[prop]);
+                }
+                newInit.headers = Object.fromEntries(headers.entries());
+              }
             }
-            newInit.headers = headers;
           }
 
           if (hasExtension()) {
