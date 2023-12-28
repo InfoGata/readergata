@@ -108,3 +108,9 @@ export interface Bookmark {
   title?: string;
   location: string;
 }
+
+export interface NavigationLinkItem {
+  title: string;
+  link: string;
+  icon: JSX.Element;
+}

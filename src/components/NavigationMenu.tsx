@@ -8,27 +8,19 @@ import {
   MenuBook,
   Settings,
 } from "@mui/icons-material";
-import {
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Tooltip,
-} from "@mui/material";
+import { Drawer, IconButton, List } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import OpenUrlForm from "./OpenUrlForm";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setIsFullscreen,
   setNavigationOpen,
 } from "../store/reducers/uiReducer";
+import { NavigationLinkItem } from "../types";
 import { drawerWidth } from "../utils";
+import NavigationLink from "./NavigationLink";
 import OpenFileButton from "./OpenFileButton";
+import OpenUrlForm from "./OpenUrlForm";
 
 const NavigationMenu: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,6 +28,15 @@ const NavigationMenu: React.FC = () => {
   const onClose = () => dispatch(setNavigationOpen(false));
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
   const { t } = useTranslation();
+
+  const listItems: NavigationLinkItem[] = [
+    { title: t("home"), link: "/", icon: <Home /> },
+    { title: t("reader"), link: "/viewer", icon: <MenuBook /> },
+    { title: t("plugins"), link: "/plugins", icon: <Extension /> },
+    { title: t("library"), link: "/library", icon: <LibraryBooks /> },
+    { title: t("settings"), link: "/settings", icon: <Settings /> },
+    { title: t("about"), link: "/about", icon: <Info /> },
+  ];
 
   return (
     <Drawer
@@ -48,66 +49,9 @@ const NavigationMenu: React.FC = () => {
       onClose={onClose}
     >
       <List onClick={onClose}>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/">
-            <ListItemIcon>
-              <Tooltip title={t("home")} placement="right">
-                <Home />
-              </Tooltip>
-            </ListItemIcon>
-            <ListItemText>{t("home")}</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/viewer">
-            <ListItemIcon>
-              <Tooltip title={t("reader")} placement="right">
-                <MenuBook />
-              </Tooltip>
-            </ListItemIcon>
-            <ListItemText>{t("reader")}</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/plugins">
-            <Tooltip title={t("plugins")} placement="right">
-              <ListItemIcon>
-                <Extension />
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText>{t("plugins")}</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/library">
-            <Tooltip title={t("library")} placement="right">
-              <ListItemIcon>
-                <LibraryBooks />
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText>{t("library")}</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/settings">
-            <Tooltip title={t("settings")} placement="right">
-              <ListItemIcon>
-                <Settings />
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText>{t("settings")}</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/about">
-            <Tooltip title={t("about")} placement="right">
-              <ListItemIcon>
-                <Info />
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText>{t("about")}</ListItemText>
-          </ListItemButton>
-        </ListItem>
+        {listItems.map((l) => (
+          <NavigationLink key={l.title} item={l} />
+        ))}
       </List>
       <OpenFileButton />
       <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
