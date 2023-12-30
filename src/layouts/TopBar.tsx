@@ -1,13 +1,13 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Grid, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, IconButton, Toolbar } from "@mui/material";
 import React from "react";
-import SearchButton from "./components/SearchButton";
-import TocButton from "./components/TocButton";
-import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { setNavigationOpen } from "./store/reducers/uiReducer";
-import BookmarksButton from "./components/BookmarksButton";
-import Title from "./components/Title";
 import { useLocation } from "react-router-dom";
+import BookmarksButton from "./BookmarksButton";
+import SearchButton from "./SearchButton";
+import Title from "./Title";
+import TocButton from "./TocButton";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setNavigationOpen } from "../store/reducers/uiReducer";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();

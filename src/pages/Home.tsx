@@ -1,9 +1,9 @@
 import { Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import DragFileContainer from "./DragFileContainer";
-import OpenFileButton from "./OpenFileButton";
-import PluginCards from "./PluginCards";
+import DragFileContainer from "../components/DragFileContainer";
+import OpenFileButton from "../components/OpenFileButton";
+import PluginCards from "../components/PluginCards";
 
 const Home: React.FC = () => {
   const { t } = useTranslation();

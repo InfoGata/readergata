@@ -8,11 +8,11 @@ import { SourceType } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPublication } from "../store/reducers/documentReducer";
 import { EBook, PublicationSourceType } from "../types";
-import DragFileContainer from "./DragFileContainer";
-import EbookViewer from "./EbookViewer";
-import OpenFileButton from "./OpenFileButton";
-import PdfViewer from "./PdfViewer";
-import Spinner from "./Spinner";
+import DragFileContainer from "../components/DragFileContainer";
+import EbookViewer from "../components/EbookViewer";
+import OpenFileButton from "../components/OpenFileButton";
+import PdfViewer from "../components/PdfViewer";
+import Spinner from "../components/Spinner";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {

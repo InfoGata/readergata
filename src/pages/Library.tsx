@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { PluginFrameContainer } from "../PluginsContext";
 import usePlugins from "../hooks/usePlugins";
 import { filterAsync } from "../utils";
-import LibraryBooks from "./LibraryBooks";
+import LibraryBooks from "../components/LibraryBooks";
 
 const Library: React.FC = () => {
   const { plugins } = usePlugins();

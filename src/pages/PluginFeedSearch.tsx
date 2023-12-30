@@ -4,9 +4,9 @@ import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
 import useFindPlugin from "../hooks/useFindPlugin";
 import usePlugins from "../hooks/usePlugins";
-import ConfirmPluginDialog from "./ConfirmPluginDialog";
-import FeedContainer from "./FeedContainer";
-import Spinner from "./Spinner";
+import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
+import FeedContainer from "../components/FeedContainer";
+import Spinner from "../components/Spinner";
 
 const PluginFeedSearch: React.FC = (props) => {
   const { plugins, pluginsLoaded } = usePlugins();

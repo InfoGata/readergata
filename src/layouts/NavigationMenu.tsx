@@ -19,8 +19,8 @@ import {
 import { NavigationLinkItem } from "../types";
 import { drawerWidth } from "../utils";
 import NavigationLink from "./NavigationLink";
-import OpenFileButton from "./OpenFileButton";
-import OpenUrlForm from "./OpenUrlForm";
+import OpenFileButton from "../components/OpenFileButton";
+import OpenUrlForm from "../components/OpenUrlForm";
 
 const NavigationMenu: React.FC = () => {
   const dispatch = useAppDispatch();
