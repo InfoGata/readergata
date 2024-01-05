@@ -3,21 +3,17 @@ import { SnackbarKey, SnackbarProvider } from "notistack";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter, HashRouter } from "react-router-dom";
-import TopBar from "./layouts/TopBar";
+import MainContainer from "./layouts/MainContainer";
 import MatomoRouterProvider from "./components/MatomoRouterProvider";
-import NavigationMenu from "./layouts/NavigationMenu";
-import Routing from "./components/Routing";
-import SearchMenu from "./layouts/SearchMenu";
-import TocMenu from "./layouts/TocMenu";
 import useFullScreen from "./hooks/useFullScreen";
 import useOffline from "./hooks/useOffline";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
-import PluginsProvider from "./providers/PluginsProvider";
 import BookmarksMenu from "./layouts/BookmarksMenu";
-import isElectron from "is-electron";
-
-const Router = isElectron() ? HashRouter : BrowserRouter;
+import NavigationMenu from "./layouts/NavigationMenu";
+import SearchMenu from "./layouts/SearchMenu";
+import TocMenu from "./layouts/TocMenu";
+import TopBar from "./layouts/TopBar";
+import PluginsProvider from "./providers/PluginsProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,21 +44,19 @@ const App: React.FC = () => {
       )}
     >
       <QueryClientProvider client={queryClient}>
-        <Router>
-          <MatomoRouterProvider>
-            <PluginsProvider>
-              <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <TopBar />
-                <NavigationMenu />
-                <Routing />
-                <TocMenu />
-                <SearchMenu />
-                <BookmarksMenu />
-              </Box>
-            </PluginsProvider>
-          </MatomoRouterProvider>
-        </Router>
+        <MatomoRouterProvider>
+          <PluginsProvider>
+            <Box sx={{ display: "flex" }}>
+              <CssBaseline />
+              <TopBar />
+              <NavigationMenu />
+              <MainContainer />
+              <TocMenu />
+              <SearchMenu />
+              <BookmarksMenu />
+            </Box>
+          </PluginsProvider>
+        </MatomoRouterProvider>
       </QueryClientProvider>
     </SnackbarProvider>
   );
