@@ -53,11 +53,15 @@ const NavigationMenu: React.FC = () => {
           <NavigationLink key={l.title} item={l} />
         ))}
       </List>
-      <OpenFileButton />
+      <div className="m-2">
+        <OpenFileButton />
+      </div>
       <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
         {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
       </IconButton>
-      <OpenUrlForm />
+      <div className="m-2">
+        <OpenUrlForm />
+      </div>
     </Drawer>
   );
 };

@@ -1,6 +1,5 @@
 {
   "common": {
-    "greeting": "Hello",
     "manifestNoScript": "Error: Manifest does not contain script",
     "fileNotFound": "Error: Couldn't find {{name}}",
     "cantGetFile": "Error: Couldn't get {{name}}",

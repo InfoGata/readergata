@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import react from "@vitejs/plugin-react";
+import path from "path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import svgrPlugin from "vite-plugin-svgr";
@@ -9,6 +10,11 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["fake-indexeddb/auto"],
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
   plugins: [
     react(),
@@ -42,6 +48,7 @@ export default defineConfig({
       },
     }),
   ],
+
   server: {
     port: 3000,
   },

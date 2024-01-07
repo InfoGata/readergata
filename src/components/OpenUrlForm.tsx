@@ -4,7 +4,6 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  Button,
 } from "@mui/material";
 import React from "react";
 import { useAppDispatch } from "../store/hooks";
@@ -12,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { setPublication } from "../store/reducers/documentReducer";
 import { PublicationSourceType } from "../types";
+import { Button } from "./ui/button";
 
 const OpenUrlForm: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
@@ -70,7 +70,7 @@ const OpenUrlForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={onUrlSubmit}>
+    <form onSubmit={onUrlSubmit} className="flex flex-col">
       <FormControl>
         <TextField
           value={inputUrl}
@@ -84,14 +84,13 @@ const OpenUrlForm: React.FC = () => {
           name="controlled-radio-buttons-group"
           value={urlType}
           onChange={onRadioChange}
+          className="flex flex-row justify-center"
         >
           <FormControlLabel value="epub" control={<Radio />} label="Epub" />
           <FormControlLabel value="pdf" control={<Radio />} label="PDF" />
         </RadioGroup>
       </FormControl>
-      <Button variant="contained" type="submit">
-        {t("submit")}
-      </Button>
+      <Button type="submit">{t("submit")}</Button>
     </form>
   );
 };

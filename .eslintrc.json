@@ -1,12 +1,7 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint",
-    "jsx-a11y",
-      "jam3",
-      "i18next"
-  ],
+  "plugins": ["@typescript-eslint", "jsx-a11y", "jam3", "i18next"],
   "extends": [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
@@ -21,6 +16,9 @@
       "node": {
         "paths": ["src"],
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
+      "alias": {
+        "map": [["@", "./src"]]
       }
     }
   },
@@ -31,10 +29,7 @@
       2,
       {
         "words": {
-          "exclude": [
-            "[0-9!-/:-@[-`{-~]+",
-            "[A-Z_-]+"
-          ]
+          "exclude": ["[0-9!-/:-@[-`{-~]+", "[A-Z_-]+"]
         }
       }
     ],

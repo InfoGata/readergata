@@ -8,12 +8,8 @@ import { FileType } from "../types";
 import { directoryProps, generatePluginId, getPlugin } from "../utils";
 import AddPluginUrlDialog from "../components/AddPluginUrlDialog";
 import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
-import PluginCards from "../components/PluginCards";
+import PluginCards from "../components/PluginCards/PluginCards";
 import PluginContainer from "../components/PluginContainer";
-
-const FileInput = styled("input")({
-  display: "none",
-});
 
 const Plugins: React.FC = () => {
   const { plugins, deletePlugin, pluginsFailed, reloadPlugins } = usePlugins();
@@ -67,10 +63,11 @@ const Plugins: React.FC = () => {
   };
 
   return (
-    <Grid sx={{ "& button": { m: 1 }, "& label": { m: 1 } }}>
-      <Grid>
+    <div>
+      <div className="flex gap-2">
         <label htmlFor="contained-button-file">
-          <FileInput
+          <input
+            className="hidden"
             id="contained-button-file"
             type="file"
             {...directoryProps}
@@ -80,12 +77,10 @@ const Plugins: React.FC = () => {
             {t("loadPluginFromFolder")}
           </Button>
         </label>
-      </Grid>
-      <Grid>
-        <Button variant="contained" onClick={onOpenUrlDialog}>
+        <Button variant="contained" component="span" onClick={onOpenUrlDialog}>
           {t("loadPluginFromUrl")}
         </Button>
-      </Grid>
+      </div>
       {plugins.length > 0 && (
         <Grid>
           <Button disabled={isCheckingUpdate} onClick={onCheckUpdates}>
@@ -117,7 +112,7 @@ const Plugins: React.FC = () => {
         handleClose={onCloseUrlDialog}
       />
       <PluginCards />
-    </Grid>
+    </div>
   );
 };
 
