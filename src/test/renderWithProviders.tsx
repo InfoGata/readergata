@@ -3,6 +3,7 @@ import { RenderOptions, render } from "@testing-library/react";
 import React, { PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { AppState, AppStore, setupStore } from "../store/store";
+import { RouterProvider, createMemoryRouter } from "react-router-dom";
 
 // as allows the user to specify other things such as initialState, store.
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
@@ -20,7 +21,17 @@ export function renderWithProviders(
   }: ExtendedRenderOptions = {}
 ) {
   function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
-    return <Provider store={store}>{children}</Provider>;
+    const options = { element: children, path: "/" };
+
+    const router = createMemoryRouter([{ ...options }], {
+      initialEntries: [options.path],
+      initialIndex: 1,
+    });
+    return (
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    );
   }
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 }

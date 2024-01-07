@@ -7,7 +7,7 @@ import { renderWithProviders } from "./renderWithProviders";
 describe("App", () => {
   test("Should render properly", () => {
     renderWithProviders(<App />);
-    const greeting = screen.queryByText(i18next.t("common:greeting"));
+    const greeting = screen.queryByText(i18next.t("common:openFile"));
     expect(greeting).not.toBeNull();
   });
 });
