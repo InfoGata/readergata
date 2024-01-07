@@ -1,4 +1,3 @@
-import { Grid, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -98,12 +97,12 @@ const PluginOptions: React.FC = () => {
   );
 
   return (
-    <Grid>
-      <Typography variant="h3">
+    <div>
+      <h1 className="text-3xl font-bold">
         {t("plugins:pluginOptions", { pluginName: plugin.name })}
-      </Typography>
+      </h1>
       {optionsHtml && pluginIframe}
-    </Grid>
+    </div>
   );
 };
 

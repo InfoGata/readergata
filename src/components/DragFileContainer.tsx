@@ -1,13 +1,6 @@
-import { styled } from "@mui/material/styles";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import useOpenDocument from "../hooks/useOpenDocument";
-
-const Container = styled("div")(() => {
-  return {
-    minHeight: "90%",
-  };
-});
 
 const DragFileContainer: React.FC<React.PropsWithChildren> = (props) => {
   const openDocument = useOpenDocument();
@@ -27,10 +20,10 @@ const DragFileContainer: React.FC<React.PropsWithChildren> = (props) => {
     noClick: true,
   });
   return (
-    <Container {...getRootProps()}>
+    <div className="min-h-[90%]" {...getRootProps()}>
       <input {...getInputProps()} />
       {props.children}
-    </Container>
+    </div>
   );
 };
 

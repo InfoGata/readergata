@@ -1,5 +1,4 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { Box, Button } from "@mui/material";
 import Epub, { Book, EpubCFI, Location, NavItem, Rendition } from "epubjs";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -24,6 +23,7 @@ import {
   setPublicationData,
 } from "../store/reducers/documentReducer";
 import Spinner from "./Spinner";
+import { Button } from "./ui/button";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {
@@ -294,23 +294,28 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   }, [ebook, dispatch]);
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center">
+    <>
       <Spinner open={isLoading.current} />
-      <Button
-        variant="outlined"
-        startIcon={<NavigateBefore />}
-        onClick={onPrev}
-        sx={{ position: "fixed", left: 0, zIndex: 5, height: "100%" }}
-      ></Button>
-
-      <div ref={containerRef}></div>
-      <Button
-        onClick={onNext}
-        sx={{ position: "fixed", right: 0, zIndex: 5, height: "100%" }}
-        variant="outlined"
-        endIcon={<NavigateNext />}
-      ></Button>
-    </Box>
+      <div className="flex justify-center items-center">
+        <Button
+          onClick={onPrev}
+          variant="ghost"
+          className="absolute top-1/2 -translate-y-1/2 left-0 z-10 h-full"
+        >
+          <NavigateBefore />
+        </Button>
+        <div className="absolute top-10">
+          <div ref={containerRef}></div>
+        </div>
+        <Button
+          onClick={onNext}
+          variant="ghost"
+          className="absolute top-1/2 -translate-y-1/2 right-0 z-10 h-full"
+        >
+          <NavigateNext />
+        </Button>
+      </div>
+    </>
   );
 };
 

@@ -1,4 +1,3 @@
-import { Grid } from "@mui/material";
 import React from "react";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
@@ -70,9 +69,9 @@ const Viewer: React.FC = () => {
     <DragFileContainer>
       <Spinner open={query.isLoading} />
       {!currentPublication ? (
-        <Grid>
+        <div>
           <OpenFileButton />
-        </Grid>
+        </div>
       ) : currentPublication.type === "ebook" ? (
         <EbookViewer ebook={currentPublication} />
       ) : (

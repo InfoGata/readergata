@@ -1,23 +1,16 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { PluginFrameContainer } from "../PluginsContext";
-import usePlugins from "../hooks/usePlugins";
-import { Manifest } from "../plugintypes";
-import { FileType } from "../types";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Delete, MoreHoriz } from "@mui/icons-material";
 import {
-  directoryProps,
-  getFileText,
-  getFileTypeFromPluginUrl,
-  getPlugin,
-} from "../utils";
-import Spinner from "./Spinner";
-
-const FileInput = styled("input")({
-  display: "none",
-});
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 interface PluginContainerProps {
   plugin: PluginFrameContainer;
@@ -26,28 +19,7 @@ interface PluginContainerProps {
 
 const PluginContainer: React.FC<PluginContainerProps> = (props) => {
   const { plugin, deletePlugin } = props;
-  const [backdropOpen, setBackdropOpen] = React.useState(false);
   const { t } = useTranslation("plugins");
-  const { updatePlugin } = usePlugins();
-  const [hasUpdate, setHasUpdate] = React.useState(false);
-  const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(false);
-
-  const checkUpdate = async () => {
-    if (!isCheckingUpdate && plugin.manifestUrl) {
-      setIsCheckingUpdate(true);
-      const fileType = getFileTypeFromPluginUrl(plugin.manifestUrl);
-      const manifestText = await getFileText(fileType, "manifest.json");
-      if (manifestText) {
-        const manifest = JSON.parse(manifestText) as Manifest;
-        if (manifest.version !== plugin.version) {
-          setHasUpdate(true);
-        } else {
-          setHasUpdate(false);
-        }
-      }
-    }
-    setIsCheckingUpdate(false);
-  };
 
   const onDelete = async () => {
     const confirmDelete = window.confirm(t("confirmDelete"));
@@ -56,83 +28,47 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
     }
   };
 
-  const updatePluginFromFilelist = async (files: FileList) => {
-    const fileType: FileType = {
-      filelist: files,
-    };
-    const newPlugin = await getPlugin(fileType);
-
-    if (newPlugin && plugin.id) {
-      newPlugin.id = plugin.id;
-      await updatePlugin(newPlugin, plugin.id, files);
-    }
-  };
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    setBackdropOpen(true);
-    await updatePluginFromFilelist(files);
-    setBackdropOpen(false);
-  };
-
-  const onReload = async () => {
-    const files = plugin.fileList;
-    if (!files) return;
-
-    setBackdropOpen(true);
-    await updatePluginFromFilelist(files);
-    setBackdropOpen(false);
-  };
-
-  const onUpdate = async () => {
-    if (plugin?.manifestUrl) {
-      const fileType = getFileTypeFromPluginUrl(plugin.manifestUrl);
-      const newPlugin = await getPlugin(fileType);
-
-      if (newPlugin && plugin.id) {
-        newPlugin.id = plugin.id;
-        newPlugin.manifestUrl = plugin.manifestUrl;
-        await updatePlugin(newPlugin, plugin.id);
-      }
-    }
-  };
-
   return (
-    <Grid>
-      <Spinner open={backdropOpen} />
-      <Typography>
-        {plugin.name} {plugin.version}
-      </Typography>
-      {plugin.hasOptions && (
-        <Button component={Link} to={`/plugins/${plugin.id}/options`}>
-          {t("options")}
-        </Button>
-      )}
-      <Button onClick={onDelete}>{t("deletePlugin")}</Button>
-      <label htmlFor={`update-plugin-${plugin.id}`}>
-        <FileInput
-          id={`update-plugin-${plugin.id}`}
-          type="file"
-          {...directoryProps}
-          onChange={onFileChange}
-        />
-        <Button component="span">{t("updateFromFile")}</Button>
-      </label>
-      <Button component={Link} to={`/plugins/${plugin.id}`}>
-        {t("pluginDetails")}
-      </Button>
-      {plugin.fileList && (
-        <Button onClick={onReload}>{t("reloadPlugin")}</Button>
-      )}
-      {plugin.manifestUrl && (
-        <Button disabled={isCheckingUpdate} onClick={checkUpdate}>
-          {t("checkForUpdates")}
-        </Button>
-      )}
-      {hasUpdate && <Button onClick={onUpdate}>{t("updatePlugin")}</Button>}
-    </Grid>
+    <div>
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">
+          {plugin.name} {plugin.version}
+        </h3>
+        <div className="flex gap-2 items-center">
+          {plugin.hasOptions && (
+            <Link
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "uppercase"
+              )}
+              to={`/plugins/${plugin.id}/options`}
+            >
+              {t("options")}
+            </Link>
+          )}
+          <Link
+            className={cn(buttonVariants({ variant: "outline" }), "uppercase")}
+            to={`/plugins/${plugin.id}`}
+          >
+            {t("pluginDetails")}
+          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="data-[state=open]:bg-muted">
+                <MoreHoriz />
+                <span className="sr-only">{t("openMenu")}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="cursor-pointer" onClick={onDelete}>
+                <Delete />
+                <span className="uppercase">{t("deletePlugin")}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,5 +1,4 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { Box, Button } from "@mui/material";
 import React from "react";
 import {
   Document,
@@ -31,6 +30,7 @@ import {
   SearchResult,
 } from "../types";
 import { getValidUrl, mapAsync } from "../utils";
+import { Button } from "./ui/button";
 
 type PDFDocumentProxy = Parameters<
   NonNullable<DocumentProps["onLoadSuccess"]>
@@ -247,14 +247,15 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center">
+    <div className="flex justify-center items-center">
       {numPages && (pageNumber || 1) - 1 > 0 && (
         <Button
-          variant="outlined"
           onClick={prevPage}
-          startIcon={<NavigateBefore />}
-          sx={{ position: "fixed", left: 0, height: "100%" }}
-        ></Button>
+          variant="ghost"
+          className="absolute top-1/2 -translate-y-1/2 left-0 z-10 h-full"
+        >
+          <NavigateBefore />
+        </Button>
       )}
       {file && (
         <Document
@@ -271,14 +272,11 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
         </Document>
       )}
       {numPages && numPages > (pageNumber || 1) + 1 && (
-        <Button
-          sx={{ position: "fixed", right: 0, height: "100%" }}
-          variant="outlined"
-          onClick={nextPage}
-          endIcon={<NavigateNext />}
-        ></Button>
+        <Button variant="ghost" onClick={nextPage}>
+          <NavigateNext />
+        </Button>
       )}
-    </Box>
+    </div>
   );
 };
 

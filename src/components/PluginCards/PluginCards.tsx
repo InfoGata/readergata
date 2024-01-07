@@ -43,7 +43,9 @@ const PluginCards: React.FC = () => {
         !plugins.some((p) => dp.id === p.id) &&
         (preinstallComplete || !dp.preinstall)
     )
-    .map((dp) => <PluginCard addPlugin={onAddPlugin} plugin={dp} />);
+    .map((dp) => (
+      <PluginCard addPlugin={onAddPlugin} plugin={dp} key={dp.id} />
+    ));
 
   return (
     <>
@@ -52,7 +54,7 @@ const PluginCards: React.FC = () => {
           <Spinner open={backdropOpen} />
           <h2 className="text-2xl font-bold">{t("availablePlugins")}</h2>
           {pluginsLoaded && (
-            <div className="grid grid-cols-4 gap-4 md:grid-cols-2 xl:grid-cols-3 animate-in fade-in">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 animate-in fade-in">
               {pluginCards}
             </div>
           )}

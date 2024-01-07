@@ -58,7 +58,7 @@ const Plugins: React.FC = () => {
 
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="grid gap-2 grid-cols-1 md:grid-cols-2 md:w-1/2">
         <label
           htmlFor="contained-button-file"
           className={cn(

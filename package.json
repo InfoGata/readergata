@@ -14,6 +14,8 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.6",
     "@piotr-cz/redux-persist-idb-storage": "^1.1.3",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-slot": "^1.0.2",
     "@reduxjs/toolkit": "^1.4.0",
     "@sentry/browser": "^7.74.0",
