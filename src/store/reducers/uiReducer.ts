@@ -16,7 +16,7 @@ interface UiState {
   title: string;
 }
 
-let initialState: UiState = {
+const initialState: UiState = {
   navigationOpen: false,
   isFullscreen: false,
   tocOpen: false,

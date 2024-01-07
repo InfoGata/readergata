@@ -8,7 +8,7 @@ import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import FeedContainer from "../components/FeedContainer";
 import Spinner from "../components/Spinner";
 
-const PluginFeedSearch: React.FC = (props) => {
+const PluginFeedSearch: React.FC = () => {
   const { plugins, pluginsLoaded } = usePlugins();
   const { pluginId } = useParams<"pluginId">();
   const plugin = plugins.find((p) => p.id === pluginId);

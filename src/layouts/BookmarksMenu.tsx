@@ -29,7 +29,7 @@ const BookmarksMenu: React.FC = () => {
   }, [currentPublication]);
 
   const addBookmark = () => {
-    let collection = getDocumentData(currentPublication);
+    const collection = getDocumentData(currentPublication);
     if (currentLocation && collection) {
       collection.modify((data) => {
         data.bookmarks.push({
@@ -41,7 +41,7 @@ const BookmarksMenu: React.FC = () => {
   };
 
   const deleteBookmark = (index: number) => {
-    let collection = getDocumentData(currentPublication);
+    const collection = getDocumentData(currentPublication);
     if (collection) {
       collection.modify((data) => {
         data.bookmarks.splice(index, 1);

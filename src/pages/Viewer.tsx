@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import usePlugins from "../hooks/usePlugins";
@@ -26,7 +25,6 @@ const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
 
 const Viewer: React.FC = () => {
   const location = useLocation();
-  const { t } = useTranslation();
   const { plugins, pluginsLoaded } = usePlugins();
   const dispatch = useAppDispatch();
   const currentPublication = useAppSelector(

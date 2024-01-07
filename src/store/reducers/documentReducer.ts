@@ -14,7 +14,7 @@ interface DocumentState {
   currentLocation?: string;
 }
 
-let initialState: DocumentState = {};
+const initialState: DocumentState = {};
 
 const documentSlice = createSlice({
   name: "document",
@@ -39,7 +39,7 @@ const ensureDocumentDataExists = async (
 ): Promise<DocumentData | undefined> => {
   let documentData = await getDocumentData(publication)?.first();
   if (!documentData) {
-    let id = nanoid();
+    const id = nanoid();
     switch (publication.sourceType) {
       case PublicationSourceType.Binary:
         documentData = {
@@ -69,10 +69,10 @@ export const setPublication =
   (publication: PublicationType): AppThunk =>
   async (dispatch) => {
     if (publication.sourceType === PublicationSourceType.Binary) {
-      let hash = await xxhash64(publication.source);
+      const hash = await xxhash64(publication.source);
       publication.hash = hash;
     }
-    let documentData = await ensureDocumentDataExists(publication);
+    const documentData = await ensureDocumentDataExists(publication);
     dispatch(documentSlice.actions.setPublication(publication));
     if (documentData?.currentLocation) {
       dispatch(
@@ -85,9 +85,9 @@ export const setCurrentLocation =
   (location: string | undefined): AppThunk =>
   async (dispatch, getState) => {
     const state = getState();
-    let currentPublication = state.document.currentPublication;
+    const currentPublication = state.document.currentPublication;
     if (currentPublication) {
-      let documentData = getDocumentData(currentPublication);
+      const documentData = getDocumentData(currentPublication);
       if (documentData) {
         documentData.modify((data) => {
           data.currentLocation = location;
@@ -102,12 +102,12 @@ export const setPublicationData =
   async (_dispatch, getState) => {
     const state = getState();
     const currentPublication = state.document.currentPublication;
-    let documentDataCollection = getDocumentData(currentPublication);
+    const documentDataCollection = getDocumentData(currentPublication);
     if (!documentDataCollection) {
       return;
     }
 
-    let documentData = await documentDataCollection.first();
+    const documentData = await documentDataCollection.first();
     if (documentData && !documentData.title && data.title) {
       documentDataCollection.modify((oldData) => {
         oldData.title = data.title;

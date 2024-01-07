@@ -1,5 +1,3 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import usePlugins from "../hooks/usePlugins";
@@ -10,6 +8,8 @@ import AddPluginUrlDialog from "../components/AddPluginUrlDialog";
 import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import PluginCards from "../components/PluginCards/PluginCards";
 import PluginContainer from "../components/PluginContainer";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const Plugins: React.FC = () => {
   const { plugins, deletePlugin, pluginsFailed, reloadPlugins } = usePlugins();
@@ -17,7 +17,6 @@ const Plugins: React.FC = () => {
   const [pendingPlugin, setPendingPlugin] = React.useState<PluginInfo | null>(
     null
   );
-  const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(false);
   const [openUrlDialog, setOpenUrlDialog] = React.useState(false);
 
   const onCloseUrlDialog = () => setOpenUrlDialog(false);
@@ -54,18 +53,19 @@ const Plugins: React.FC = () => {
       key={plugin.id}
       plugin={plugin}
       deletePlugin={deletePlugin}
-      isCheckingUpdate={isCheckingUpdate}
     />
   ));
-
-  const onCheckUpdates = () => {
-    setIsCheckingUpdate(true);
-  };
 
   return (
     <div>
       <div className="flex gap-2">
-        <label htmlFor="contained-button-file">
+        <label
+          htmlFor="contained-button-file"
+          className={cn(
+            buttonVariants({ variant: "default" }),
+            "uppercase cursor-pointer"
+          )}
+        >
           <input
             className="hidden"
             id="contained-button-file"
@@ -73,34 +73,21 @@ const Plugins: React.FC = () => {
             {...directoryProps}
             onChange={onFileChange}
           />
-          <Button variant="contained" component="span">
-            {t("loadPluginFromFolder")}
-          </Button>
+          {t("loadPluginFromFolder")}
         </label>
-        <Button variant="contained" component="span" onClick={onOpenUrlDialog}>
+        <Button onClick={onOpenUrlDialog} className="uppercase">
           {t("loadPluginFromUrl")}
         </Button>
       </div>
-      {plugins.length > 0 && (
-        <Grid>
-          <Button disabled={isCheckingUpdate} onClick={onCheckUpdates}>
-            {t("checkForUpdates")}
-          </Button>
-        </Grid>
-      )}
       {pluginsFailed && (
-        <Grid>
-          <Button
-            variant="contained"
-            color="warning"
-            onClick={reloadPlugins}
-          >{`${t("failedPlugins")}: ${t("clickReload")}`}</Button>
-        </Grid>
+        <Button variant="secondary" onClick={reloadPlugins}>{`${t(
+          "failedPlugins"
+        )}: ${t("clickReload")}`}</Button>
       )}
       {plugins.length > 0 && (
-        <Typography variant="h6">{t("installedPlugins")}</Typography>
+        <h2 className="text-2xl font-bold">{t("installedPlugins")}</h2>
       )}
-      <Grid>{pluginComponents}</Grid>
+      <div>{pluginComponents}</div>
       <ConfirmPluginDialog
         open={Boolean(pendingPlugin)}
         plugins={pendingPlugin ? [pendingPlugin] : []}

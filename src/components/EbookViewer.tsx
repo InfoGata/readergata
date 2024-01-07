@@ -18,7 +18,6 @@ import {
   SearchResult,
 } from "../types";
 import { debounce, getValidUrl } from "../utils";
-// eslint-disable-next-line import/no-unresolved
 import Section from "epubjs/types/section";
 import {
   setCurrentLocation,
@@ -60,7 +59,9 @@ const openBook = async (ebook: EBook): Promise<Book | undefined> => {
         }
       }
     }
-  } catch {}
+  } catch {
+    /* empty */
+  }
 };
 
 const findInSection = async (book: Book, q: string, section: Section) => {
@@ -80,6 +81,7 @@ const search = async (book: Book, query: string) => {
 
 // https://github.com/futurepress/epub.js/issues/759#issuecomment-1399499918
 function flatten(chapters: any) {
+  // eslint-disable-next-line prefer-spread
   return [].concat.apply(
     [],
     chapters.map((chapter: NavItem) =>
@@ -100,7 +102,7 @@ export function getCfiFromHref(book: Book, href: string) {
 export function getChapter(book: Book, location: Location) {
   const locationHref = location.start.href;
 
-  let match = flatten(book.navigation.toc)
+  const match = flatten(book.navigation.toc)
     .filter((chapter: NavItem) => {
       return book
         .canonical(chapter.href)

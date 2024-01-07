@@ -62,7 +62,9 @@ const OpenUrlForm: React.FC = () => {
           setUrlType("pdf");
           break;
       }
-    } catch {}
+    } catch {
+      /* empty */
+    }
   };
 
   const onRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {

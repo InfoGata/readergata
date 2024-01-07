@@ -41,7 +41,7 @@ const outlineToBookConent = async (
   outline: OutlineType,
   pdf: PDFDocumentProxy
 ): Promise<BookContent> => {
-  let destination =
+  const destination =
     outline.dest !== "string"
       ? outline.dest
       : await pdf.getDestination(outline.dest);

@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   plugin: PluginDescription;
@@ -18,6 +19,7 @@ const PluginCard = (props: Props) => {
   const onClickAdd = () => {
     addPlugin(plugin);
   };
+  const { t } = useTranslation();
 
   return (
     <Card>
@@ -27,7 +29,7 @@ const PluginCard = (props: Props) => {
       </CardHeader>
       <CardFooter>
         <Button className="uppercase" onClick={onClickAdd}>
-          Add
+          {t("addPlugin")}
         </Button>
       </CardFooter>
     </Card>

@@ -36,7 +36,7 @@ const SearchMenu: React.FC = () => {
     setSearch(event.currentTarget.value);
   };
 
-  const handleSubmit = (event: React.FormEvent<{}>) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (search) {
       dispatch(setSearchQuery(search));

@@ -14,7 +14,7 @@ import semverGte from "semver/functions/gte";
 
 export const getDocumentData = (publication?: PublicationType) => {
   if (publication) {
-    let table = db.documentData;
+    const table = db.documentData;
     switch (publication.sourceType) {
       case PublicationSourceType.Url:
         return table.where("url").equals(publication.source);
@@ -284,7 +284,11 @@ export const generatePluginId = () => {
   return nanoid();
 };
 
-export const debounce = (f: Function, wait: number, immediate?: boolean) => {
+export const debounce = <T extends (...args: any[]) => void>(
+  f: T,
+  wait: number,
+  immediate?: boolean
+) => {
   let timeout: NodeJS.Timeout | undefined;
   return (...args: any[]) => {
     const later = () => {

@@ -19,7 +19,7 @@ const createClient = () => {
 };
 
 const MamotoRouterProvider: React.FC<React.PropsWithChildren> = (props) => {
-  let location = useLocation();
+  const location = useLocation();
   const matomoClient = createClient();
   const MatomoProviderWithChildren: React.FC<MatomoProviderWithChildrenProps> =
     MatomoProvider;

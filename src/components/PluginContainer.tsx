@@ -22,33 +22,32 @@ const FileInput = styled("input")({
 interface PluginContainerProps {
   plugin: PluginFrameContainer;
   deletePlugin: (plugin: PluginFrameContainer) => Promise<void>;
-  isCheckingUpdate: boolean;
 }
 
 const PluginContainer: React.FC<PluginContainerProps> = (props) => {
-  const { plugin, deletePlugin, isCheckingUpdate } = props;
+  const { plugin, deletePlugin } = props;
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const { t } = useTranslation("plugins");
   const { updatePlugin } = usePlugins();
   const [hasUpdate, setHasUpdate] = React.useState(false);
+  const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(false);
 
-  React.useEffect(() => {
-    const checkUpdate = async () => {
-      if (isCheckingUpdate && plugin.manifestUrl) {
-        const fileType = getFileTypeFromPluginUrl(plugin.manifestUrl);
-        const manifestText = await getFileText(fileType, "manifest.json");
-        if (manifestText) {
-          const manifest = JSON.parse(manifestText) as Manifest;
-          if (manifest.version !== plugin.version) {
-            setHasUpdate(true);
-          } else {
-            setHasUpdate(false);
-          }
+  const checkUpdate = async () => {
+    if (!isCheckingUpdate && plugin.manifestUrl) {
+      setIsCheckingUpdate(true);
+      const fileType = getFileTypeFromPluginUrl(plugin.manifestUrl);
+      const manifestText = await getFileText(fileType, "manifest.json");
+      if (manifestText) {
+        const manifest = JSON.parse(manifestText) as Manifest;
+        if (manifest.version !== plugin.version) {
+          setHasUpdate(true);
+        } else {
+          setHasUpdate(false);
         }
       }
-    };
-    checkUpdate();
-  }, [isCheckingUpdate, plugin]);
+    }
+    setIsCheckingUpdate(false);
+  };
 
   const onDelete = async () => {
     const confirmDelete = window.confirm(t("confirmDelete"));
@@ -126,6 +125,11 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
       </Button>
       {plugin.fileList && (
         <Button onClick={onReload}>{t("reloadPlugin")}</Button>
+      )}
+      {plugin.manifestUrl && (
+        <Button disabled={isCheckingUpdate} onClick={checkUpdate}>
+          {t("checkForUpdates")}
+        </Button>
       )}
       {hasUpdate && <Button onClick={onUpdate}>{t("updatePlugin")}</Button>}
     </Grid>
