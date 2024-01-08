@@ -7,7 +7,7 @@ import {
 import AboutPage from "./pages/AboutPage";
 import Donate from "./pages/Donate";
 import Home from "./pages/Home";
-import Library from "./pages/Library";
+import Library from "./pages/Library/Library";
 import PluginDetails from "./pages/PluginDetails";
 import PluginFeed from "./pages/PluginFeed";
 import PluginFeedSearch from "./pages/PluginFeedSearch";

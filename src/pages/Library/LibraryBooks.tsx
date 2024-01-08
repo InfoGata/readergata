@@ -1,21 +1,20 @@
 import { Delete } from "@mui/icons-material";
-import {
-  List,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { db } from "../database";
-import { DocumentData } from "../types";
+import { db } from "../../database";
+import { DocumentData } from "../../types";
 import LibraryBook from "./LibraryBook";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { getDocumentData } from "../utils";
-import { clearPublication } from "../store/reducers/documentReducer";
-import { clearBookData } from "../store/reducers/uiReducer";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { getDocumentData } from "../../utils";
+import { clearPublication } from "../../store/reducers/documentReducer";
+import { clearBookData } from "../../store/reducers/uiReducer";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+// } from "@/components/ui/dropdown-menu";
 
 const LibraryBooks: React.FC = () => {
   const documents = useLiveQuery(() => db.documentData.toArray());
@@ -54,7 +53,7 @@ const LibraryBooks: React.FC = () => {
 
   return (
     <>
-      <List>
+      <div>
         {documents?.map((d) => (
           <LibraryBook
             key={d.url || d.xxhash64}
@@ -62,7 +61,15 @@ const LibraryBooks: React.FC = () => {
             openMenu={openMenu}
           />
         ))}
-      </List>
+      </div>
+      {/* <DropdownMenu>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={onRemove}>
+            <Delete />
+            <span>{t("remove")}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu> */}
       <Menu
         open={Boolean(anchorEl)}
         onClose={closeMenu}
