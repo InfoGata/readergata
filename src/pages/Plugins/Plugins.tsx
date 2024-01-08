@@ -1,15 +1,15 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import usePlugins from "../hooks/usePlugins";
-import { PluginInfo } from "../plugintypes";
-import { FileType } from "../types";
-import { directoryProps, generatePluginId, getPlugin } from "../utils";
-import AddPluginUrlDialog from "../components/AddPluginUrlDialog";
-import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
-import PluginCards from "../components/PluginCards/PluginCards";
-import PluginContainer from "../components/PluginContainer";
+import usePlugins from "../../hooks/usePlugins";
+import { PluginInfo } from "../../plugintypes";
+import { FileType } from "../../types";
+import { directoryProps, generatePluginId, getPlugin } from "../../utils";
+import ConfirmPluginDialog from "../../components/ConfirmPluginDialog";
+import PluginCards from "../../components/PluginCards/PluginCards";
+import PluginContainer from "./PluginContainer";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import AddPluginUrlDialog from "./AddPluginUrlDialog";
 
 const Plugins: React.FC = () => {
   const { plugins, deletePlugin, pluginsFailed, reloadPlugins } = usePlugins();
@@ -95,6 +95,7 @@ const Plugins: React.FC = () => {
       />
       <AddPluginUrlDialog
         open={openUrlDialog}
+        setOpen={setOpenUrlDialog}
         handleConfirm={onConfirmUrlDialog}
         handleClose={onCloseUrlDialog}
       />

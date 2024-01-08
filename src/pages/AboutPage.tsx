@@ -1,19 +1,10 @@
+import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 import { faGitAlt } from "@fortawesome/free-brands-svg-icons/faGitAlt";
 import { faMastodon } from "@fortawesome/free-brands-svg-icons/faMastodon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Email, Favorite, Language, Lock, Twitter } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 const AboutPage: React.FC = () => {
   const { t } = useTranslation();
@@ -24,79 +15,54 @@ const AboutPage: React.FC = () => {
   const mastodonUrl = "https://mastodon.online/@InfoGata";
   const mastodonAt = "@InfoGata@mastodon.online";
   const gitUrl = "https://github.com/InfoGata/readergata";
+
+  const links: AboutLinkProps[] = [
+    {
+      title: "Company Website",
+      description: website,
+      icon: <Language />,
+      url: website,
+    },
+    {
+      title: "Github",
+      description: gitUrl,
+      icon: <FontAwesomeIcon icon={faGitAlt} />,
+      url: gitUrl,
+    },
+    {
+      title: "Email",
+      description: email,
+      icon: <Email />,
+    },
+    {
+      title: "Twitter",
+      description: twitterAt,
+      icon: <Twitter />,
+      url: twitterUrl,
+    },
+    {
+      title: "Mastodon",
+      description: mastodonAt,
+      icon: <FontAwesomeIcon icon={faMastodon} />,
+      url: mastodonUrl,
+    },
+    {
+      title: t("donate"),
+      icon: <Favorite />,
+      internalPath: "/donate",
+    },
+    {
+      title: "Privacy",
+      icon: <Lock />,
+      internalPath: "/privacy",
+    },
+  ];
   return (
-    <Box>
-      <List dense>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={website} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <Language />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Company Website" secondary={website} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={gitUrl} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <FontAwesomeIcon icon={faGitAlt} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="GitHub" secondary={gitUrl} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <Email />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={t("email")} secondary={email} />
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={twitterUrl} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <Twitter />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Twitter" secondary={twitterAt} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={mastodonUrl} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <FontAwesomeIcon icon={faMastodon} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Mastodon" secondary={mastodonAt} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/donate">
-            <ListItemAvatar>
-              <Avatar>
-                <Favorite />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={t("donate")} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/privacy">
-            <ListItemAvatar>
-              <Avatar>
-                <Lock />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={t("privacyPolicy")} />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </Box>
+    <div>
+      {links.map((l) => (
+        <AboutLink {...l} key={l.title} />
+      ))}
+    </div>
   );
 };
 

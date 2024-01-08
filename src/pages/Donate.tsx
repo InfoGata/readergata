@@ -3,19 +3,11 @@ import { faMonero } from "@fortawesome/free-brands-svg-icons/faMonero";
 import { faPatreon } from "@fortawesome/free-brands-svg-icons/faPatreon";
 import { faPaypal } from "@fortawesome/free-brands-svg-icons/faPaypal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Avatar,
-  Box,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  SvgIcon,
-} from "@mui/material";
+import { SvgIcon } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ReactComponent as Liberapay } from "../liberapay_logo.svg";
+import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 
 const Donate: React.FC = () => {
   const { t } = useTranslation();
@@ -27,64 +19,43 @@ const Donate: React.FC = () => {
   const liberapayUrl = "https://liberapay.com/InfoGata/donate";
   const patreonUrl = "https://www.patreon.com/InfoGata";
   const donateText = t("donate");
+
+  const links: AboutLinkProps[] = [
+    {
+      title: donateText,
+      description: "Paypal",
+      icon: <FontAwesomeIcon icon={faPaypal} />,
+      url: paypalUrl,
+    },
+    {
+      title: donateText,
+      description: "Pateron",
+      icon: <FontAwesomeIcon icon={faPatreon} />,
+      url: patreonUrl,
+    },
+    {
+      title: donateText,
+      description: "Liberapay",
+      icon: <SvgIcon component={Liberapay} inheritViewBox />,
+      url: liberapayUrl,
+    },
+    {
+      title: `${donateText} - BTC`,
+      description: btcDonation,
+      icon: <FontAwesomeIcon icon={faBitcoin} />,
+    },
+    {
+      title: `${donateText} - XMR`,
+      description: xmrDonation,
+      icon: <FontAwesomeIcon icon={faMonero} />,
+    },
+  ];
   return (
-    <Box>
-      <List dense>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={paypalUrl} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <FontAwesomeIcon icon={faPaypal} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={donateText} secondary="Paypal" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={patreonUrl} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <FontAwesomeIcon icon={faPatreon} />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={donateText} secondary="Patreon" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component="a" href={liberapayUrl} target="_blank">
-            <ListItemAvatar>
-              <Avatar>
-                <SvgIcon component={Liberapay} inheritViewBox />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={donateText} secondary="Liberapay" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <FontAwesomeIcon icon={faBitcoin} />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={`${donateText} - BTC`}
-            secondary={btcDonation}
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <FontAwesomeIcon icon={faMonero} />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={`${donateText} - XMR`}
-            secondary={xmrDonation}
-            secondaryTypographyProps={{ style: { wordWrap: "break-word" } }}
-          />
-        </ListItem>
-      </List>
-    </Box>
+    <div>
+      {links.map((l) => (
+        <AboutLink {...l} key={l.title} />
+      ))}
+    </div>
   );
 };
 

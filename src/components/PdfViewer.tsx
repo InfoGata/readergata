@@ -272,7 +272,11 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
         </Document>
       )}
       {numPages && numPages > (pageNumber || 1) + 1 && (
-        <Button variant="ghost" onClick={nextPage}>
+        <Button
+          variant="ghost"
+          onClick={nextPage}
+          className="absolute top-1/2 -translate-y-1/2 right-0 z-10 h-full"
+        >
           <NavigateNext />
         </Button>
       )}

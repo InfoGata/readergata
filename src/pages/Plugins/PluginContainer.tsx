@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { PluginFrameContainer } from "../PluginsContext";
+import { PluginFrameContainer } from "../../PluginsContext";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Delete, MoreHoriz } from "@mui/icons-material";
@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 
 interface PluginContainerProps {
   plugin: PluginFrameContainer;

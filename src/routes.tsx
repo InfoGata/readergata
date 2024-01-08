@@ -13,7 +13,7 @@ import PluginFeed from "./pages/PluginFeed";
 import PluginFeedSearch from "./pages/PluginFeedSearch";
 import PluginInstall from "./pages/PluginInstall";
 import PluginOptions from "./pages/PluginOptions";
-import Plugins from "./pages/Plugins";
+import Plugins from "./pages/Plugins/Plugins";
 import Privacy from "./pages/Privacy";
 import Settings from "./pages/Settings";
 import Viewer from "./pages/Viewer";

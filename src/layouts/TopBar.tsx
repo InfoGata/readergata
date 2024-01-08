@@ -16,7 +16,7 @@ const TopBar: React.FC = () => {
   const location = useLocation();
 
   return (
-    <AppBar color="default" position="fixed">
+    <AppBar color="default" position="fixed" sx={{ zIndex: 40 }}>
       <Toolbar variant="dense">
         <IconButton
           color="inherit"

@@ -71,6 +71,7 @@
     "openMenu": "Open Menu"
   },
   "settings": {
-    "disableAutoUpdatePlugins": "Disable plugins updating automatically"
+    "disableAutoUpdatePlugins": "Disable plugins updating automatically",
+    "corsProxy": "Cors Proxy Url"
   }
 }
