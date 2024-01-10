@@ -1,10 +1,3 @@
-import {
-  FormControl,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material";
 import React from "react";
 import { useAppDispatch } from "../store/hooks";
 import { useTranslation } from "react-i18next";
@@ -12,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { setPublication } from "../store/reducers/documentReducer";
 import { PublicationSourceType } from "../types";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { RadioGroupItem, RadioGroup as ShRadioGroup } from "./ui/radio-group";
+import { Label } from "./ui/label";
 
 const OpenUrlForm: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
@@ -67,31 +63,36 @@ const OpenUrlForm: React.FC = () => {
     }
   };
 
-  const onRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUrlType((event.target as HTMLInputElement).value);
+  const onRadioChange = (value: string) => {
+    setUrlType(value);
   };
 
   return (
-    <form onSubmit={onUrlSubmit} className="flex flex-col">
-      <FormControl>
-        <TextField
+    <form onSubmit={onUrlSubmit} className="flex flex-col gap-2">
+      <div className="space-y-2">
+        <Input
           value={inputUrl}
           onChange={onInputUrlChange}
           placeholder="URL"
           name="url"
+          className="rounded-none py-6"
         />
-        <RadioGroup
-          row
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="controlled-radio-buttons-group"
-          value={urlType}
-          onChange={onRadioChange}
+        <ShRadioGroup
+          defaultValue="epub"
           className="flex flex-row justify-center"
+          value={urlType}
+          onValueChange={onRadioChange}
         >
-          <FormControlLabel value="epub" control={<Radio />} label="Epub" />
-          <FormControlLabel value="pdf" control={<Radio />} label="PDF" />
-        </RadioGroup>
-      </FormControl>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="epub" id="r1" />
+            <Label htmlFor="r1">EPUB</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="pdf" id="r2" />
+            <Label htmlFor="r2">PDF</Label>
+          </div>
+        </ShRadioGroup>
+      </div>
       <Button type="submit">{t("submit")}</Button>
     </form>
   );

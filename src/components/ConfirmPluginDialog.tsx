@@ -1,12 +1,6 @@
 import {
-  Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
-  Grid,
-  Link,
   List,
   ListItem,
   ListItemText,
@@ -15,9 +9,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import usePlugins from "../hooks/usePlugins";
 import { PluginInfo } from "../plugintypes";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from "./ui/dialog";
 
 interface ConfirmPluginDialogProps {
   open: boolean;
+  setOpen?: (open: boolean) => void;
   plugins: PluginInfo[];
   handleClose: () => void;
   afterConfirm?: () => void;
@@ -26,8 +23,15 @@ interface ConfirmPluginDialogProps {
 }
 
 const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
-  const { open, plugins, handleClose, afterConfirm, afterCancel, installUrl } =
-    props;
+  const {
+    open,
+    plugins,
+    handleClose,
+    afterConfirm,
+    afterCancel,
+    installUrl,
+    setOpen,
+  } = props;
   const [checked, setChecked] = React.useState<Set<string>>(new Set());
   const { addPlugin } = usePlugins();
   const { t } = useTranslation(["plugins", "common"]);
@@ -84,39 +88,43 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">
-        {t("plugins:addPlugin", { count: plugins.length })}
-      </DialogTitle>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
-        <List>{info}</List>
-        {plugins.length === 1 &&
-          installUrl &&
-          plugins[0].manifestUrl !== installUrl && (
-            <Grid>
-              {t("plugins:installManifestUrl")}:{" "}
-              <Link href={installUrl} target="_blank">
-                {installUrl}
-              </Link>
-            </Grid>
+        <DialogHeader>
+          <DialogTitle>
+            {t("plugins:addPlugin", { count: plugins.length })}
+          </DialogTitle>
+        </DialogHeader>
+        <div>
+          <List>{info}</List>
+          {plugins.length === 1 &&
+            installUrl &&
+            plugins[0].manifestUrl !== installUrl && (
+              <div>
+                {t("plugins:installManifestUrl")}:{" "}
+                <a href={installUrl} target="_blank">
+                  {installUrl}
+                </a>
+              </div>
+            )}
+          {plugins.length === 1 && plugins[0].manifestUrl && (
+            <div>
+              {t("plugins:updateManifestUrl")}:{" "}
+              <a href={plugins[0].manifestUrl} target="_blank">
+                {plugins[0].manifestUrl}
+              </a>
+            </div>
           )}
-        {plugins.length === 1 && plugins[0].manifestUrl && (
-          <Grid>
-            {t("plugins:updateManifestUrl")}:{" "}
-            <Link href={plugins[0].manifestUrl} target="_blank">
-              {plugins[0].manifestUrl}
-            </Link>
-          </Grid>
-        )}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" className="uppercase" onClick={onCancel}>
+            {t("common:cancel")}
+          </Button>
+          <Button variant="outline" className="uppercase" onClick={onConfirm}>
+            {t("common:confirm")}
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onCancel}>{t("common:cancel")}</Button>
-        <Button onClick={onConfirm}>{t("common:confirm")}</Button>
-      </DialogActions>
     </Dialog>
   );
 };

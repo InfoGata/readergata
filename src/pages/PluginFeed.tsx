@@ -1,4 +1,3 @@
-import { Grid } from "@mui/material";
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -32,7 +31,7 @@ const PluginFeed: React.FC = () => {
   });
 
   return (
-    <Grid>
+    <div>
       <Spinner open={query.isLoading || isLoading} />
       {query.data && (
         <FeedContainer
@@ -47,7 +46,7 @@ const PluginFeed: React.FC = () => {
         plugins={pendingPlugin ? [pendingPlugin] : []}
         handleClose={removePendingPlugin}
       />
-    </Grid>
+    </div>
   );
 };
 

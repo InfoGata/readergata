@@ -1,21 +1,26 @@
 import React from "react";
 import { DocumentData } from "../../types";
-import { MoreHoriz } from "@mui/icons-material";
+import { Delete, MoreHoriz } from "@mui/icons-material";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface LibraryBookProps {
   documentData: DocumentData;
-  openMenu: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    documentData: DocumentData
-  ) => void;
+  removeDocument: (document: DocumentData) => void;
 }
 
 const LibraryBook: React.FC<LibraryBookProps> = (props) => {
-  const { documentData, openMenu } = props;
+  const { documentData, removeDocument } = props;
+  const { t } = useTranslation();
 
-  const openDocumentMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    openMenu(event, documentData);
+  const onRemove = () => {
+    removeDocument(documentData);
   };
 
   return (
@@ -29,9 +34,24 @@ const LibraryBook: React.FC<LibraryBookProps> = (props) => {
             {documentData.author}
           </p>
         </div>
-        <Button variant="ghost" onClick={openDocumentMenu}>
-          <MoreHoriz />
-        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="data-[state=open]:bg-muted"
+              size="icon"
+            >
+              <MoreHoriz />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onRemove} className="cursor-pointer">
+              <Delete />
+              <span className="uppercase">{t("remove")}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

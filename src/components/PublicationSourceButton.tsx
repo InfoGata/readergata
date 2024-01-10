@@ -1,7 +1,8 @@
-import { Button } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 import { PublicationSource } from "../plugintypes";
+import { buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 interface PublicationSourceButtonProps {
   source: PublicationSource;
@@ -17,15 +18,15 @@ const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
   search = pluginId ? `${search}&pluginId=${pluginId}` : search;
 
   return (
-    <Button
-      component={Link}
+    <Link
+      className={cn(buttonVariants({ variant: "outline" }), "uppercase")}
       to={{
         pathname: "/viewer",
         search: search,
       }}
     >
       {source.name ?? source.type}
-    </Button>
+    </Link>
   );
 };
 

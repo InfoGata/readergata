@@ -1,10 +1,3 @@
-import {
-  Button,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
 import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -22,8 +15,9 @@ import {
 import Spinner from "@/components/Spinner";
 import { directoryProps } from "../utils";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useSnackbar } from "notistack";
+import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 
 const PluginDetails: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();
@@ -178,6 +172,34 @@ const PluginDetails: React.FC = () => {
     return <div>{t("common:notFound")}</div>;
   }
 
+  const aboutLinks: (AboutLinkProps | null)[] = [
+    {
+      title: t("plugins:pluginDescription"),
+      description: pluginInfo.description,
+    },
+    pluginInfo.homepage
+      ? {
+          title: t("plugins:homepage"),
+          description: pluginInfo.homepage,
+          url: pluginInfo.homepage,
+        }
+      : null,
+    { title: t("plugins:version"), description: pluginInfo.version },
+    { title: "Id", description: pluginInfo.id },
+    { title: t("plugins:scriptSize"), description: `${scriptSize / 1000} kb` },
+    {
+      title: t("plugins:optionsPageSize"),
+      description: `${optionSize / 1000} kb`,
+    },
+    pluginInfo.manifestUrl
+      ? {
+          title: t("plugins:updateUrl"),
+          description: pluginInfo.manifestUrl,
+          url: pluginInfo.manifestUrl,
+        }
+      : null,
+  ];
+
   return (
     <>
       <Spinner open={loading} />
@@ -186,15 +208,20 @@ const PluginDetails: React.FC = () => {
           {t("plugins:pluginDetailsTitle")}
         </h1>
         <h2 className="text-2xl font-semibold">{pluginInfo.name}</h2>
-
-        <div>
+        <div className="flex gap-2 flex-wrap">
           {pluginInfo.manifestUrl && (
-            <Button onClick={checkUpdate}>
+            <Button
+              variant="outline"
+              className="uppercase"
+              onClick={checkUpdate}
+            >
               {t("plugins:checkForUpdates")}
             </Button>
           )}
           {hasUpdate && (
-            <Button onClick={onUpdate}>{t("plugins:updatePlugin")}</Button>
+            <Button variant="outline" className="uppercase" onClick={onUpdate}>
+              {t("plugins:updatePlugin")}
+            </Button>
           )}
 
           <label
@@ -219,77 +246,18 @@ const PluginDetails: React.FC = () => {
               <span>{t("plugins:reloadPlugin")}</span>
             </Button>
           )}
+          {hasAuth && pluginAuth && (
+            <Button variant="outline" onClick={onLogout}>
+              {t("plugins:login")}
+            </Button>
+          )}
+          {hasAuth && !pluginAuth && (
+            <Button variant="outline" onClick={onLogin}>
+              {t("plugins:login")}
+            </Button>
+          )}
         </div>
-        <List>
-          <ListItem>
-            <ListItemText
-              primary={t("plugins:pluginDescription")}
-              secondary={pluginInfo.description}
-            />
-          </ListItem>
-          {pluginInfo.homepage && (
-            <ListItem disablePadding>
-              <ListItemButton
-                component="a"
-                href={pluginInfo.homepage}
-                target="_blank"
-              >
-                <ListItemText
-                  primary={t("plugins:homepage")}
-                  secondary={pluginInfo.homepage}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
-          <ListItem>
-            <ListItemText
-              primary={t("plugins:version")}
-              secondary={pluginInfo.version}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Id" secondary={pluginInfo.id} />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary={t("plugins:scriptSize")}
-              secondary={`${scriptSize / 1000} kb`}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary={t("plugins:optionsPageSize")}
-              secondary={`${optionSize / 1000} kb`}
-            />
-          </ListItem>
-          {pluginInfo.manifestUrl && (
-            <ListItem disablePadding>
-              <ListItemButton
-                component="a"
-                href={pluginInfo.manifestUrl}
-                target="_blank"
-              >
-                <ListItemText
-                  primary={t("plugins:updateUrl")}
-                  secondary={pluginInfo.manifestUrl}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
-        </List>
-        {hasAuth && (
-          <ListItem disablePadding>
-            {pluginAuth ? (
-              <ListItemButton onClick={onLogout}>
-                <ListItemText primary={t("plugins:logout")} />
-              </ListItemButton>
-            ) : (
-              <ListItemButton onClick={onLogin}>
-                <ListItemText primary={t("plugins:login")} />
-              </ListItemButton>
-            )}
-          </ListItem>
-        )}
+        {aboutLinks.map((a) => a && <AboutLink {...a} key={a.title} />)}
       </div>
     </>
   );

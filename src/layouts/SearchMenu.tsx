@@ -1,15 +1,5 @@
 import { Clear } from "@mui/icons-material";
-import {
-  Drawer,
-  IconButton,
-  InputAdornment,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Drawer } from "@mui/material";
 import DOMPurify from "dompurify";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -21,6 +11,8 @@ import {
   setSearchQuery,
 } from "../store/reducers/uiReducer";
 import { drawerWidth } from "../utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const SearchMenu: React.FC = () => {
   const searchOpen = useAppSelector((state) => state.ui.searchOpen);
@@ -55,19 +47,11 @@ const SearchMenu: React.FC = () => {
     const originalText = regExecArray ? regExecArray[0] : "";
     const boldText = r.text.replace(regex, `<b>${originalText}</b>`);
     return (
-      <ListItem key={i} disablePadding>
-        <ListItemButton onClick={onResultClick}>
-          <ListItemText
-            primary={
-              <Typography
-                dangerouslySetInnerHTML={{
-                  __html: sanitizer(boldText),
-                }}
-              />
-            }
-          />
-        </ListItemButton>
-      </ListItem>
+      <button className="w-full" onClick={onResultClick} key={i}>
+        <div className="flex py-2 px-4 transition-all hover:bg-accent hover:text-accent-foreground items-center">
+          <p dangerouslySetInnerHTML={{ __html: sanitizer(boldText) }} />
+        </div>
+      </button>
     );
   });
 
@@ -88,27 +72,26 @@ const SearchMenu: React.FC = () => {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <TextField
-          placeholder={t("search")}
-          value={search}
-          onChange={onChange}
-          name="query"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="clear search"
-                  onClick={onClear}
-                  edge="end"
-                >
-                  {<Clear />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
+        <div className="relative m-2">
+          <Input
+            placeholder={t("search")}
+            className="pr-8"
+            value={search}
+            onChange={onChange}
+            name="query"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute top-0 right-0 opacity-60"
+            onClick={onClear}
+          >
+            <Clear />
+          </Button>
+        </div>
       </form>
-      <List disablePadding>{resultItems}</List>
+      <div>{resultItems}</div>
     </Drawer>
   );
 };

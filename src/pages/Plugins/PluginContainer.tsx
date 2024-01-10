@@ -54,7 +54,11 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="data-[state=open]:bg-muted">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="data-[state=open]:bg-muted"
+              >
                 <MoreHoriz />
                 <span className="sr-only">{t("openMenu")}</span>
               </Button>

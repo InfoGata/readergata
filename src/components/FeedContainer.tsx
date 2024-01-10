@@ -1,18 +1,12 @@
-import {
-  Button,
-  Grid,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  TextField,
-} from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PluginFrameContainer } from "../PluginsContext";
 import { Feed } from "../plugintypes";
 import PublicationInfo from "./PublicationInfo";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import AboutLink from "./AboutLink";
 
 interface FeedContainerProps {
   feed: Feed;
@@ -51,10 +45,10 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
   };
 
   return (
-    <Grid>
+    <div>
       {feed.hasSearch && (
-        <form onSubmit={onSubmit}>
-          <TextField
+        <form onSubmit={onSubmit} className="flex flex-col gap-2">
+          <Input
             placeholder={t("search")}
             value={query}
             onChange={onSearchChange}
@@ -62,25 +56,21 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
           <Button type="submit">{t("search")}</Button>
         </form>
       )}
-      <List>
+      <div>
         {feed.type === "publication"
           ? feed.items.map((p, i) => (
               <PublicationInfo key={i} publication={p} />
             ))
           : feed.items.map((c, i) => (
-              <ListItem key={i} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  to={`/plugins/${c.pluginId}/feed/${encodeURIComponent(
-                    c.apiId || ""
-                  )}`}
-                >
-                  <ListItemText primary={c.name} />
-                </ListItemButton>
-              </ListItem>
+              <AboutLink
+                title={c.name}
+                internalPath={`/plugins/${c.pluginId}/feed/${encodeURIComponent(
+                  c.apiId || ""
+                )}`}
+              />
             ))}
-      </List>
-    </Grid>
+      </div>
+    </div>
   );
 };
 
