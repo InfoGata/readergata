@@ -1,8 +1,8 @@
 import { Toc } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setTocOpen } from "../store/reducers/uiReducer";
+import { Button } from "@/components/ui/button";
 
 const TocButton: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -10,16 +10,14 @@ const TocButton: React.FC = () => {
   const onTocToggle = () => dispatch(setTocOpen(!tocOpen));
 
   return (
-    <IconButton
-      color="inherit"
-      aria-label="menu"
-      edge="start"
+    <Button
+      size="icon"
+      variant="ghost"
       onClick={onTocToggle}
-      sx={{ mr: 2 }}
-      size="small"
+      aria-label="contents"
     >
       <Toc />
-    </IconButton>
+    </Button>
   );
 };
 

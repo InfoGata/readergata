@@ -63,7 +63,7 @@ const Plugins: React.FC = () => {
           htmlFor="contained-button-file"
           className={cn(
             buttonVariants({ variant: "default" }),
-            "uppercase cursor-pointer"
+            "cursor-pointer"
           )}
         >
           <input
@@ -75,9 +75,7 @@ const Plugins: React.FC = () => {
           />
           {t("loadPluginFromFolder")}
         </label>
-        <Button onClick={onOpenUrlDialog} className="uppercase">
-          {t("loadPluginFromUrl")}
-        </Button>
+        <Button onClick={onOpenUrlDialog}>{t("loadPluginFromUrl")}</Button>
       </div>
       {pluginsFailed && (
         <Button variant="secondary" onClick={reloadPlugins}>{`${t(
@@ -87,7 +85,10 @@ const Plugins: React.FC = () => {
       {plugins.length > 0 && (
         <h2 className="text-2xl font-bold">{t("installedPlugins")}</h2>
       )}
-      <div>{pluginComponents}</div>
+      <div className="flex flex-col gap-4">
+        <div>{pluginComponents}</div>
+        <PluginCards />
+      </div>
       <ConfirmPluginDialog
         open={Boolean(pendingPlugin)}
         plugins={pendingPlugin ? [pendingPlugin] : []}
@@ -99,7 +100,6 @@ const Plugins: React.FC = () => {
         handleConfirm={onConfirmUrlDialog}
         handleClose={onCloseUrlDialog}
       />
-      <PluginCards />
     </div>
   );
 };

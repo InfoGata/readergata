@@ -52,7 +52,7 @@ const AboutPage: React.FC = () => {
       internalPath: "/donate",
     },
     {
-      title: "Privacy",
+      title: t("privacyPolicy"),
       icon: <Lock />,
       internalPath: "/privacy",
     },

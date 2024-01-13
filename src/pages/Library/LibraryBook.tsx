@@ -48,7 +48,7 @@ const LibraryBook: React.FC<LibraryBookProps> = (props) => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={onRemove} className="cursor-pointer">
               <Delete />
-              <span className="uppercase">{t("remove")}</span>
+              <span>{t("remove")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

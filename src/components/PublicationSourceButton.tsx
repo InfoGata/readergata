@@ -19,7 +19,7 @@ const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
 
   return (
     <Link
-      className={cn(buttonVariants({ variant: "outline" }), "uppercase")}
+      className={cn(buttonVariants({ variant: "outline" }))}
       to={{
         pathname: "/viewer",
         search: search,

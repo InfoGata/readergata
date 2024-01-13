@@ -1,6 +1,7 @@
-import { Avatar } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Avatar } from "./ui/avatar";
+import { AvatarImage } from "@radix-ui/react-avatar";
 
 export type AboutLinkProps = {
   icon?: JSX.Element;
@@ -41,8 +42,16 @@ const AboutLink: React.FC<AboutLinkProps> = (props) => {
   return (
     <CondtionalLink>
       <div className="m-1 flex space-x-4 rounded-md py-2 pl-4 pr-16 transition-all hover:bg-accent hover:text-accent-foreground items-center">
-        {icon && <Avatar>{icon}</Avatar>}
-        {avatarSrc && <Avatar variant="square" src={avatarSrc} />}
+        {icon && (
+          <div className="w-10 h-10 flex items-center bg-muted-foreground rounded-full justify-center text-background">
+            {icon}
+          </div>
+        )}
+        {avatarSrc && (
+          <Avatar>
+            <AvatarImage src={avatarSrc} />
+          </Avatar>
+        )}
         <div className="space-y-1 w-full">
           <p className="text-sm font-medium leading-none">{title}</p>
           <p className="text-sm text-muted-foreground break-words">

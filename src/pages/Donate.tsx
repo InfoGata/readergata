@@ -1,13 +1,12 @@
+import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 import { faBitcoin } from "@fortawesome/free-brands-svg-icons/faBitcoin";
 import { faMonero } from "@fortawesome/free-brands-svg-icons/faMonero";
 import { faPatreon } from "@fortawesome/free-brands-svg-icons/faPatreon";
 import { faPaypal } from "@fortawesome/free-brands-svg-icons/faPaypal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { SvgIcon } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ReactComponent as Liberapay } from "../liberapay_logo.svg";
-import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 
 const Donate: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +35,7 @@ const Donate: React.FC = () => {
     {
       title: donateText,
       description: "Liberapay",
-      icon: <SvgIcon component={Liberapay} inheritViewBox />,
+      icon: <Liberapay fill="white" className="w-6 h-6" />,
       url: liberapayUrl,
     },
     {

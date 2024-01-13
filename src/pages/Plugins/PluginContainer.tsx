@@ -37,17 +37,14 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
         <div className="flex gap-2 items-center">
           {plugin.hasOptions && (
             <Link
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "uppercase"
-              )}
+              className={cn(buttonVariants({ variant: "outline" }))}
               to={`/plugins/${plugin.id}/options`}
             >
               {t("options")}
             </Link>
           )}
           <Link
-            className={cn(buttonVariants({ variant: "outline" }), "uppercase")}
+            className={cn(buttonVariants({ variant: "outline" }))}
             to={`/plugins/${plugin.id}`}
           >
             {t("pluginDetails")}
@@ -66,7 +63,7 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" onClick={onDelete}>
                 <Delete />
-                <span className="uppercase">{t("deletePlugin")}</span>
+                <span>{t("deletePlugin")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

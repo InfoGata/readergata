@@ -1,5 +1,4 @@
 import { Clear } from "@mui/icons-material";
-import { Drawer } from "@mui/material";
 import DOMPurify from "dompurify";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -10,13 +9,13 @@ import {
   setSearchOpen,
   setSearchQuery,
 } from "../store/reducers/uiReducer";
-import { drawerWidth } from "../utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const SearchMenu: React.FC = () => {
   const searchOpen = useAppSelector((state) => state.ui.searchOpen);
-  const onClose = () => dispatch(setSearchOpen(false));
+  const setOpen = (open: boolean) => dispatch(setSearchOpen(open));
   const [search, setSearch] = React.useState("");
   const sanitizer = DOMPurify.sanitize;
   const searchResults = useAppSelector((state) => state.ui.searchResults);
@@ -61,38 +60,31 @@ const SearchMenu: React.FC = () => {
   };
 
   return (
-    <Drawer
-      variant="temporary"
-      anchor="right"
-      open={searchOpen}
-      onClose={onClose}
-      sx={{
-        display: { xs: "none", sm: "block" },
-        "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-      }}
-    >
-      <form onSubmit={handleSubmit}>
-        <div className="relative m-2">
-          <Input
-            placeholder={t("search")}
-            className="pr-8"
-            value={search}
-            onChange={onChange}
-            name="query"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute top-0 right-0 opacity-60"
-            onClick={onClear}
-          >
-            <Clear />
-          </Button>
-        </div>
-      </form>
-      <div>{resultItems}</div>
-    </Drawer>
+    <Sheet open={searchOpen} onOpenChange={setOpen}>
+      <SheetContent side="right" className="overflow-y-scroll">
+        <form onSubmit={handleSubmit}>
+          <div className="relative m-2">
+            <Input
+              placeholder={t("search")}
+              className="pr-8"
+              value={search}
+              onChange={onChange}
+              name="query"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute top-0 right-0 opacity-60"
+              onClick={onClear}
+            >
+              <Clear />
+            </Button>
+          </div>
+        </form>
+        <div>{resultItems}</div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

@@ -1,5 +1,4 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, IconButton, Toolbar } from "@mui/material";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import BookmarksButton from "./BookmarksButton";
@@ -8,6 +7,7 @@ import Title from "./Title";
 import TocButton from "./TocButton";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
+import { Button } from "@/components/ui/button";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,28 +16,25 @@ const TopBar: React.FC = () => {
   const location = useLocation();
 
   return (
-    <AppBar color="default" position="fixed" sx={{ zIndex: 40 }}>
-      <Toolbar variant="dense">
-        <IconButton
-          color="inherit"
-          aria-label="menu"
-          edge="start"
-          onClick={onNavigationToggle}
-          sx={{ mr: 2 }}
-          size="small"
-        >
-          <MenuIcon />
-        </IconButton>
-        {location.pathname === "/viewer" ? (
-          <>
-            <Title />
-            <SearchButton />
-            <BookmarksButton />
-            <TocButton />
-          </>
-        ) : null}
-      </Toolbar>
-    </AppBar>
+    <header className="fixed top-0 left-auto right-0 w-full shadow-xl z-40 bg-background">
+      <div className="flex items-center px-6 min-h-12">
+        <div className="flex w-full items-center justify-between">
+          <Button variant="ghost" size="icon" onClick={onNavigationToggle}>
+            <MenuIcon />
+          </Button>
+          {location.pathname === "/viewer" ? (
+            <>
+              <Title />
+              <div className="flex">
+                <SearchButton />
+                <BookmarksButton />
+                <TocButton />
+              </div>
+            </>
+          ) : null}
+        </div>
+      </div>
+    </header>
   );
 };
 

@@ -1,12 +1,13 @@
-import { Button, Drawer, List } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBookmarksOpen } from "../store/reducers/uiReducer";
-import { drawerWidth, getDocumentData } from "../utils";
+import { getDocumentData } from "../utils";
 import { useTranslation } from "react-i18next";
 import { BookmarkAdd } from "@mui/icons-material";
 import { useLiveQuery } from "dexie-react-hooks";
 import BookmarkItem from "./BookmarkItem";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const BookmarksMenu: React.FC = () => {
   const currentPublication = useAppSelector(
@@ -19,7 +20,7 @@ const BookmarksMenu: React.FC = () => {
   const { t } = useTranslation();
   const open = useAppSelector((state) => state.ui.bookmarksOpen);
   const dispatch = useAppDispatch();
-  const onClose = () => dispatch(setBookmarksOpen(false));
+  const setOpen = (open: boolean) => dispatch(setBookmarksOpen(open));
 
   const documentData = useLiveQuery(() => {
     const data = getDocumentData(currentPublication);
@@ -50,35 +51,25 @@ const BookmarksMenu: React.FC = () => {
   };
 
   return (
-    <Drawer
-      variant="temporary"
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      sx={{
-        display: { xs: "none", sm: "block" },
-        "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-      }}
-    >
-      <Button
-        variant="contained"
-        startIcon={<BookmarkAdd />}
-        onClick={addBookmark}
-      >
-        {t("addBookmark")}
-      </Button>
-      <List>
-        {documentData &&
-          documentData.bookmarks.map((b, i) => (
-            <BookmarkItem
-              key={i}
-              bookmark={b}
-              index={i}
-              deleteBookmark={deleteBookmark}
-            />
-          ))}
-      </List>
-    </Drawer>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent side="right" className="overflow-y-scroll">
+        <Button onClick={addBookmark} className="m-2 w-full">
+          <BookmarkAdd />
+          {t("addBookmark")}
+        </Button>
+        <div>
+          {documentData &&
+            documentData.bookmarks.map((b, i) => (
+              <BookmarkItem
+                key={i}
+                bookmark={b}
+                index={i}
+                deleteBookmark={deleteBookmark}
+              />
+            ))}
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

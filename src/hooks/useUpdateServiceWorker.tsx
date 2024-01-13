@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -29,14 +29,12 @@ const useUpdateServiceWorker = (
       enqueueSnackbar(t("newVersion"), {
         persist: true,
         action: (key) => (
-          <>
-            <Button color="primary" onClick={() => updateServiceWorker()}>
-              {t("reload")}
-            </Button>
-            <Button color="error" onClick={() => onDismiss(key)}>
+          <div className="flex gap-2">
+            <Button onClick={() => updateServiceWorker()}>{t("reload")}</Button>
+            <Button variant="destructive" onClick={() => onDismiss(key)}>
               {t("dismiss")}
             </Button>
-          </>
+          </div>
         ),
       });
     }

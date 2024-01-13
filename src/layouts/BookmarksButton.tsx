@@ -1,8 +1,8 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBookmarksOpen } from "../store/reducers/uiReducer";
-import { IconButton } from "@mui/material";
 import { Bookmarks } from "@mui/icons-material";
+import { Button } from "@/components/ui/button";
 
 const BookmarksButton: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -10,16 +10,14 @@ const BookmarksButton: React.FC = () => {
   const onBookmarksToggle = () => dispatch(setBookmarksOpen(!bookmarksOpen));
 
   return (
-    <IconButton
-      color="inherit"
-      aria-label="bookmarks"
-      edge="start"
-      sx={{ mr: 2 }}
-      size="small"
+    <Button
+      size="icon"
+      variant="ghost"
       onClick={onBookmarksToggle}
+      aria-label="contents"
     >
       <Bookmarks />
-    </IconButton>
+    </Button>
   );
 };
 

@@ -1,8 +1,3 @@
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-import { StyledEngineProvider } from "@mui/material/styles";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -28,9 +23,7 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ShadThemeProvider defaultTheme="light">
-          <StyledEngineProvider injectFirst>
-            <RouterProvider router={router} />
-          </StyledEngineProvider>
+          <RouterProvider router={router} />
         </ShadThemeProvider>
       </PersistGate>
     </Provider>

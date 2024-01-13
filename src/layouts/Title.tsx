@@ -1,6 +1,5 @@
 import React from "react";
 import { useAppSelector } from "../store/hooks";
-import { Grid, Typography } from "@mui/material";
 
 const Title: React.FC = () => {
   const title = useAppSelector((state) => state.ui.title);
@@ -9,11 +8,9 @@ const Title: React.FC = () => {
   );
 
   return (
-    <Grid container justifyContent="center">
-      <Typography variant="subtitle1" noWrap>
-        {title || currentPublication?.fileName}
-      </Typography>
-    </Grid>
+    <div className="container flex justify-center">
+      <div className="truncate">{title || currentPublication?.fileName}</div>
+    </div>
   );
 };
 

@@ -1,14 +1,14 @@
-import { Box, Button, CssBaseline } from "@mui/material";
 import { SnackbarKey, SnackbarProvider } from "notistack";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
-import MainContainer from "./layouts/MainContainer";
 import MatomoRouterProvider from "./components/MatomoRouterProvider";
+import { Button } from "./components/ui/button";
 import useFullScreen from "./hooks/useFullScreen";
 import useOffline from "./hooks/useOffline";
 import useUpdateServiceWorker from "./hooks/useUpdateServiceWorker";
 import BookmarksMenu from "./layouts/BookmarksMenu";
+import MainContainer from "./layouts/MainContainer";
 import NavigationMenu from "./layouts/NavigationMenu";
 import SearchMenu from "./layouts/SearchMenu";
 import TocMenu from "./layouts/TocMenu";
@@ -40,21 +40,22 @@ const App: React.FC = () => {
       maxSnack={3}
       ref={notistackRef}
       action={(key) => (
-        <Button onClick={() => onClickDismiss(key)}>{t("dismiss")}</Button>
+        <Button variant="ghost" onClick={() => onClickDismiss(key)}>
+          {t("dismiss")}
+        </Button>
       )}
     >
       <QueryClientProvider client={queryClient}>
         <MatomoRouterProvider>
           <PluginsProvider>
-            <Box sx={{ display: "flex" }}>
-              <CssBaseline />
+            <div className="flex">
               <TopBar />
               <NavigationMenu />
               <MainContainer />
               <TocMenu />
               <SearchMenu />
               <BookmarksMenu />
-            </Box>
+            </div>
           </PluginsProvider>
         </MatomoRouterProvider>
       </QueryClientProvider>

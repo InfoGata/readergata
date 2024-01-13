@@ -110,10 +110,10 @@ const AddPluginUrlDialog: React.FC<AddPluginUrlDialogProps> = (props) => {
           </Accordion>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="uppercase" onClick={handleClose}>
+          <Button variant="outline" onClick={handleClose}>
             {t("common:cancel")}
           </Button>
-          <Button variant="outline" className="uppercase" onClick={onConfirm}>
+          <Button variant="outline" onClick={onConfirm}>
             {t("common:confirm")}
           </Button>
         </DialogFooter>

@@ -210,16 +210,12 @@ const PluginDetails: React.FC = () => {
         <h2 className="text-2xl font-semibold">{pluginInfo.name}</h2>
         <div className="flex gap-2 flex-wrap">
           {pluginInfo.manifestUrl && (
-            <Button
-              variant="outline"
-              className="uppercase"
-              onClick={checkUpdate}
-            >
+            <Button variant="outline" onClick={checkUpdate}>
               {t("plugins:checkForUpdates")}
             </Button>
           )}
           {hasUpdate && (
-            <Button variant="outline" className="uppercase" onClick={onUpdate}>
+            <Button variant="outline" onClick={onUpdate}>
               {t("plugins:updatePlugin")}
             </Button>
           )}
@@ -228,7 +224,7 @@ const PluginDetails: React.FC = () => {
             htmlFor={`update-plugin-${pluginInfo.id}`}
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "cursor-pointer uppercase"
+              "cursor-pointer"
             )}
           >
             <input

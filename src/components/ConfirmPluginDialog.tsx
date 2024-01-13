@@ -1,16 +1,16 @@
-import {
-  Checkbox,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import usePlugins from "../hooks/usePlugins";
 import { PluginInfo } from "../plugintypes";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import AboutLink from "./AboutLink";
 
 interface ConfirmPluginDialogProps {
   open: boolean;
@@ -54,30 +54,29 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
     handleClose();
   };
 
-  const onChange =
-    (pluginId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setChecked((prev) => {
-        const next = new Set(prev);
-        e.target.checked ? next.add(pluginId) : next.delete(pluginId);
-        return next;
-      });
-    };
+  // const onChange =
+  //   (pluginId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     setChecked((prev) => {
+  //       const next = new Set(prev);
+  //       e.target.checked ? next.add(pluginId) : next.delete(pluginId);
+  //       return next;
+  //     });
+  //   };
 
   const info = plugins.map((p) => (
-    <ListItem key={p.id}>
-      {plugins.length > 1 && (
+    /* {plugins.length > 1 && (
         <Checkbox
           edge="start"
           checked={checked.has(p.id || "")}
           tabIndex={-1}
           onChange={onChange(p.id || "")}
         />
-      )}
-      <ListItemText
-        primary={`${p.name} ${p.version || ""}`}
-        secondary={p.description}
-      />
-    </ListItem>
+      )} */
+    <AboutLink
+      title={`${p.name} ${p.version || ""}`}
+      description={p.description}
+      key={p.id}
+    />
   ));
 
   const onCancel = () => {
@@ -96,7 +95,7 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
           </DialogTitle>
         </DialogHeader>
         <div>
-          <List>{info}</List>
+          <div>{info}</div>
           {plugins.length === 1 &&
             installUrl &&
             plugins[0].manifestUrl !== installUrl && (
@@ -117,10 +116,10 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" className="uppercase" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel}>
             {t("common:cancel")}
           </Button>
-          <Button variant="outline" className="uppercase" onClick={onConfirm}>
+          <Button variant="outline" onClick={onConfirm}>
             {t("common:confirm")}
           </Button>
         </DialogFooter>

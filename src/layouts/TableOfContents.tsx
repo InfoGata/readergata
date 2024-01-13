@@ -1,8 +1,8 @@
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setContent } from "../store/reducers/uiReducer";
 import { BookContent } from "../types";
+import { cn } from "@/lib/utils";
 
 interface TocItemProps {
   content: BookContent;
@@ -27,12 +27,19 @@ const TocItem: React.FC<TocItemProps> = (props) => {
   selected ||=
     !!currentChapter?.pageNumber &&
     currentChapter.pageNumber === content.pageNumber;
+  //TODP: fix selection
   return (
-    <ListItem onClick={onClick}>
-      <ListItemButton sx={isNested ? { pl: 4 } : undefined} selected={selected}>
-        <ListItemText primary={title} />
-      </ListItemButton>
-    </ListItem>
+    <button className="w-full p-0 text-left" onClick={onClick}>
+      <div
+        className={cn(
+          "flex py-2 px-4 transition-all hover:bg-accent hover:text-accent-foreground",
+          selected && "bg-accent",
+          isNested && "ml-6"
+        )}
+      >
+        <p>{title}</p>
+      </div>
+    </button>
   );
 };
 
@@ -57,7 +64,7 @@ const TableOfContents: React.FC = () => {
       ...getBookContents(c.items, true),
     ]);
   };
-  return <List>{getBookContents(bookContents)}</List>;
+  return <div>{getBookContents(bookContents)}</div>;
 };
 
 export default TableOfContents;

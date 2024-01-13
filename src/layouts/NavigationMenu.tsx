@@ -8,7 +8,6 @@ import {
   MenuBook,
   Settings,
 } from "@mui/icons-material";
-import { Drawer, IconButton, List } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -17,15 +16,16 @@ import {
   setNavigationOpen,
 } from "../store/reducers/uiReducer";
 import { NavigationLinkItem } from "../types";
-import { drawerWidth } from "../utils";
 import NavigationLink from "./NavigationLink";
 import OpenFileButton from "../components/OpenFileButton";
 import OpenUrlForm from "../components/OpenUrlForm";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const NavigationMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigationOpen = useAppSelector((state) => state.ui.navigationOpen);
-  const onClose = () => dispatch(setNavigationOpen(false));
+  const setOpen = (value: boolean) => dispatch(setNavigationOpen(value));
   const isFullscreen = useAppSelector((state) => state.ui.isFullscreen);
   const { t } = useTranslation();
 
@@ -39,30 +39,30 @@ const NavigationMenu: React.FC = () => {
   ];
 
   return (
-    <Drawer
-      variant="temporary"
-      anchor="left"
-      open={navigationOpen}
-      sx={{
-        "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-      }}
-      onClose={onClose}
-    >
-      <List onClick={onClose}>
-        {listItems.map((l) => (
-          <NavigationLink key={l.title} item={l} />
-        ))}
-      </List>
-      <div className="m-2">
-        <OpenFileButton />
-      </div>
-      <IconButton onClick={() => dispatch(setIsFullscreen(!isFullscreen))}>
-        {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
-      </IconButton>
-      <div className="m-2">
-        <OpenUrlForm />
-      </div>
-    </Drawer>
+    <Sheet open={navigationOpen} onOpenChange={setOpen}>
+      <SheetContent side="left" className="w-64 p-0">
+        <div className="space-y-2 py-4 text-muted-foreground">
+          {listItems.map((l) => (
+            <NavigationLink key={l.title} item={l} setOpen={setOpen} />
+          ))}
+        </div>
+        <div className="flex flex-col justify-center items-center">
+          <div>
+            <OpenFileButton />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => dispatch(setIsFullscreen(!isFullscreen))}
+          >
+            {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+          </Button>
+          <div>
+            <OpenUrlForm />
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

@@ -1,8 +1,8 @@
 import { Search } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSearchOpen } from "../store/reducers/uiReducer";
+import { Button } from "@/components/ui/button";
 
 const SearchButton: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -10,16 +10,9 @@ const SearchButton: React.FC = () => {
   const onSearchToggle = () => dispatch(setSearchOpen(!searchOpen));
 
   return (
-    <IconButton
-      color="inherit"
-      aria-label="menu"
-      edge="start"
-      sx={{ mr: 2 }}
-      size="small"
-      onClick={onSearchToggle}
-    >
+    <Button size="icon" variant="ghost" onClick={onSearchToggle}>
       <Search />
-    </IconButton>
+    </Button>
   );
 };
 

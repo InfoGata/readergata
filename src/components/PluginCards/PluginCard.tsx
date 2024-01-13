@@ -28,9 +28,7 @@ const PluginCard = (props: Props) => {
         <CardDescription>{plugin.description}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button className="uppercase" onClick={onClickAdd}>
-          {t("addPlugin")}
-        </Button>
+        <Button onClick={onClickAdd}>{t("addPlugin")}</Button>
       </CardFooter>
     </Card>
   );

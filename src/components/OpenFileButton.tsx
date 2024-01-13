@@ -20,7 +20,7 @@ const OpenFileButton: React.FC = () => {
     <label
       className={cn(
         buttonVariants({ variant: "default" }),
-        "uppercase cursor-pointer w-full"
+        "cursor-pointer w-full"
       )}
     >
       {t("openFile")}
