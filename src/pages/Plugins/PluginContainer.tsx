@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import Alert from "@/components/Alert";
 
 interface PluginContainerProps {
   plugin: PluginFrameContainer;
@@ -19,13 +20,15 @@ interface PluginContainerProps {
 
 const PluginContainer: React.FC<PluginContainerProps> = (props) => {
   const { plugin, deletePlugin } = props;
+  const [alertOpen, setAlertOpen] = React.useState(false);
   const { t } = useTranslation("plugins");
 
   const onDelete = async () => {
-    const confirmDelete = window.confirm(t("confirmDelete"));
-    if (confirmDelete) {
-      await deletePlugin(plugin);
-    }
+    setAlertOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    await deletePlugin(plugin);
   };
 
   return (
@@ -69,6 +72,13 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
           </DropdownMenu>
         </div>
       </div>
+      <Alert
+        title={t("deletePlugin")}
+        description={t("confirmDelete")}
+        setOpen={setAlertOpen}
+        open={alertOpen}
+        confirm={confirmDelete}
+      />
     </div>
   );
 };

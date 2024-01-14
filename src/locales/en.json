@@ -32,11 +32,11 @@
   "plugins": {
     "addPlugin_one": "Add Plugin",
     "addPlugin_other": "Add Plugins",
-    "confirmDelete": "Are you sure you want to delete this plugin",
+    "confirmDelete": "Are you sure you want to delete this plugin?",
     "pluginOptions": "{{pluginName}} Options",
     "options": "Options",
     "updateFromFile": "Update from file",
-    "deletePlugin": "Delete",
+    "deletePlugin": "Delete Plugin",
     "reloadPlugin": "Reload",
     "pluginDetails": "Details",
     "loadPluginFromFolder": "Load Plugin From Folder",
