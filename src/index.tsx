@@ -9,6 +9,7 @@ import * as Sentry from "@sentry/browser";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import { ThemeProvider as ShadThemeProvider } from "./providers/ThemeProvider";
+import { IconContext } from "react-icons";
 
 Sentry.init({
   dsn: "https://691bc946c63849509dc61a61eaee4a5f@app.glitchtip.com/4800",
@@ -23,7 +24,9 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ShadThemeProvider defaultTheme="light">
-          <RouterProvider router={router} />
+          <IconContext.Provider value={{ className: "w-5 h-5" }}>
+            <RouterProvider router={router} />
+          </IconContext.Provider>
         </ShadThemeProvider>
       </PersistGate>
     </Provider>
