@@ -16,7 +16,7 @@ const TopBar: React.FC = () => {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-auto right-0 w-full shadow-xl z-40 bg-background">
+    <header className="fixed top-0 left-auto right-0 w-full shadow-lg z-40 bg-background border-b">
       <div className="flex items-center px-6 min-h-12">
         <div className="flex w-full items-center justify-between">
           <Button variant="ghost" size="icon" onClick={onNavigationToggle}>

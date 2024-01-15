@@ -1,4 +1,3 @@
-import { useSnackbar } from "notistack";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -10,10 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const Settings: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { enqueueSnackbar } = useSnackbar();
   const disableAutoUpdatePlugins = useAppSelector(
     (state) => state.settings.disableAutoUpdatePlugins
   );
@@ -29,7 +28,7 @@ const Settings: React.FC = () => {
 
   const onCorsProxySave = () => {
     dispatch(saveCorsProxyUrl(corsProxy));
-    enqueueSnackbar("Saved Cors Proxy Url", { variant: "success" });
+    toast.success("Saved Cors Proxy Url");
   };
 
   return (

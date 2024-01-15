@@ -1,4 +1,3 @@
-import { useSnackbar } from "notistack";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -11,10 +10,10 @@ import {
 } from "../../utils";
 import Spinner from "../Spinner";
 import PluginCard from "./PluginCard";
+import { toast } from "sonner";
 
 const PluginCards: React.FC = () => {
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
   const { plugins, addPlugin, pluginsLoaded, preinstallComplete } =
     usePlugins();
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -31,7 +30,7 @@ const PluginCards: React.FC = () => {
         plugin.id = generatePluginId();
       }
       await addPlugin(plugin);
-      enqueueSnackbar(`${t("addPluginSuccess")}: ${plugin.name}`);
+      toast(`${t("addPluginSuccess")}: ${plugin.name}`);
       navigate("/plugins");
     }
     setBackdropOpen(false);

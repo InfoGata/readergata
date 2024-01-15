@@ -1,23 +1,23 @@
+import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
+import Spinner from "@/components/Spinner";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import { db } from "../database";
 import usePlugins from "../hooks/usePlugins";
 import { Manifest, PluginInfo } from "../plugintypes";
 import { FileType, NotifyLoginMessage } from "../types";
 import {
+  directoryProps,
   getFileText,
   getFileTypeFromPluginUrl,
   getPlugin,
   hasAuthentication,
 } from "../utils";
-import Spinner from "@/components/Spinner";
-import { directoryProps } from "../utils";
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useSnackbar } from "notistack";
-import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 
 const PluginDetails: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();
@@ -32,7 +32,6 @@ const PluginDetails: React.FC = () => {
   const [hasUpdate, setHasUpdate] = React.useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   const updatePluginFromFilelist = async (files: FileList) => {
     const fileType: FileType = {
@@ -149,10 +148,10 @@ const PluginDetails: React.FC = () => {
         const manifest = JSON.parse(manifestText) as Manifest;
         if (manifest.version !== pluginInfo.version) {
           setHasUpdate(true);
-          enqueueSnackbar(t("plugins:updateFound"));
+          toast(t("plugins:updateFound"));
         } else {
           setHasUpdate(false);
-          enqueueSnackbar(t("plugins:noUpdateFound"));
+          toast(t("plugins:noUpdateFound"));
         }
       }
     }
