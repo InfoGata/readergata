@@ -1,15 +1,19 @@
-import {
-  Extension,
-  Fullscreen,
-  FullscreenExit,
-  Home,
-  Info,
-  LibraryBooks,
-  MenuBook,
-  Settings,
-} from "@mui/icons-material";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import {
+  FaBookOpen,
+  FaCircleInfo,
+  FaCompress,
+  FaExpand,
+  FaGear,
+  FaHouse,
+  FaPuzzlePiece,
+} from "react-icons/fa6";
+import { MdLibraryBooks } from "react-icons/md";
+import OpenFileButton from "../components/OpenFileButton";
+import OpenUrlForm from "../components/OpenUrlForm";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setIsFullscreen,
@@ -17,10 +21,6 @@ import {
 } from "../store/reducers/uiReducer";
 import { NavigationLinkItem } from "../types";
 import NavigationLink from "./NavigationLink";
-import OpenFileButton from "../components/OpenFileButton";
-import OpenUrlForm from "../components/OpenUrlForm";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const NavigationMenu: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -30,12 +30,16 @@ const NavigationMenu: React.FC = () => {
   const { t } = useTranslation();
 
   const listItems: NavigationLinkItem[] = [
-    { title: t("home"), link: "/", icon: <Home /> },
-    { title: t("reader"), link: "/viewer", icon: <MenuBook /> },
-    { title: t("plugins"), link: "/plugins", icon: <Extension /> },
-    { title: t("library"), link: "/library", icon: <LibraryBooks /> },
-    { title: t("settings"), link: "/settings", icon: <Settings /> },
-    { title: t("about"), link: "/about", icon: <Info /> },
+    { title: t("home"), link: "/", icon: <FaHouse /> },
+    {
+      title: t("reader"),
+      link: "/viewer",
+      icon: <FaBookOpen />,
+    },
+    { title: t("plugins"), link: "/plugins", icon: <FaPuzzlePiece /> },
+    { title: t("library"), link: "/library", icon: <MdLibraryBooks /> },
+    { title: t("settings"), link: "/settings", icon: <FaGear /> },
+    { title: t("about"), link: "/about", icon: <FaCircleInfo /> },
   ];
 
   return (
@@ -55,7 +59,7 @@ const NavigationMenu: React.FC = () => {
             size="icon"
             onClick={() => dispatch(setIsFullscreen(!isFullscreen))}
           >
-            {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+            {isFullscreen ? <FaCompress /> : <FaExpand />}
           </Button>
           <div>
             <OpenUrlForm />

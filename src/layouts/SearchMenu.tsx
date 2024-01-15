@@ -1,5 +1,8 @@
-import { Clear } from "@mui/icons-material";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import DOMPurify from "dompurify";
+import { XIcon } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -9,9 +12,6 @@ import {
   setSearchOpen,
   setSearchQuery,
 } from "../store/reducers/uiReducer";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const SearchMenu: React.FC = () => {
   const searchOpen = useAppSelector((state) => state.ui.searchOpen);
@@ -78,7 +78,7 @@ const SearchMenu: React.FC = () => {
               className="absolute top-0 right-0 opacity-60"
               onClick={onClear}
             >
-              <Clear />
+              <XIcon />
             </Button>
           </div>
         </form>

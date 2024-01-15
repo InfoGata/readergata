@@ -1,9 +1,9 @@
-import React from "react";
-import { Bookmark } from "../types";
-import { useAppDispatch } from "../store/hooks";
-import { Delete } from "@mui/icons-material";
-import { setCurrentLocation } from "../store/reducers/documentReducer";
 import { Button } from "@/components/ui/button";
+import React from "react";
+import { useAppDispatch } from "../store/hooks";
+import { setCurrentLocation } from "../store/reducers/documentReducer";
+import { Bookmark } from "../types";
+import { FaTrash } from "react-icons/fa6";
 
 interface BookmarkItemProps {
   bookmark: Bookmark;
@@ -35,7 +35,7 @@ const BookmarkItem: React.FC<BookmarkItemProps> = (props) => {
         className="hover:bg-muted"
         onClick={onDeleteClick}
       >
-        <Delete />
+        <FaTrash />
       </Button>
     </div>
   );

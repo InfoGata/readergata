@@ -1,13 +1,13 @@
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useLiveQuery } from "dexie-react-hooks";
+import { BookmarkPlusIcon } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBookmarksOpen } from "../store/reducers/uiReducer";
 import { getDocumentData } from "../utils";
-import { useTranslation } from "react-i18next";
-import { BookmarkAdd } from "@mui/icons-material";
-import { useLiveQuery } from "dexie-react-hooks";
 import BookmarkItem from "./BookmarkItem";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const BookmarksMenu: React.FC = () => {
   const currentPublication = useAppSelector(
@@ -54,7 +54,7 @@ const BookmarksMenu: React.FC = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent side="right" className="overflow-y-scroll">
         <Button onClick={addBookmark} className="m-2 w-full">
-          <BookmarkAdd />
+          <BookmarkPlusIcon />
           {t("addBookmark")}
         </Button>
         <div>

@@ -1,17 +1,18 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { PluginFrameContainer } from "../../PluginsContext";
+import Alert from "@/components/Alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Delete, MoreHoriz } from "@mui/icons-material";
+import { MoreHorizontalIcon } from "lucide-react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { FaTrash } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { PluginFrameContainer } from "../../PluginsContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
-import Alert from "@/components/Alert";
 
 interface PluginContainerProps {
   plugin: PluginFrameContainer;
@@ -59,13 +60,13 @@ const PluginContainer: React.FC<PluginContainerProps> = (props) => {
                 size="icon"
                 className="data-[state=open]:bg-muted"
               >
-                <MoreHoriz />
+                <MoreHorizontalIcon />
                 <span className="sr-only">{t("openMenu")}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" onClick={onDelete}>
-                <Delete />
+                <FaTrash />
                 <span>{t("deletePlugin")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

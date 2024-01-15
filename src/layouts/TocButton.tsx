@@ -1,8 +1,8 @@
-import { Toc } from "@mui/icons-material";
+import { Button } from "@/components/ui/button";
 import React from "react";
+import { FaTableList } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setTocOpen } from "../store/reducers/uiReducer";
-import { Button } from "@/components/ui/button";
 
 const TocButton: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +16,7 @@ const TocButton: React.FC = () => {
       onClick={onTocToggle}
       aria-label="contents"
     >
-      <Toc />
+      <FaTableList />
     </Button>
   );
 };

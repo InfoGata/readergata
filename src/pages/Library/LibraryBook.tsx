@@ -1,14 +1,15 @@
-import React from "react";
-import { DocumentData } from "../../types";
-import { Delete, MoreHoriz } from "@mui/icons-material";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MoreHorizontalIcon } from "lucide-react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { DocumentData } from "../../types";
+import { FaTrash } from "react-icons/fa6";
 
 interface LibraryBookProps {
   documentData: DocumentData;
@@ -42,12 +43,12 @@ const LibraryBook: React.FC<LibraryBookProps> = (props) => {
               className="data-[state=open]:bg-muted"
               size="icon"
             >
-              <MoreHoriz />
+              <MoreHorizontalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={onRemove} className="cursor-pointer">
-              <Delete />
+              <FaTrash />
               <span>{t("remove")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

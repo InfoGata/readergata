@@ -1,5 +1,5 @@
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import React from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import {
   Document,
   DocumentProps,
@@ -254,7 +254,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
           variant="ghost"
           className="absolute top-1/2 -translate-y-1/2 left-0 z-10 h-full"
         >
-          <NavigateBefore />
+          <FaChevronLeft />
         </Button>
       )}
       {file && (
@@ -277,7 +277,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
           onClick={nextPage}
           className="absolute top-1/2 -translate-y-1/2 right-0 z-10 h-full"
         >
-          <NavigateNext />
+          <FaChevronRight />
         </Button>
       )}
     </div>

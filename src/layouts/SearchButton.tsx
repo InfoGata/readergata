@@ -1,8 +1,8 @@
-import { Search } from "@mui/icons-material";
+import { Button } from "@/components/ui/button";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSearchOpen } from "../store/reducers/uiReducer";
-import { Button } from "@/components/ui/button";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 const SearchButton: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -11,7 +11,7 @@ const SearchButton: React.FC = () => {
 
   return (
     <Button size="icon" variant="ghost" onClick={onSearchToggle}>
-      <Search />
+      <FaMagnifyingGlass />
     </Button>
   );
 };

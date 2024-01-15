@@ -1,10 +1,15 @@
 import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
-import { faGitAlt } from "@fortawesome/free-brands-svg-icons/faGitAlt";
-import { faMastodon } from "@fortawesome/free-brands-svg-icons/faMastodon";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Email, Favorite, Language, Lock, Twitter } from "@mui/icons-material";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import {
+  FaEnvelope,
+  FaGitAlt,
+  FaGlobe,
+  FaLock,
+  FaMastodon,
+  FaStar,
+  FaTwitter,
+} from "react-icons/fa6";
 
 const AboutPage: React.FC = () => {
   const { t } = useTranslation();
@@ -20,40 +25,40 @@ const AboutPage: React.FC = () => {
     {
       title: "Company Website",
       description: website,
-      icon: <Language />,
+      icon: <FaGlobe />,
       url: website,
     },
     {
       title: "Github",
       description: gitUrl,
-      icon: <FontAwesomeIcon icon={faGitAlt} />,
+      icon: <FaGitAlt />,
       url: gitUrl,
     },
     {
       title: "Email",
       description: email,
-      icon: <Email />,
+      icon: <FaEnvelope />,
     },
     {
       title: "Twitter",
       description: twitterAt,
-      icon: <Twitter />,
+      icon: <FaTwitter />,
       url: twitterUrl,
     },
     {
       title: "Mastodon",
       description: mastodonAt,
-      icon: <FontAwesomeIcon icon={faMastodon} />,
+      icon: <FaMastodon />,
       url: mastodonUrl,
     },
     {
       title: t("donate"),
-      icon: <Favorite />,
+      icon: <FaStar />,
       internalPath: "/donate",
     },
     {
       title: t("privacyPolicy"),
-      icon: <Lock />,
+      icon: <FaLock />,
       internalPath: "/privacy",
     },
   ];

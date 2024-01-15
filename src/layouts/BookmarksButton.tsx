@@ -1,8 +1,8 @@
+import { Button } from "@/components/ui/button";
 import React from "react";
+import { FaBookmark } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setBookmarksOpen } from "../store/reducers/uiReducer";
-import { Bookmarks } from "@mui/icons-material";
-import { Button } from "@/components/ui/button";
 
 const BookmarksButton: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +16,7 @@ const BookmarksButton: React.FC = () => {
       onClick={onBookmarksToggle}
       aria-label="contents"
     >
-      <Bookmarks />
+      <FaBookmark />
     </Button>
   );
 };

@@ -1,7 +1,12 @@
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import Epub, { Book, EpubCFI, Location, NavItem, Rendition } from "epubjs";
+import Section from "epubjs/types/section";
 import React from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  setCurrentLocation,
+  setPublicationData,
+} from "../store/reducers/documentReducer";
 import {
   clearBookData,
   setCurrentChapter,
@@ -17,11 +22,6 @@ import {
   SearchResult,
 } from "../types";
 import { debounce, getValidUrl } from "../utils";
-import Section from "epubjs/types/section";
-import {
-  setCurrentLocation,
-  setPublicationData,
-} from "../store/reducers/documentReducer";
 import Spinner from "./Spinner";
 import { Button } from "./ui/button";
 
@@ -302,7 +302,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
           variant="ghost"
           className="absolute top-1/2 -translate-y-1/2 left-0 z-10 h-full"
         >
-          <NavigateBefore />
+          <FaChevronLeft />
         </Button>
         <div className="absolute top-10">
           <div ref={containerRef}></div>
@@ -312,7 +312,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
           variant="ghost"
           className="absolute top-1/2 -translate-y-1/2 right-0 z-10 h-full"
         >
-          <NavigateNext />
+          <FaChevronRight />
         </Button>
       </div>
     </>

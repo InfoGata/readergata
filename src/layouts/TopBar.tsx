@@ -1,13 +1,13 @@
-import MenuIcon from "@mui/icons-material/Menu";
+import { Button } from "@/components/ui/button";
+import { MenuIcon } from "lucide-react";
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setNavigationOpen } from "../store/reducers/uiReducer";
 import BookmarksButton from "./BookmarksButton";
 import SearchButton from "./SearchButton";
 import Title from "./Title";
 import TocButton from "./TocButton";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setNavigationOpen } from "../store/reducers/uiReducer";
-import { Button } from "@/components/ui/button";
 
 const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
