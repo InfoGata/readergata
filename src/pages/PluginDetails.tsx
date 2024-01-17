@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { db } from "../database";
 import usePlugins from "../hooks/usePlugins";
-import { Manifest, PluginInfo } from "../plugintypes";
+import { Manifest } from "../plugintypes";
 import { FileType, NotifyLoginMessage } from "../types";
 import {
   directoryProps,
@@ -21,9 +21,6 @@ import {
 
 const PluginDetails: React.FC = () => {
   const { pluginId } = useParams<"pluginId">();
-  const [pluginInfo, setPluginInfo] = React.useState<PluginInfo>();
-  const [scriptSize, setScriptSize] = React.useState(0);
-  const [optionSize, setOptionsSize] = React.useState(0);
   const { updatePlugin, plugins } = usePlugins();
   const plugin = plugins.find((p) => p.id === pluginId);
   const { t } = useTranslation(["plugins", "common"]);
@@ -65,6 +62,17 @@ const PluginDetails: React.FC = () => {
     setLoading(false);
   };
 
+  const pluginInfo = useLiveQuery(() => db.plugins.get(pluginId || ""));
+  const scriptSize = React.useMemo(() => {
+    const scriptBlob = new Blob([pluginInfo?.script || ""]);
+    return scriptBlob.size;
+  }, [pluginInfo]);
+  const optionSize = React.useMemo(() => {
+    return pluginInfo?.optionsHtml
+      ? new Blob([pluginInfo?.optionsHtml || ""]).size
+      : 0;
+  }, [pluginInfo]);
+
   React.useEffect(() => {
     const getHasAuth = async () => {
       const platformHasAuth = await hasAuthentication();
@@ -100,17 +108,6 @@ const PluginDetails: React.FC = () => {
     return () => window.removeEventListener("message", iframeListener);
   }, [iframeListener]);
 
-  const loadPluginFromDb = React.useCallback(async () => {
-    const p = await db.plugins.get(pluginId || "");
-    setPluginInfo(p);
-    const scriptBlob = new Blob([p?.script || ""]);
-    setScriptSize(scriptBlob.size);
-    if (p?.optionsHtml) {
-      const optionsBlob = new Blob([p.optionsHtml]);
-      setOptionsSize(optionsBlob.size);
-    }
-  }, [pluginId]);
-
   const onLogin = () => {
     if (pluginInfo?.manifest?.authentication?.loginUrl) {
       if (window.InfoGata.openLoginWindow) {
@@ -122,10 +119,6 @@ const PluginDetails: React.FC = () => {
     }
   };
 
-  React.useEffect(() => {
-    loadPluginFromDb();
-  }, [loadPluginFromDb]);
-
   const onUpdate = async () => {
     if (pluginInfo?.manifestUrl) {
       const fileType = getFileTypeFromPluginUrl(pluginInfo.manifestUrl);
@@ -134,7 +127,6 @@ const PluginDetails: React.FC = () => {
         newPlugin.id = pluginInfo.id;
         newPlugin.manifestUrl = pluginInfo.manifestUrl;
         await updatePlugin(newPlugin, pluginInfo.id);
-        await loadPluginFromDb();
       }
     }
   };
@@ -208,6 +200,14 @@ const PluginDetails: React.FC = () => {
         </h1>
         <h2 className="text-2xl font-semibold">{pluginInfo.name}</h2>
         <div className="flex gap-2 flex-wrap">
+          {pluginInfo.optionsHtml && (
+            <Link
+              className={cn(buttonVariants({ variant: "outline" }))}
+              to={`/plugins/${pluginInfo.id}/options`}
+            >
+              {t("plugins:options")}
+            </Link>
+          )}
           {pluginInfo.manifestUrl && (
             <Button variant="outline" onClick={checkUpdate}>
               {t("plugins:checkForUpdates")}
