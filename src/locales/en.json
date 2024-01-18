@@ -72,6 +72,9 @@
   },
   "settings": {
     "disableAutoUpdatePlugins": "Disable plugins updating automatically",
-    "corsProxy": "Cors Proxy Url"
+    "corsProxy": "Cors Proxy Url",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

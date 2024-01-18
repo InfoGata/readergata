@@ -24,6 +24,7 @@ import {
 import { debounce, getValidUrl } from "../utils";
 import Spinner from "./Spinner";
 import { Button } from "./ui/button";
+import { useTheme } from "@/providers/ThemeProvider";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {
@@ -126,6 +127,7 @@ interface EbookViewerProps {
 
 const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   const { ebook } = props;
+  const theme = useTheme();
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
   const book = React.useRef<Book>();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -226,6 +228,19 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   }, [content, rendition]);
 
   React.useEffect(() => {
+    if (rendition) {
+      switch (theme.theme) {
+        case "dark":
+          rendition.themes.select("dark");
+          break;
+        case "light":
+          rendition.themes.select("none");
+          break;
+      }
+    }
+  }, [rendition, theme]);
+
+  React.useEffect(() => {
     const loadEbook = async () => {
       if (isLoading.current) return;
 
@@ -272,6 +287,10 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
             if (compare) rend?.next();
           }, 500)
         );
+        rend.themes.register("dark", {
+          body: { "background-color": "#020817", color: "#fff" },
+          "a:link": { color: "#0B4085" },
+        });
         rend.display();
         dispatch(clearBookData());
         setRendition(rend);

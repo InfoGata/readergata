@@ -15,7 +15,7 @@ import PluginInstall from "./pages/PluginInstall";
 import PluginOptions from "./pages/PluginOptions";
 import Plugins from "./pages/Plugins/Plugins";
 import Privacy from "./pages/Privacy";
-import Settings from "./pages/Settings";
+import Settings from "./pages/Settings/Settings";
 import Viewer from "./pages/Viewer";
 import isElectron from "is-electron";
 import App from "./App";
