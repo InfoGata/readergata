@@ -5,7 +5,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Theme, useTheme } from "@/providers/ThemeProvider";
+import { Theme } from "@/plugintypes";
+import { useTheme } from "@/providers/ThemeProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

@@ -7,6 +7,7 @@ import {
   GetPublicationResponse,
   PluginInfo,
   SearchRequest,
+  Theme,
 } from "./plugintypes";
 
 export interface PluginMethodInterface {
@@ -18,6 +19,7 @@ export interface PluginMethodInterface {
   onUiMessage(message: any): Promise<void>;
   onPostLogin(): Promise<void>;
   onPostLogout(): Promise<void>;
+  onChangeTheme(theme: Theme): Promise<void>;
 }
 
 export interface PluginMessage {

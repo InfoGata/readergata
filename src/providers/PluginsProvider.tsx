@@ -17,6 +17,7 @@ import {
   Manifest,
   NotificationMessage,
   PluginInfo,
+  Theme,
 } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
@@ -31,6 +32,7 @@ import {
   isAuthorizedDomain,
   mapAsync,
 } from "../utils";
+import { useTheme } from "./ThemeProvider";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(input: string, init?: RequestInit): Promise<NetworkRequest>;
@@ -38,6 +40,7 @@ interface ApplicationPluginInterface extends PluginInterface {
   getCorsProxy(): Promise<string | undefined>;
   createNotification(notification: NotificationMessage): Promise<void>;
   isLoggedIn(): Promise<boolean>;
+  getTheme(): Promise<Theme>;
 }
 
 const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
@@ -54,6 +57,10 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const corsProxyUrl = useAppSelector((state) => state.settings.corsProxyUrl);
   const corsProxyUrlRef = React.useRef(corsProxyUrl);
   corsProxyUrlRef.current = corsProxyUrl;
+  const theme = useTheme();
+  const themeRef = React.useRef(theme.theme);
+  themeRef.current = theme.theme;
+
   const disableAutoUpdatePlugins = useAppSelector(
     (state) => state.settings.disableAutoUpdatePlugins
   );
@@ -175,6 +182,9 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             return !!db.pluginAuths.get(plugin.id);
           }
           return false;
+        },
+        getTheme: async () => {
+          return themeRef.current;
         },
       };
 

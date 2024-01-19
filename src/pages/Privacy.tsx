@@ -1,7 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
+import { useTheme } from "@/providers/ThemeProvider";
 import React from "react";
 
 const Privacy: React.FC = () => {
+  const theme = useTheme();
+  const fontColor = theme.theme === "light" ? "020817" : "ffffff";
+  const backgroundColor = theme.theme === "light" ? "ffffff" : "020817";
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold">Privacy Overview</h1>
@@ -34,7 +38,7 @@ const Privacy: React.FC = () => {
         <iframe
           title="out-opt"
           style={{ border: 0, height: "200px", width: "600px" }}
-          src="https://matomo.infogata.com/index.php?module=CoreAdminHome&action=optOut&language=en&fontSize=16px"
+          src={`https://matomo.infogata.com/index.php?module=CoreAdminHome&action=optOut&language=en&fontSize=16px&fontColor=${fontColor}&backgroundColor=${backgroundColor}`}
         ></iframe>
       </p>
       {/* End Section */}
