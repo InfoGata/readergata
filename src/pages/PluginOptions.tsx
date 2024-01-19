@@ -14,6 +14,15 @@ const PluginOptions: React.FC = () => {
   const [optionsHtml, setOptionsHtml] = React.useState<string>();
   const { t } = useTranslation(["plugins", "common"]);
 
+  React.useEffect(() => {
+    const getOptionsHtml = async () => {
+      const pluginData = await db.plugins.get(plugin?.id || "");
+      setOptionsHtml(pluginData?.optionsHtml);
+    };
+
+    getOptionsHtml();
+  }, [plugin]);
+
   const iframeListener = React.useCallback(
     async (event: MessageEvent<any>) => {
       if (ref.current?.contentWindow === event.source && plugin) {
@@ -36,30 +45,8 @@ const PluginOptions: React.FC = () => {
     }
   }, [pluginMessage, plugin?.id]);
 
-  React.useEffect(() => {
-    const getOptionsHtml = async () => {
-      if (plugin) {
-        if (!plugin.optionsSameOrigin) {
-          const pluginData = await db.plugins.get(plugin.id || "");
-          setOptionsHtml(pluginData?.optionsHtml);
-        }
-      }
-    };
-
-    getOptionsHtml();
-  }, [plugin]);
-
-  if (!pluginsLoaded) {
-    return <Spinner />;
-  }
-  if (!plugin) return <>{t("common:notFound")}</>;
-
-  const srcUrl = `${getPluginSubdomain(plugin.id)}/ui.html`;
-  let sandbox = "allow-scripts allow-popups allow-popups-to-escape-sandbox";
-  if (plugin.optionsSameOrigin) sandbox = sandbox.concat(" allow-same-origin");
-
   const iframeOnload = async () => {
-    const pluginData = await db.plugins.get(plugin.id || "");
+    const pluginData = await db.plugins.get(plugin?.id || "");
     if (pluginData) {
       ref.current?.contentWindow?.postMessage(
         {
@@ -71,37 +58,30 @@ const PluginOptions: React.FC = () => {
     }
   };
 
-  const pluginIframe = plugin.optionsSameOrigin ? (
-    <iframe
-      ref={ref}
-      name={plugin.id}
-      title={plugin.name}
-      sandbox={sandbox}
-      src={srcUrl}
-      onLoad={iframeOnload}
-      width="100%"
-      frameBorder="0"
-      style={{ height: "80vh" }}
-    />
-  ) : (
-    <iframe
-      ref={ref}
-      name={plugin.id}
-      title={plugin.name}
-      sandbox={sandbox}
-      srcDoc={optionsHtml}
-      width="100%"
-      frameBorder="0"
-      style={{ height: "80vh" }}
-    />
-  );
+  if (!pluginsLoaded) {
+    return <Spinner />;
+  }
+  if (!plugin) return <>{t("common:notFound")}</>;
 
+  const srcUrl = `${getPluginSubdomain(plugin.id)}/ui.html`;
   return (
     <div>
       <h1 className="text-3xl font-bold">
         {t("plugins:pluginOptions", { pluginName: plugin.name })}
       </h1>
-      {optionsHtml && pluginIframe}
+      {optionsHtml && (
+        <iframe
+          ref={ref}
+          name={plugin.id}
+          title={plugin.name}
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+          src={srcUrl}
+          onLoad={iframeOnload}
+          width="100%"
+          frameBorder="0"
+          style={{ height: "80vh" }}
+        />
+      )}
     </div>
   );
 };
