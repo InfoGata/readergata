@@ -5,17 +5,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import usePlugins from "@/hooks/usePlugins";
 import { Theme } from "@/plugintypes";
 import { useTheme } from "@/providers/ThemeProvider";
+import { filterAsync, mapAsync } from "@/utils";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
 const ThemeChangeSetting: React.FC = () => {
   const theme = useTheme();
+  const { plugins } = usePlugins();
   const { t } = useTranslation("settings");
-  const onThemeChange = (value: string) => {
+  const onThemeChange = async (value: string) => {
     if (value) {
       theme.setTheme(value as Theme);
+      const themePlugins = await filterAsync(plugins, (p) =>
+        p.hasDefined.onChangeTheme()
+      );
+      await mapAsync(themePlugins, (p) =>
+        p.remote.onChangeTheme(value as Theme)
+      );
     }
   };
   return (
