@@ -55,6 +55,9 @@ const PluginOptions: React.FC = () => {
         },
         "*"
       );
+      if (ref.current) {
+        ref.current.style.visibility = "visible";
+      }
     }
   };
 
@@ -79,7 +82,8 @@ const PluginOptions: React.FC = () => {
           onLoad={iframeOnload}
           width="100%"
           frameBorder="0"
-          style={{ height: "80vh" }}
+          style={{ height: "80vh", visibility: "hidden" }}
+          allowTransparency={true}
         />
       )}
     </div>
