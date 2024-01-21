@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { NavigationLinkItem } from "../types";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,17 +15,20 @@ const NavigationLink: React.FC<NavigationLinkProps> = (props) => {
     setOpen(false);
   };
   return (
-    <Link
-      className={cn(
-        buttonVariants({ variant: "ghost" }),
-        "w-full justify-start gap-8 text-md"
-      )}
+    <NavLink
+      className={({ isActive }) =>
+        cn(
+          buttonVariants({ variant: "ghost" }),
+          "w-full justify-start gap-8 text-md",
+          isActive && "bg-muted"
+        )
+      }
       to={item.link}
       onClick={onClose}
     >
       {item.icon}
       {item.title}
-    </Link>
+    </NavLink>
   );
 };
 export default NavigationLink;
