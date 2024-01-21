@@ -1,10 +1,10 @@
 import { buttonVariants } from "@/components/ui/button";
 import React from "react";
 import { Link } from "react-router-dom";
-import { PluginFrameContainer } from "../../PluginsContext";
-import usePlugins from "../../hooks/usePlugins";
-import { filterAsync } from "../../utils";
-import LibraryBooks from "./LibraryBooks";
+import { PluginFrameContainer } from "../PluginsContext";
+import usePlugins from "../hooks/usePlugins";
+import { filterAsync } from "../utils";
+import LibraryBooks from "../components/Library/LibraryBooks";
 
 const Library: React.FC = () => {
   const { plugins } = usePlugins();

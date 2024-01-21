@@ -1,7 +1,7 @@
 import React from "react";
-import DisableAutoUpdateSetting from "./DisableAutoUpdateSetting";
-import UpdateCorsSetting from "./UpdateCorsSetting";
-import ThemeChangeSetting from "./ThemeChangeSetting";
+import DisableAutoUpdateSetting from "../components/Settings/DisableAutoUpdateSetting";
+import UpdateCorsSetting from "../components/Settings/UpdateCorsSetting";
+import ThemeChangeSetting from "../components/Settings/ThemeChangeSetting";
 
 const Settings: React.FC = () => {
   return (
