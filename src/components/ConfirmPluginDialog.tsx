@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import AboutLink from "./AboutLink";
+import { Checkbox } from "./ui/checkbox";
 
 interface ConfirmPluginDialogProps {
   open: boolean;
@@ -54,29 +55,31 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
     handleClose();
   };
 
-  // const onChange =
-  //   (pluginId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     setChecked((prev) => {
-  //       const next = new Set(prev);
-  //       e.target.checked ? next.add(pluginId) : next.delete(pluginId);
-  //       return next;
-  //     });
-  //   };
+  const onChange = (pluginId: string) => (checked: boolean) => {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      checked ? next.add(pluginId) : next.delete(pluginId);
+      return next;
+    });
+  };
 
   const info = plugins.map((p) => (
-    /* {plugins.length > 1 && (
+    <div className="flex items-center">
+      {plugins.length > 1 && (
         <Checkbox
-          edge="start"
+          className="rounded-none"
           checked={checked.has(p.id || "")}
-          tabIndex={-1}
-          onChange={onChange(p.id || "")}
+          onCheckedChange={onChange(p.id || "")}
         />
-      )} */
-    <AboutLink
-      title={`${p.name} ${p.version || ""}`}
-      description={p.description}
-      key={p.id}
-    />
+      )}
+      <div className="flex-grow">
+        <AboutLink
+          title={`${p.name} ${p.version || ""}`}
+          description={p.description}
+          key={p.id}
+        />
+      </div>
+    </div>
   ));
 
   const onCancel = () => {
