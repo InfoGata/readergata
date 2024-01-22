@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Avatar } from "./ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 export type AboutLinkProps = {
   icon?: JSX.Element;
@@ -48,7 +47,7 @@ const AboutLink: React.FC<AboutLinkProps> = (props) => {
           </div>
         )}
         {avatarSrc && (
-          <Avatar>
+          <Avatar className="rounded-none">
             <AvatarImage src={avatarSrc} />
           </Avatar>
         )}

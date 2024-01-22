@@ -63,6 +63,7 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
             ))
           : feed.items.map((c, i) => (
               <AboutLink
+                key={i}
                 title={c.name}
                 internalPath={`/plugins/${c.pluginId}/feed/${encodeURIComponent(
                   c.apiId || ""
