@@ -111,7 +111,11 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
                 for (const prop in pluginAuth.domainHeaders?.[
                   domainHeaderKey
                 ]) {
-                  headers.set(prop, pluginAuth.headers[prop]);
+                  headers.set(
+                    prop,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    pluginAuth.domainHeaders![domainHeaderKey][prop]
+                  );
                 }
                 newInit.headers = Object.fromEntries(headers.entries());
               }
