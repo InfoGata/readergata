@@ -67,7 +67,6 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
     <div className="flex items-center">
       {plugins.length > 1 && (
         <Checkbox
-          className="rounded-none"
           checked={checked.has(p.id || "")}
           onCheckedChange={onChange(p.id || "")}
         />
