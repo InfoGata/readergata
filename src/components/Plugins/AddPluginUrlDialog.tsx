@@ -24,11 +24,10 @@ interface AddPluginUrlDialogProps {
   open: boolean;
   setOpen: (value: boolean) => void;
   handleConfirm: (plugin: PluginInfo) => void;
-  handleClose: () => void;
 }
 
 const AddPluginUrlDialog: React.FC<AddPluginUrlDialogProps> = (props) => {
-  const { open, handleClose, handleConfirm, setOpen } = props;
+  const { open, handleConfirm, setOpen } = props;
   const [pluginUrl, setPluginUrl] = React.useState("");
   const [headerKey, setHeaderKey] = React.useState("");
   const [headerValue, setHeaderValue] = React.useState("");
@@ -110,7 +109,7 @@ const AddPluginUrlDialog: React.FC<AddPluginUrlDialogProps> = (props) => {
           </Accordion>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={() => setOpen(false)}>
             {t("common:cancel")}
           </Button>
           <Button variant="outline" onClick={onConfirm}>

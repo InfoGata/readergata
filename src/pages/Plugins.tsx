@@ -19,11 +19,10 @@ const Plugins: React.FC = () => {
   );
   const [openUrlDialog, setOpenUrlDialog] = React.useState(false);
 
-  const onCloseUrlDialog = () => setOpenUrlDialog(false);
   const onOpenUrlDialog = () => setOpenUrlDialog(true);
 
   const onConfirmUrlDialog = (plugin: PluginInfo) => {
-    onCloseUrlDialog();
+    setOpenUrlDialog(false);
     setPendingPlugin(plugin);
   };
 
@@ -98,7 +97,6 @@ const Plugins: React.FC = () => {
         open={openUrlDialog}
         setOpen={setOpenUrlDialog}
         handleConfirm={onConfirmUrlDialog}
-        handleClose={onCloseUrlDialog}
       />
     </div>
   );
