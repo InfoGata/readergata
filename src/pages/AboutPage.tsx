@@ -5,9 +5,9 @@ import {
   FaEnvelope,
   FaGitAlt,
   FaGlobe,
+  FaHeart,
   FaLock,
   FaMastodon,
-  FaStar,
   FaTwitter,
 } from "react-icons/fa6";
 
@@ -53,7 +53,7 @@ const AboutPage: React.FC = () => {
     },
     {
       title: t("donate"),
-      icon: <FaStar />,
+      icon: <FaHeart />,
       internalPath: "/donate",
     },
     {
