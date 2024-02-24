@@ -288,7 +288,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
           }, 500)
         );
         rend.themes.register("dark", {
-          body: { "background-color": "#020817", color: "#fff" },
+          body: { "background-color": "#0b0c0e", color: "#fff" },
           "a:link": { color: "#0B4085" },
         });
         rend.display();
