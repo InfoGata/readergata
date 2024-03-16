@@ -25,6 +25,7 @@ const NavigationLink: React.FC<NavigationLinkProps> = (props) => {
       }
       to={item.link}
       onClick={onClose}
+      end
     >
       {item.icon}
       {item.title}
