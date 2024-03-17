@@ -4,8 +4,8 @@ import React from "react";
 
 const Privacy: React.FC = () => {
   const theme = useTheme();
-  const fontColor = theme.theme === "light" ? "020817" : "ffffff";
-  const backgroundColor = theme.theme === "light" ? "ffffff" : "020817";
+  const fontColor = theme.theme === "light" ? "020817" : "E6E6E6";
+  const backgroundColor = theme.theme === "light" ? "f2f2f2" : "0B0C0E";
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold">Privacy Overview</h1>
