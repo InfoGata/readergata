@@ -51,7 +51,7 @@
     "sonner": "^1.3.1",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^4.9.4"
+    "typescript": "^5.2.2"
   },
   "scripts": {
     "copy-worker": "node ./scripts/copy-worker.js",
