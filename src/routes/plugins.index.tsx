@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import usePlugins from "../hooks/usePlugins";
@@ -102,4 +103,6 @@ const Plugins: React.FC = () => {
   );
 };
 
-export default Plugins;
+export const Route = createFileRoute("/plugins/")({
+  component: Plugins,
+});

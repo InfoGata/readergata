@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import DisableAutoUpdateSetting from "../components/Settings/DisableAutoUpdateSetting";
 import UpdateCorsSetting from "../components/Settings/UpdateCorsSetting";
@@ -13,4 +14,6 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings;
+export const Route = createFileRoute("/settings")({
+  component: Settings,
+});

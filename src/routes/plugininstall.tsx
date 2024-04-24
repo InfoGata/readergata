@@ -1,6 +1,6 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
 import { PluginInfo } from "../plugintypes";
 import { FileType } from "../types";
 import { generatePluginId, getPlugin } from "../utils";
@@ -9,15 +9,11 @@ import Spinner from "../components/Spinner";
 
 const PluginInstall: React.FC = () => {
   const [isInstalling, setIsInstalling] = React.useState(true);
-  const location = useLocation();
   const [pendingPlugin, setPendingPlugin] = React.useState<PluginInfo | null>(
     null
   );
   const navigate = useNavigate();
-  const params = new URLSearchParams(location.search);
-  const manifestUrl = params.get("manifestUrl") || "";
-  const headerKey = params.get("headerKey") || "";
-  const headerValue = params.get("headerValue") || "";
+  const { manifestUrl, headerKey, headerValue } = Route.useSearch();
   const [isLoading, setIsLoading] = React.useState(true);
   const { t } = useTranslation("plugins");
 
@@ -61,11 +57,11 @@ const PluginInstall: React.FC = () => {
   };
 
   const onAfterConfirm = () => {
-    navigate("/plugins");
+    navigate({ to: "/plugins" });
   };
 
   const onAfterCancel = () => {
-    navigate("/plugins");
+    navigate({ to: "/plugins" });
   };
 
   return (
@@ -88,4 +84,19 @@ const PluginInstall: React.FC = () => {
   );
 };
 
-export default PluginInstall;
+type PluginInstallSearch = {
+  manifestUrl?: string;
+  headerKey?: string;
+  headerValue?: string;
+};
+
+export const Route = createFileRoute("/plugininstall")({
+  component: PluginInstall,
+  validateSearch: (search: Record<string, unknown>): PluginInstallSearch => {
+    return {
+      manifestUrl: search?.manifestUrl as string,
+      headerKey: search?.manifestUrl as string,
+      headerValue: search?.manifestUrl as string,
+    };
+  },
+});

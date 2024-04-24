@@ -1,13 +1,13 @@
+import Spinner from "@/components/Spinner";
+import { db } from "@/database";
+import usePlugins from "@/hooks/usePlugins";
+import { getPluginSubdomain } from "@/utils";
+import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { db } from "../database";
-import usePlugins from "../hooks/usePlugins";
-import { getPluginSubdomain } from "../utils";
-import Spinner from "../components/Spinner";
 
 const PluginOptions: React.FC = () => {
-  const { pluginId } = useParams<"pluginId">();
+  const { pluginId } = Route.useParams();
   const { plugins, pluginMessage, pluginsLoaded } = usePlugins();
   const ref = React.useRef<HTMLIFrameElement>(null);
   const plugin = plugins.find((p) => p.id === pluginId);
@@ -83,11 +83,12 @@ const PluginOptions: React.FC = () => {
           width="100%"
           frameBorder="0"
           style={{ height: "80vh", visibility: "hidden" }}
-          allowTransparency={true}
         />
       )}
     </div>
   );
 };
 
-export default PluginOptions;
+export const Route = createFileRoute("/plugins/$pluginId/options")({
+  component: PluginOptions,
+});

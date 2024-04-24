@@ -1,6 +1,6 @@
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { buttonVariants } from "@/components/ui/button";
 import React from "react";
-import { Link } from "react-router-dom";
 import { PluginFrameContainer } from "../PluginsContext";
 import usePlugins from "../hooks/usePlugins";
 import { filterAsync } from "../utils";
@@ -28,7 +28,8 @@ const Library: React.FC = () => {
     <Link
       key={p.id}
       className={buttonVariants({ variant: "outline" })}
-      to={`/plugins/${p.id}/feed`}
+      to="/plugins/$pluginId/feed"
+      params={{ pluginId: p.id || "" }}
     >
       {p.name}
     </Link>
@@ -42,4 +43,6 @@ const Library: React.FC = () => {
   );
 };
 
-export default Library;
+export const Route = createFileRoute("/library")({
+  component: Library,
+});

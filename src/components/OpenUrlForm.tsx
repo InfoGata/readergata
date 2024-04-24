@@ -1,13 +1,13 @@
 import React from "react";
 import { useAppDispatch } from "../store/hooks";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { setPublication } from "../store/reducers/documentReducer";
 import { PublicationSourceType } from "../types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { RadioGroupItem, RadioGroup as ShRadioGroup } from "./ui/radio-group";
 import { Label } from "./ui/label";
+import { useNavigate } from "@tanstack/react-router";
 
 const OpenUrlForm: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
@@ -40,7 +40,7 @@ const OpenUrlForm: React.FC = () => {
           })
         );
       }
-      navigate("/viewer");
+      navigate({ to: "/viewer" });
     }
   };
 

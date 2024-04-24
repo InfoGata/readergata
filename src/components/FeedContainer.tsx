@@ -1,12 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { PluginFrameContainer } from "../PluginsContext";
 import { Feed } from "../plugintypes";
 import PublicationInfo from "./PublicationInfo";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import AboutLink from "./AboutLink";
+import { useNavigate } from "@tanstack/react-router";
 
 interface FeedContainerProps {
   feed: Feed;
@@ -29,17 +29,10 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
     event.preventDefault();
 
     if (plugin && (await plugin.hasDefined.onSearch())) {
-      const params = new URLSearchParams();
-      params.append("query", query);
-      if (searchInfo) {
-        params.append("searchInfo", searchInfo);
-      }
-      if (apiId) {
-        params.append("apiId", apiId);
-      }
       navigate({
-        pathname: `/plugins/${plugin.id}/feed/search`,
-        search: `?${params.toString()}`,
+        to: "/plugins/$pluginId/feed/search",
+        params: { pluginId: plugin.id || "" },
+        search: { apiId: apiId, searchInfo: searchInfo, query: query },
       });
     }
   };
@@ -65,9 +58,13 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
               <AboutLink
                 key={i}
                 title={c.name}
-                internalPath={`/plugins/${c.pluginId}/feed/${encodeURIComponent(
-                  c.apiId || ""
-                )}`}
+                link={{
+                  to: "/plugins/$pluginId/feed/$apiId",
+                  params: {
+                    pluginId: c.pluginId || "",
+                    apiId: encodeURIComponent(c.apiId || ""),
+                  },
+                }}
               />
             ))}
       </div>

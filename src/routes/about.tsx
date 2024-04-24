@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -11,7 +12,7 @@ import {
   FaTwitter,
 } from "react-icons/fa6";
 
-const AboutPage: React.FC = () => {
+const About: React.FC = () => {
   const { t } = useTranslation();
   const email = "contact@readergata.com";
   const website = "https://www.infogata.com";
@@ -54,12 +55,12 @@ const AboutPage: React.FC = () => {
     {
       title: t("donate"),
       icon: <FaHeart />,
-      internalPath: "/donate",
+      link: { to: "/donate" },
     },
     {
       title: t("privacyPolicy"),
       icon: <FaLock />,
-      internalPath: "/privacy",
+      link: { to: "/privacy" },
     },
   ];
   return (
@@ -71,4 +72,6 @@ const AboutPage: React.FC = () => {
   );
 };
 
-export default AboutPage;
+export const Route = createFileRoute("/about")({
+  component: About,
+});

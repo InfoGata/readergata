@@ -28,7 +28,7 @@ const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
         title={publication.title}
         description={publication.authors?.map((a) => a.name).join(", ")}
         avatarSrc={icon}
-        onClick={toggleDialogOpen}
+        action={toggleDialogOpen}
       />
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="overflow-y-scroll max-h-screen">

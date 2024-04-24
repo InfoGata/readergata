@@ -1,8 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { PublicationSource } from "../plugintypes";
 import { buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 
 interface PublicationSourceButtonProps {
   source: PublicationSource;
@@ -13,16 +13,15 @@ const PublicationSourceButton: React.FC<PublicationSourceButtonProps> = (
   props
 ) => {
   const { source, pluginId } = props;
-  let search = `?source=${encodeURIComponent(source.source)}`;
-  search = source.type ? `${search}&type=${source.type}` : search;
-  search = pluginId ? `${search}&pluginId=${pluginId}` : search;
 
   return (
     <Link
       className={cn(buttonVariants({ variant: "outline" }))}
-      to={{
-        pathname: "/viewer",
-        search: search,
+      to="/viewer"
+      search={{
+        pluginId: pluginId,
+        source: encodeURIComponent(source.source),
+        type: source.type,
       }}
     >
       {source.name ?? source.type}

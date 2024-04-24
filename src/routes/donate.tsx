@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -48,10 +49,12 @@ const Donate: React.FC = () => {
   return (
     <div>
       {links.map((l) => (
-        <AboutLink {...l} key={l.title} />
+        <AboutLink {...l} key={l.description} />
       ))}
     </div>
   );
 };
 
-export default Donate;
+export const Route = createFileRoute("/donate")({
+  component: Donate,
+});

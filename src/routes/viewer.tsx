@@ -1,6 +1,6 @@
+import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { useQuery } from "react-query";
-import { useLocation } from "react-router-dom";
 import usePlugins from "../hooks/usePlugins";
 import { SourceType } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -22,26 +22,24 @@ const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   return PublicationSourceType.Binary;
 };
 
-const Viewer: React.FC = () => {
-  const location = useLocation();
+export const Viewer: React.FC = () => {
   const { plugins, pluginsLoaded } = usePlugins();
   const dispatch = useAppDispatch();
   const currentPublication = useAppSelector(
     (state) => state.document.currentPublication
   );
 
-  const params = new URLSearchParams(location.search);
-  const source = params.get("source");
-  const type = params.get("type");
-  const pluginId = params.get("pluginId");
+  const { source, type, pluginId } = Route.useSearch();
   const plugin = plugins.find((p) => p.id === pluginId);
 
   const getBookFromUrl = async () => {
     if (source) {
-      let src = source;
+      let src = decodeURIComponent(source);
       let sourceType = PublicationSourceType.Url;
       if (plugin && (await plugin.hasDefined.onGetPublication())) {
-        const publication = await plugin.remote.onGetPublication({ source });
+        const publication = await plugin.remote.onGetPublication({
+          source: src,
+        });
         src = publication.source;
         sourceType = sourceTypeToPulicationSourceType(publication.sourceType);
       }
@@ -81,4 +79,19 @@ const Viewer: React.FC = () => {
   );
 };
 
-export default Viewer;
+type ViewerSearch = {
+  source?: string;
+  type?: string;
+  pluginId?: string;
+};
+
+export const Route = createFileRoute("/viewer")({
+  component: Viewer,
+  validateSearch: (search: Record<string, unknown>): ViewerSearch => {
+    return {
+      source: search?.source as string,
+      type: search?.type as string,
+      pluginId: search?.pluginId as string,
+    };
+  },
+});

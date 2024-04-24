@@ -3,7 +3,15 @@ import { RenderOptions, render } from "@testing-library/react";
 import React, { PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { AppState, AppStore, setupStore } from "../store/store";
-import { RouterProvider, createMemoryRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from "@tanstack/react-router";
+import { ThemeProvider } from "@/providers/ThemeProvider";
+import { Root } from "@/routes/__root";
 
 // as allows the user to specify other things such as initialState, store.
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
@@ -21,15 +29,24 @@ export function renderWithProviders(
   }: ExtendedRenderOptions = {}
 ) {
   function Wrapper({ children }: PropsWithChildren): JSX.Element {
-    const options = { element: children, path: "/" };
+    const rootRoute = createRootRoute({
+      component: Root,
+    });
+    const route = createRoute({
+      getParentRoute: () => rootRoute,
+      path: "/",
+      component: () => <>{children}</>,
+    });
 
-    const router = createMemoryRouter([{ ...options }], {
-      initialEntries: [options.path],
-      initialIndex: 1,
+    const router = createRouter({
+      routeTree: rootRoute.addChildren([route]),
+      history: createMemoryHistory(),
     });
     return (
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <ThemeProvider defaultTheme="light">
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </Provider>
     );
   }

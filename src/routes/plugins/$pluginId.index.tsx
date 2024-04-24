@@ -1,3 +1,4 @@
+import { Link, createFileRoute } from "@tanstack/react-router";
 import AboutLink, { AboutLinkProps } from "@/components/AboutLink";
 import Spinner from "@/components/Spinner";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -5,22 +6,21 @@ import { cn } from "@/lib/utils";
 import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { db } from "../database";
-import usePlugins from "../hooks/usePlugins";
-import { Manifest } from "../plugintypes";
-import { FileType, NotifyLoginMessage } from "../types";
+import { db } from "@/database";
+import usePlugins from "@/hooks/usePlugins";
+import { FileType, NotifyLoginMessage } from "@/types";
 import {
-  directoryProps,
-  getFileText,
-  getFileTypeFromPluginUrl,
   getPlugin,
   hasAuthentication,
-} from "../utils";
+  getFileTypeFromPluginUrl,
+  getFileText,
+  directoryProps,
+} from "@/utils";
+import { Manifest } from "@/plugintypes";
 
 const PluginDetails: React.FC = () => {
-  const { pluginId } = useParams<"pluginId">();
+  const { pluginId } = Route.useParams();
   const { updatePlugin, plugins } = usePlugins();
   const plugin = plugins.find((p) => p.id === pluginId);
   const { t } = useTranslation(["plugins", "common"]);
@@ -203,7 +203,8 @@ const PluginDetails: React.FC = () => {
           {pluginInfo.optionsHtml && (
             <Link
               className={cn(buttonVariants({ variant: "outline" }))}
-              to={`/plugins/${pluginInfo.id}/options`}
+              to="/plugins/$pluginId/options"
+              params={{ pluginId: pluginInfo.id || "" }}
             >
               {t("plugins:options")}
             </Link>
@@ -258,4 +259,6 @@ const PluginDetails: React.FC = () => {
   );
 };
 
-export default PluginDetails;
+export const Route = createFileRoute("/plugins/$pluginId/")({
+  component: PluginDetails,
+});

@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store/hooks";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
 import { PublicationSourceType } from "../types";
 import { openFile } from "../utils";
 import { setPublication } from "../store/reducers/documentReducer";
+import { useNavigate } from "@tanstack/react-router";
 
 const useOpenDocument = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +34,7 @@ const useOpenDocument = () => {
       );
     }
     dispatch(setNavigationOpen(false));
-    navigate("/viewer");
+    navigate({ to: "/viewer" });
   };
 
   return openDocument;

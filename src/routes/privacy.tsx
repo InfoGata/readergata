@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { createFileRoute } from "@tanstack/react-router";
 import { useTheme } from "@/providers/ThemeProvider";
 import React from "react";
 
@@ -98,4 +99,6 @@ const Privacy: React.FC = () => {
   );
 };
 
-export default Privacy;
+export const Route = createFileRoute("/privacy")({
+  component: Privacy,
+});

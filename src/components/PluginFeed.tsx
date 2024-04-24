@@ -1,16 +1,19 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import useFindPlugin from "../hooks/useFindPlugin";
 import usePlugins from "../hooks/usePlugins";
 import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import FeedContainer from "../components/FeedContainer";
 import Spinner from "../components/Spinner";
+import useFindPlugin from "@/hooks/useFindPlugin";
 
-const PluginFeed: React.FC = () => {
+type PluginFeed = {
+  pluginId: string;
+  apiId?: string;
+};
+
+const PluginFeed: React.FC<PluginFeed> = (props) => {
   const { plugins, pluginsLoaded } = usePlugins();
-  const { pluginId } = useParams<"pluginId">();
-  const { apiId } = useParams<"apiId">();
+  const { pluginId, apiId } = props;
   const plugin = plugins.find((p) => p.id === pluginId);
 
   const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
