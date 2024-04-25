@@ -6,6 +6,7 @@ import usePlugins from "@/hooks/usePlugins";
 import ConfirmPluginDialog from "@/components/ConfirmPluginDialog";
 import FeedContainer from "@/components/FeedContainer";
 import Spinner from "@/components/Spinner";
+import { z } from "zod";
 
 const PluginFeedSearch: React.FC = () => {
   const { pluginId } = Route.useParams();
@@ -57,19 +58,13 @@ const PluginFeedSearch: React.FC = () => {
   );
 };
 
-type FeedSearch = {
-  query?: string;
-  apiId?: string;
-  searchInfo?: string;
-};
+const feedSearchSchema = z.object({
+  query: z.string().optional(),
+  apiId: z.string().optional(),
+  searchInfo: z.string().optional(),
+});
 
 export const Route = createFileRoute("/plugins/$pluginId/feed/search")({
   component: PluginFeedSearch,
-  validateSearch: (search: Record<string, unknown>): FeedSearch => {
-    return {
-      query: search?.query as string,
-      apiId: search?.apiId as string,
-      searchInfo: search?.searchInfo as string,
-    };
-  },
+  validateSearch: feedSearchSchema,
 });

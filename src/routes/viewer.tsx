@@ -11,6 +11,7 @@ import EbookViewer from "../components/EbookViewer";
 import OpenFileButton from "../components/OpenFileButton";
 import PdfViewer from "../components/PdfViewer";
 import Spinner from "../components/Spinner";
+import { z } from "zod";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {
@@ -79,19 +80,13 @@ export const Viewer: React.FC = () => {
   );
 };
 
-type ViewerSearch = {
-  source?: string;
-  type?: string;
-  pluginId?: string;
-};
+const viewerSearchSchema = z.object({
+  source: z.string().optional(),
+  type: z.string().optional(),
+  pluginId: z.string().optional(),
+});
 
 export const Route = createFileRoute("/viewer")({
   component: Viewer,
-  validateSearch: (search: Record<string, unknown>): ViewerSearch => {
-    return {
-      source: search?.source as string,
-      type: search?.type as string,
-      pluginId: search?.pluginId as string,
-    };
-  },
+  validateSearch: viewerSearchSchema,
 });

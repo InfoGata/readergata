@@ -6,6 +6,7 @@ import { FileType } from "../types";
 import { generatePluginId, getPlugin } from "../utils";
 import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import Spinner from "../components/Spinner";
+import { z } from "zod";
 
 const PluginInstall: React.FC = () => {
   const [isInstalling, setIsInstalling] = React.useState(true);
@@ -84,19 +85,13 @@ const PluginInstall: React.FC = () => {
   );
 };
 
-type PluginInstallSearch = {
-  manifestUrl?: string;
-  headerKey?: string;
-  headerValue?: string;
-};
+const pluginInstallSchema = z.object({
+  manifestUrl: z.string().optional(),
+  headerKey: z.string().optional(),
+  headerValue: z.string().optional(),
+});
 
 export const Route = createFileRoute("/plugininstall")({
   component: PluginInstall,
-  validateSearch: (search: Record<string, unknown>): PluginInstallSearch => {
-    return {
-      manifestUrl: search?.manifestUrl as string,
-      headerKey: search?.manifestUrl as string,
-      headerValue: search?.manifestUrl as string,
-    };
-  },
+  validateSearch: pluginInstallSchema,
 });
