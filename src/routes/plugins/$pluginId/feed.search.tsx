@@ -59,9 +59,9 @@ const PluginFeedSearch: React.FC = () => {
 };
 
 const feedSearchSchema = z.object({
-  query: z.string().optional(),
-  apiId: z.string().optional(),
-  searchInfo: z.string().optional(),
+  query: z.string().optional().catch(undefined),
+  apiId: z.string().optional().catch(undefined),
+  searchInfo: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/plugins/$pluginId/feed/search")({

@@ -86,9 +86,9 @@ const PluginInstall: React.FC = () => {
 };
 
 const pluginInstallSchema = z.object({
-  manifestUrl: z.string().optional(),
-  headerKey: z.string().optional(),
-  headerValue: z.string().optional(),
+  manifestUrl: z.string().optional().catch(undefined),
+  headerKey: z.string().optional().catch(undefined),
+  headerValue: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/plugininstall")({

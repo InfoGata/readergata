@@ -81,9 +81,9 @@ export const Viewer: React.FC = () => {
 };
 
 const viewerSearchSchema = z.object({
-  source: z.string().optional(),
-  type: z.string().optional(),
-  pluginId: z.string().optional(),
+  source: z.string().optional().catch(undefined),
+  type: z.string().optional().catch(undefined),
+  pluginId: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/viewer")({
