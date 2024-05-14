@@ -33,7 +33,7 @@ const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="overflow-y-scroll max-h-screen">
           <div className="flex flex-col justify-center items-center">
-            <img alt="cover" src={icon} height={225} width={125} />
+            <img alt="" src={icon} height={225} width={125} />
             <h2 className="text-3xl font-bold">{publication.title}</h2>
             <h3 className="text-lg font-semibold">{authors}</h3>
             <div

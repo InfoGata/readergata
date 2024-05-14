@@ -3,7 +3,6 @@ import { customAlphabet } from "nanoid";
 import { db } from "./database";
 import i18next from "./i18n";
 import { ImageInfo, Manifest, PluginInfo } from "./plugintypes";
-import thumbnail from "./thumbnail.png";
 import {
   DirectoryFile,
   FileType,
@@ -143,18 +142,16 @@ export async function getFileText(
 export const getThumbnailImage = (
   images: ImageInfo[] | undefined,
   size: number
-): string => {
+): string | undefined => {
   if (!images) {
-    return thumbnail;
+    return;
   }
 
   const sortedImages = [...images].sort(
     (a, b) => (a.height || 0) - (b.height || 0)
   );
   const thumbnailImage = sortedImages.find((i) => (i.height || 0) >= size);
-  return thumbnailImage
-    ? thumbnailImage.url
-    : sortedImages[0]?.url ?? thumbnail;
+  return thumbnailImage ? thumbnailImage.url : sortedImages[0]?.url;
 };
 
 const isCorrectMimeType = (response: Response, type: string): boolean => {
