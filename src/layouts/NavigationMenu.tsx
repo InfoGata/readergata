@@ -44,7 +44,7 @@ const NavigationMenu: React.FC = () => {
 
   return (
     <Sheet open={navigationOpen} onOpenChange={setOpen}>
-      <SheetContent side="left" className="w-64 p-2">
+      <SheetContent side="left" className="w-64 p-2 overflow-y-scroll">
         <div className="space-y-2 py-4 text-muted-foreground">
           {listItems.map((l) => (
             <NavigationLink key={l.title} item={l} setOpen={setOpen} />
