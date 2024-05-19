@@ -64,7 +64,7 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
   };
 
   const info = plugins.map((p) => (
-    <div className="flex items-center">
+    <div className="flex items-center" key={p.id}>
       {plugins.length > 1 && (
         <Checkbox
           checked={checked.has(p.id || "")}
@@ -103,7 +103,7 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
             plugins[0].manifestUrl !== installUrl && (
               <div>
                 {t("plugins:installManifestUrl")}:{" "}
-                <a href={installUrl} target="_blank">
+                <a href={installUrl} target="_blank" rel="noreferrer">
                   {installUrl}
                 </a>
               </div>
@@ -111,7 +111,7 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
           {plugins.length === 1 && plugins[0].manifestUrl && (
             <div>
               {t("plugins:updateManifestUrl")}:{" "}
-              <a href={plugins[0].manifestUrl} target="_blank">
+              <a href={plugins[0].manifestUrl} target="_blank" rel="noreferrer">
                 {plugins[0].manifestUrl}
               </a>
             </div>

@@ -22,7 +22,7 @@ const AboutLink: React.FC<AboutLinkProps> = (props) => {
     }
     if (url) {
       return (
-        <a href={url} target="_blank">
+        <a href={url} target="_blank" rel="noreferrer">
           {props.children}
         </a>
       );
