@@ -6,13 +6,8 @@ import {
 } from "@tanstack/react-router";
 import isElectron from "is-electron";
 import React from "react";
-import { PluginFrameContainer } from "./PluginsContext";
 import Spinner from "./components/Spinner";
 import { routeTree } from "./routeTree.gen";
-
-export interface MyRouterContext {
-  plugins: PluginFrameContainer[];
-}
 
 const history = isElectron() ? createHashHistory() : createBrowserHistory();
 const router = createRouter({
