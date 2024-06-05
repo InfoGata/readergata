@@ -1,5 +1,4 @@
-import { MyRouterContext } from "@/router";
-import { Outlet, createRootRoute, createRootRouteWithContext } from "@tanstack/react-router";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
 import React from "react";
 import { Toaster } from "../components/ui/sonner";
 import useFullScreen from "../hooks/useFullScreen";
