@@ -1,11 +1,8 @@
 import {
-  AnyRoute,
-  LinkOptions,
-  LinkProps,
-  RegisteredRouter,
-  ToPathOption,
+  LinkOptions
 } from "@tanstack/react-router";
 import { ManifestAuthentication } from "./plugintypes";
+import { router } from "./router";
 
 export interface NetworkRequest {
   body: Blob | ArrayBuffer | null;
@@ -116,18 +113,10 @@ export interface Bookmark {
   location: string;
 }
 
-export type LinkToPathProps<
-  TRouteTree extends AnyRoute = RegisteredRouter["routeTree"],
-  TTo extends string = "",
-> = ToPathOption<TRouteTree, "/", TTo>;
-
-export type LinkRouterProps<
-  TRouteTree extends AnyRoute = RegisteredRouter["routeTree"],
-  TTo extends string = "",
-> = LinkOptions<TRouteTree, "/", TTo> & LinkProps;
+export type LinkRouterProps = LinkOptions<typeof router>;
 
 export interface NavigationLinkItem {
   title: string;
-  link: LinkToPathProps;
+  link: LinkRouterProps;
   icon: JSX.Element;
 }

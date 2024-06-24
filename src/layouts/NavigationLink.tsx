@@ -21,8 +21,8 @@ const NavigationLink: React.FC<NavigationLinkProps> = (props) => {
         "w-full justify-start gap-8 text-md"
       )}
       activeProps={{ className: "bg-muted" }}
-      to={item.link}
       onClick={onClose}
+      {...item.link}
     >
       {item.icon}
       {item.title}

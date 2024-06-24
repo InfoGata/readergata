@@ -103,58 +103,100 @@ const PluginsPluginIdFeedApiIdRoute = PluginsPluginIdFeedApiIdImport.update({
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
     '/donate': {
+      id: '/donate'
+      path: '/donate'
+      fullPath: '/donate'
       preLoaderRoute: typeof DonateImport
       parentRoute: typeof rootRoute
     }
     '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
       preLoaderRoute: typeof LibraryImport
       parentRoute: typeof rootRoute
     }
     '/plugininstall': {
+      id: '/plugininstall'
+      path: '/plugininstall'
+      fullPath: '/plugininstall'
       preLoaderRoute: typeof PlugininstallImport
       parentRoute: typeof rootRoute
     }
     '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyImport
       parentRoute: typeof rootRoute
     }
     '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
       preLoaderRoute: typeof SettingsImport
       parentRoute: typeof rootRoute
     }
     '/viewer': {
+      id: '/viewer'
+      path: '/viewer'
+      fullPath: '/viewer'
       preLoaderRoute: typeof ViewerImport
       parentRoute: typeof rootRoute
     }
     '/plugins/': {
+      id: '/plugins/'
+      path: '/plugins'
+      fullPath: '/plugins'
       preLoaderRoute: typeof PluginsIndexImport
       parentRoute: typeof rootRoute
     }
     '/plugins/$pluginId/options': {
+      id: '/plugins/$pluginId/options'
+      path: '/plugins/$pluginId/options'
+      fullPath: '/plugins/$pluginId/options'
       preLoaderRoute: typeof PluginsPluginIdOptionsImport
       parentRoute: typeof rootRoute
     }
     '/plugins/$pluginId/': {
+      id: '/plugins/$pluginId/'
+      path: '/plugins/$pluginId'
+      fullPath: '/plugins/$pluginId'
       preLoaderRoute: typeof PluginsPluginIdIndexImport
       parentRoute: typeof rootRoute
     }
     '/plugins/$pluginId/feed/$apiId': {
+      id: '/plugins/$pluginId/feed/$apiId'
+      path: '/plugins/$pluginId/feed/$apiId'
+      fullPath: '/plugins/$pluginId/feed/$apiId'
       preLoaderRoute: typeof PluginsPluginIdFeedApiIdImport
       parentRoute: typeof rootRoute
     }
     '/plugins/$pluginId/feed/search': {
+      id: '/plugins/$pluginId/feed/search'
+      path: '/plugins/$pluginId/feed/search'
+      fullPath: '/plugins/$pluginId/feed/search'
       preLoaderRoute: typeof PluginsPluginIdFeedSearchImport
       parentRoute: typeof rootRoute
     }
     '/plugins/$pluginId/feed/': {
+      id: '/plugins/$pluginId/feed/'
+      path: '/plugins/$pluginId/feed'
+      fullPath: '/plugins/$pluginId/feed'
       preLoaderRoute: typeof PluginsPluginIdFeedIndexImport
       parentRoute: typeof rootRoute
     }
@@ -163,7 +205,7 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
+export const routeTree = rootRoute.addChildren({
   IndexRoute,
   AboutRoute,
   DonateRoute,
@@ -178,6 +220,74 @@ export const routeTree = rootRoute.addChildren([
   PluginsPluginIdFeedApiIdRoute,
   PluginsPluginIdFeedSearchRoute,
   PluginsPluginIdFeedIndexRoute,
-])
+})
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/about",
+        "/donate",
+        "/library",
+        "/plugininstall",
+        "/privacy",
+        "/settings",
+        "/viewer",
+        "/plugins/",
+        "/plugins/$pluginId/options",
+        "/plugins/$pluginId/",
+        "/plugins/$pluginId/feed/$apiId",
+        "/plugins/$pluginId/feed/search",
+        "/plugins/$pluginId/feed/"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/about": {
+      "filePath": "about.tsx"
+    },
+    "/donate": {
+      "filePath": "donate.tsx"
+    },
+    "/library": {
+      "filePath": "library.tsx"
+    },
+    "/plugininstall": {
+      "filePath": "plugininstall.tsx"
+    },
+    "/privacy": {
+      "filePath": "privacy.tsx"
+    },
+    "/settings": {
+      "filePath": "settings.tsx"
+    },
+    "/viewer": {
+      "filePath": "viewer.tsx"
+    },
+    "/plugins/": {
+      "filePath": "plugins.index.tsx"
+    },
+    "/plugins/$pluginId/options": {
+      "filePath": "plugins/$pluginId/options.tsx"
+    },
+    "/plugins/$pluginId/": {
+      "filePath": "plugins/$pluginId.index.tsx"
+    },
+    "/plugins/$pluginId/feed/$apiId": {
+      "filePath": "plugins/$pluginId/feed.$apiId.tsx"
+    },
+    "/plugins/$pluginId/feed/search": {
+      "filePath": "plugins/$pluginId/feed.search.tsx"
+    },
+    "/plugins/$pluginId/feed/": {
+      "filePath": "plugins/$pluginId/feed.index.tsx"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

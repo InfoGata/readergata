@@ -10,7 +10,7 @@ import Spinner from "./components/Spinner";
 import { routeTree } from "./routeTree.gen";
 
 const history = isElectron() ? createHashHistory() : createBrowserHistory();
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   history,
   defaultPendingComponent: Spinner,
