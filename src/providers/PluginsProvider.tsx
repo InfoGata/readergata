@@ -27,10 +27,10 @@ import {
   getFileText,
   getFileTypeFromPluginUrl,
   getPlugin,
-  getPluginSubdomain,
+  getPluginUrl,
   hasExtension,
   isAuthorizedDomain,
-  mapAsync,
+  mapAsync
 } from "../utils";
 import { useTheme } from "./ThemeProvider";
 
@@ -213,10 +213,10 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         },
       };
 
-      const srcUrl = `${getPluginSubdomain(plugin.id)}/pluginframe.html`;
+      const srcUrl = getPluginUrl(plugin.id || "", "/pluginframe.html");
       const host = new PluginFrameContainer(api, {
         completeMethods,
-        frameSrc: new URL(srcUrl),
+        frameSrc: srcUrl,
         sandboxAttributes: ["allow-scripts", "allow-same-origin"],
       });
       host.id = plugin.id;

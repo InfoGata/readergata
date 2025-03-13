@@ -254,6 +254,12 @@ export const getPluginSubdomain = (id?: string): string => {
   return `${window.location.protocol}//${id}.${window.location.host}`;
 };
 
+export const getPluginUrl = (id: string, path: string): URL => {
+  return import.meta.env.VITE_UNSAFE_SAME_ORIGIN_IFRAME === "true"
+    ? new URL(path, window.location.origin)
+    : new URL(`${getPluginSubdomain(id)}${path}`);
+};
+
 export const isAuthorizedDomain = (
   input: string,
   loginUrl?: string,
