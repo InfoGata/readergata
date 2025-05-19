@@ -8,7 +8,7 @@ import {
 import usePlugins from "@/hooks/usePlugins";
 import { Theme } from "@/plugintypes";
 import { useTheme } from "@/providers/ThemeProvider";
-import { filterAsync, mapAsync } from "@/utils";
+import { filterAsync, mapAsync } from "@infogata/utils";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

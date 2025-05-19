@@ -1,10 +1,11 @@
 import DOMPurify from "dompurify";
 import React from "react";
 import { Publication } from "../plugintypes";
-import { getThumbnailImage, searchThumbnailSize } from "../utils";
+import { searchThumbnailSize } from "../utils";
 import PublicationSourceButton from "./PublicationSourceButton";
 import { Dialog, DialogContent } from "./ui/dialog";
 import AboutLink from "./AboutLink";
+import { getThumbnailImage } from "@infogata/utils";
 
 interface PublicationInfoProps {
   publication: Publication;

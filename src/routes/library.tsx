@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import React from "react";
 import { PluginFrameContainer } from "../PluginsContext";
 import usePlugins from "../hooks/usePlugins";
-import { filterAsync } from "../utils";
+import { filterAsync } from "@infogata/utils";
 import LibraryBooks from "../components/Library/LibraryBooks";
 
 const Library: React.FC = () => {

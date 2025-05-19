@@ -29,8 +29,9 @@ import {
   PublicationSourceType,
   SearchResult,
 } from "../types";
-import { getValidUrl, mapAsync } from "../utils";
+import { getValidUrl } from "../utils";
 import { Button } from "./ui/button";
+import { mapAsync } from "@infogata/utils";
 
 type PDFDocumentProxy = Parameters<
   NonNullable<DocumentProps["onLoadSuccess"]>

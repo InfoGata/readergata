@@ -2,7 +2,7 @@ import isElectron from "is-electron";
 import { customAlphabet } from "nanoid";
 import { db } from "./database";
 import i18next from "./i18n";
-import { ImageInfo, Manifest, PluginInfo } from "./plugintypes";
+import { Manifest, PluginInfo } from "./plugintypes";
 import {
   DirectoryFile,
   FileType,
@@ -138,22 +138,6 @@ export async function getFileText(
   return null;
 }
 
-// Retreive smallest image bigger than thumbnail size
-export const getThumbnailImage = (
-  images: ImageInfo[] | undefined,
-  size: number
-): string | undefined => {
-  if (!images) {
-    return;
-  }
-
-  const sortedImages = [...images].sort(
-    (a, b) => (a.height || 0) - (b.height || 0)
-  );
-  const thumbnailImage = sortedImages.find((i) => (i.height || 0) >= size);
-  return thumbnailImage ? thumbnailImage.url : sortedImages[0]?.url;
-};
-
 const isCorrectMimeType = (response: Response, type: string): boolean => {
   const mimeType = response.headers.get("Content-Type");
 
@@ -216,21 +200,6 @@ export const getValidUrl = async (url: string, mimeType: string) => {
   }
   return null;
 };
-
-export function mapAsync<T, U>(
-  array: T[],
-  callbackfn: (value: T, index: number, array: T[]) => Promise<U>
-): Promise<U[]> {
-  return Promise.all(array.map(callbackfn));
-}
-
-export async function filterAsync<T>(
-  array: T[],
-  callbackfn: (value: T, index: number, array: T[]) => Promise<boolean>
-): Promise<T[]> {
-  const filterMap = await mapAsync(array, callbackfn);
-  return array.filter((_value, index) => filterMap[index]);
-}
 
 export const openFile = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {

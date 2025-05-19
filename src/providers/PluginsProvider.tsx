@@ -30,9 +30,9 @@ import {
   getPluginUrl,
   hasExtension,
   isAuthorizedDomain,
-  mapAsync
 } from "../utils";
 import { useTheme } from "./ThemeProvider";
+import { mapAsync } from "@infogata/utils";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(input: string, init?: RequestInit): Promise<NetworkRequest>;
