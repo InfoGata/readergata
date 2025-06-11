@@ -27,7 +27,10 @@
     "privacyPolicy": "Privacy Policy",
     "about": "About",
     "addBookmark": "Add Bookmark",
-    "remove": "Remove"
+    "remove": "Remove",
+    "extensionMessage": "Get the InfoGata extension for enhanced plugin functionality",
+    "installExtension": "Install Extension",
+    "close": "Close"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
