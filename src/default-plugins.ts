@@ -4,6 +4,7 @@ export interface PluginDescription {
   url: string;
   description: string;
   preinstall?: boolean;
+  requiresCorsDisabled?: boolean;
 }
 
 export const defaultPlugins: PluginDescription[] = [

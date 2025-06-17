@@ -23,7 +23,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
 import { NetworkRequest } from "../types";
 import {
-  corsIsDisabled,
+  isCorsDisabled,
   getFileText,
   getFileTypeFromPluginUrl,
   getPlugin,
@@ -151,7 +151,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           return result;
         },
         isNetworkRequestCorsDisabled: async () => {
-          return corsIsDisabled();
+          return isCorsDisabled();
         },
         postUiMessage: async (message: any) => {
           setPluginMessage({ pluginId: plugin.id, message });
