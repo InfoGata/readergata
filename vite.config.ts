@@ -21,6 +21,14 @@ export default defineConfig({
     TanStackRouterVite({ target: "react"}),
     VitePWA({
       registerType: "prompt",
+      workbox: {
+        navigateFallback: "/",
+        navigateFallbackDenylist: [
+          /\.html$/,
+          /\.html\?/,
+          /login_popup\.html/,
+        ],
+      },
       manifest: {
         short_name: "ReaderGata",
         name: "ReaderGata",
