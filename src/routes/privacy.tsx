@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { createFileRoute } from "@tanstack/react-router";
-import { useTheme } from "@/providers/ThemeProvider";
+import { useTheme } from "@/hooks/useTheme";
 import React from "react";
 
 const Privacy: React.FC = () => {

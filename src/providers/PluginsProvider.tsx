@@ -31,7 +31,7 @@ import {
   hasExtension,
   isAuthorizedDomain,
 } from "../utils";
-import { useTheme } from "./ThemeProvider";
+import { useTheme } from "@/hooks/useTheme";
 import { mapAsync } from "@infogata/utils";
 
 interface ApplicationPluginInterface extends PluginInterface {
