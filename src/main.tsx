@@ -11,6 +11,7 @@ import store, { persistor } from "./store/store";
 import Router from "./router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import PluginsProvider from "./providers/PluginsProvider";
+import { ExtensionProvider } from "./contexts/ExtensionContext";
 
 Sentry.init({
   dsn: "https://691bc946c63849509dc61a61eaee4a5f@app.glitchtip.com/4800",
@@ -34,13 +35,15 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider defaultTheme="light">
-          <IconContext.Provider value={{ className: "size-5" }}>
-            <QueryClientProvider client={queryClient}>
-              <PluginsProvider>
-                <Router />
-              </PluginsProvider>
-            </QueryClientProvider>
-          </IconContext.Provider>
+          <ExtensionProvider>
+            <IconContext.Provider value={{ className: "size-5" }}>
+              <QueryClientProvider client={queryClient}>
+                <PluginsProvider>
+                  <Router />
+                </PluginsProvider>
+              </QueryClientProvider>
+            </IconContext.Provider>
+          </ExtensionProvider>
         </ThemeProvider>
       </PersistGate>
     </Provider>

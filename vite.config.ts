@@ -11,6 +11,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["fake-indexeddb/auto", "src/test/before.ts"],
+    teardownTimeout: 10000,
   },
   resolve: {
     alias: {
