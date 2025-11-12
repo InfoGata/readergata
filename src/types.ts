@@ -2,7 +2,7 @@ import {
   LinkOptions
 } from "@tanstack/react-router";
 import { ManifestAuthentication } from "./plugintypes";
-import { router } from "./router";
+import { RouterType } from "./router";
 
 export interface NetworkRequest {
   body: Blob | ArrayBuffer | null;
@@ -113,7 +113,7 @@ export interface Bookmark {
   location: string;
 }
 
-export type LinkRouterProps = LinkOptions<typeof router>;
+export type LinkRouterProps = LinkOptions<RouterType>;
 
 export interface NavigationLinkItem {
   title: string;

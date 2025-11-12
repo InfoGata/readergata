@@ -10,11 +10,12 @@ import Spinner from "./components/Spinner";
 import { routeTree } from "./routeTree.gen";
 
 const history = isElectron() ? createHashHistory() : createBrowserHistory();
-export const router = createRouter({
+const router = createRouter({
   routeTree,
   history,
   defaultPendingComponent: Spinner,
 });
+export type RouterType = typeof router;
 
 declare module "@tanstack/react-router" {
   interface Register {
