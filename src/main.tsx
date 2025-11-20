@@ -12,6 +12,7 @@ import Router from "./router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import PluginsProvider from "./providers/PluginsProvider";
 import { ExtensionProvider } from "./contexts/ExtensionContext";
+import { PostHogProvider } from "posthog-js/react";
 
 Sentry.init({
   dsn: "https://691bc946c63849509dc61a61eaee4a5f@app.glitchtip.com/4800",
@@ -25,27 +26,37 @@ const queryClient = new QueryClient({
   },
 });
 
-
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider defaultTheme="light">
-          <ExtensionProvider>
-            <IconContext.Provider value={{ className: "size-5" }}>
-              <QueryClientProvider client={queryClient}>
-                <PluginsProvider>
-                  <Router />
-                </PluginsProvider>
-              </QueryClientProvider>
-            </IconContext.Provider>
-          </ExtensionProvider>
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+      options={{
+        api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+        defaults: '2025-05-24',
+        capture_exceptions: true,
+        debug: import.meta.env.MODE === "development",
+        cookieless_mode: "always",
+      }}
+    >
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider defaultTheme="light">
+            <ExtensionProvider>
+              <IconContext.Provider value={{ className: "size-5" }}>
+                <QueryClientProvider client={queryClient}>
+                  <PluginsProvider>
+                    <Router />
+                  </PluginsProvider>
+                </QueryClientProvider>
+              </IconContext.Provider>
+            </ExtensionProvider>
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
+    </PostHogProvider>
   </React.StrictMode>
 );
