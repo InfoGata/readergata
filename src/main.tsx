@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/browser";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { IconContext } from "react-icons";
@@ -13,10 +12,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import PluginsProvider from "./providers/PluginsProvider";
 import { ExtensionProvider } from "./contexts/ExtensionContext";
 import { PostHogProvider } from "posthog-js/react";
-
-Sentry.init({
-  dsn: "https://691bc946c63849509dc61a61eaee4a5f@app.glitchtip.com/4800",
-});
 
 const queryClient = new QueryClient({
   defaultOptions: {
