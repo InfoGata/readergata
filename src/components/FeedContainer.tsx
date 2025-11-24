@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { PluginFrameContainer } from "../PluginsContext";
+import { PluginFrameContainer } from "../contexts/PluginsContext";
 import { Feed } from "../plugintypes";
 import PublicationInfo from "./PublicationInfo";
 import { Input } from "./ui/input";

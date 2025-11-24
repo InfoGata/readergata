@@ -8,7 +8,7 @@ import {
   PluginInfo,
   SearchRequest,
   Theme,
-} from "./plugintypes";
+} from "../plugintypes";
 
 export interface PluginMethodInterface {
   onGetPublication(
