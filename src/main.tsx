@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import "./i18n";
 import "./index.css";
-import { ThemeProvider } from "./providers/ThemeProvider";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import store, { persistor } from "./store/store";
 import Router from "./router";
 import { QueryClient, QueryClientProvider } from "react-query";
