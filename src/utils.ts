@@ -156,7 +156,7 @@ const proxy = import.meta.env.PROD
   : "http://localhost:36325/";
 
 export const hasExtension = () => {
-  return typeof window.InfoGata !== "undefined";
+  return typeof window !== "undefined" && typeof window.InfoGata !== "undefined";
 };
 
 export const isCorsDisabled = () => {

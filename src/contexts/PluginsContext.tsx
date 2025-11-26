@@ -91,6 +91,8 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const { t } = useTranslation("plugins");
   const [pluginsLoaded, setPluginsLoaded] = React.useState(false);
   const hasUpdated = React.useRef(false);
+  const isMountedRef = React.useRef(true);
+
   const [pluginsFailed, setPluginsFailed] = React.useState(false);
   const dispatch = useAppDispatch();
   const [pluginFrames, setPluginFrames] = React.useState<
@@ -282,18 +284,25 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   );
 
   const loadPlugins = React.useCallback(async () => {
+    if (!isMountedRef.current) return;
     setPluginsFailed(false);
     try {
       const plugs = await db.plugins.toArray();
 
       const framePromises = plugs.map((p) => loadPlugin(p));
       const frames = await Promise.all(framePromises);
-      setPluginFrames(frames);
+      if (isMountedRef.current) {
+        setPluginFrames(frames);
+      }
     } catch {
-      toast.error(t("failedPlugins"));
-      setPluginsFailed(true);
+      if (isMountedRef.current) {
+        toast.error(t("failedPlugins"));
+        setPluginsFailed(true);
+      }
     } finally {
-      setPluginsLoaded(true);
+      if (isMountedRef.current) {
+        setPluginsLoaded(true);
+      }
     }
   }, [loadPlugin, t]);
 
@@ -302,6 +311,13 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     loadingPlugin.current = true;
     loadPlugins();
   }, [loadPlugins]);
+
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    }
+  }, [])
 
   const addPlugin = async (plugin: PluginInfo) => {
     if (pluginFrames.some((p) => p.id === plugin.id)) {
@@ -314,6 +330,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
   const loadAndAddPlugin = React.useCallback(
     async (plugin: PluginInfo) => {
+      if (!isMountedRef.current) return;
       const pluginFrame = await loadPlugin(plugin);
       setPluginFrames((prev) => [...prev, pluginFrame]);
       await db.plugins.put(plugin);
@@ -345,15 +362,20 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             (preinstall) => !plugs.some((pf) => pf.id === preinstall.id)
           );
           await mapAsync(newPlugins, async (newPlugin) => {
+            if (!isMountedRef.current) return;
             const fileType = getFileTypeFromPluginUrl(newPlugin.url);
             const plugin = await getPlugin(fileType, true);
             if (!plugin) return;
 
             await loadAndAddPlugin(plugin);
           });
-          dispatch(setPluginsPreInstalled());
+          if (isMountedRef.current) {
+            dispatch(setPluginsPreInstalled());
+          }
         } finally {
-          setPreinstallComplete(true);
+          if (isMountedRef.current) {
+            setPreinstallComplete(true);
+          }
         }
       }
     };
@@ -366,6 +388,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
       if (pluginsLoaded && !disableAutoUpdatePlugins && !hasUpdated.current) {
         hasUpdated.current = true;
         await mapAsync(pluginFrames, async (p) => {
+          if (!isMountedRef.current) return;
           if (p.manifestUrl) {
             const fileType = getFileTypeFromPluginUrl(p.manifestUrl);
             const manifestText = await getFileText(
@@ -373,6 +396,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
               "manifest.json",
               true
             );
+            if (!isMountedRef.current) return;
             if (manifestText) {
               const manifest = JSON.parse(manifestText) as Manifest;
               if (
@@ -384,6 +408,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
               ) {
                 const newPlugin = await getPlugin(fileType);
 
+                if (!isMountedRef.current) return;
                 if (newPlugin && p.id) {
                   newPlugin.id = p.id;
                   newPlugin.manifestUrl = p.manifestUrl;

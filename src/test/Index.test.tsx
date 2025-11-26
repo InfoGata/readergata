@@ -1,11 +1,15 @@
 import "@testing-library/jest-dom/vitest";
-import { screen, waitFor } from "@testing-library/react";
-import { describe, expect, test } from "vitest";
+import { cleanup, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, test } from "vitest";
 import i18next from "../i18n";
 import { renderWithProviders } from "./renderWithProviders";
 import { Index } from "@/routes";
 
 describe("Index", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   test("Should render properly", async () => {
     renderWithProviders(<Index />);
     expect(screen).toBeDefined();
