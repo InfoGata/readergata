@@ -15,8 +15,8 @@ import {
   NotificationMessage,
   PluginInfo,
   SearchRequest,
-  Theme,
 } from "../plugintypes";
+import { Theme } from "./ThemeContext";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
 import { NetworkRequest } from "../types";

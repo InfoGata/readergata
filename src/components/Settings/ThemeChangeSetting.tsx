@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import usePlugins from "@/hooks/usePlugins";
-import { Theme } from "@/plugintypes";
+import { Theme } from "@/contexts/ThemeContext";
 import { useTheme } from "@/hooks/useTheme";
 import { filterAsync, mapAsync } from "@infogata/utils";
 import React from "react";

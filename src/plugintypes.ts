@@ -118,5 +118,3 @@ export interface ManifestOptions {
   page: string;
   sameOrigin?: boolean;
 }
-
-export type Theme = "dark" | "light" | "system";

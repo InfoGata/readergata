@@ -1,5 +1,6 @@
-import { Theme } from "@/plugintypes";
 import { createContext, useEffect, useState } from "react";
+
+export type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
