@@ -24,7 +24,7 @@ import {
 import { debounce, getValidUrl } from "../utils";
 import Spinner from "./Spinner";
 import { Button } from "./ui/button";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@infogata/shadcn-vite-theme-provider";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {

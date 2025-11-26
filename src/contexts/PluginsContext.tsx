@@ -16,7 +16,7 @@ import {
   PluginInfo,
   SearchRequest,
 } from "../plugintypes";
-import { Theme } from "./ThemeContext";
+import { Theme, useTheme } from "@infogata/shadcn-vite-theme-provider";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
 import { NetworkRequest } from "../types";
@@ -29,7 +29,6 @@ import {
   hasExtension,
   isAuthorizedDomain,
 } from "../utils";
-import { useTheme } from "@/hooks/useTheme";
 import { mapAsync } from "@infogata/utils";
 
 interface ApplicationPluginInterface extends PluginInterface {
