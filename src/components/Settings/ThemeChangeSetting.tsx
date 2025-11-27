@@ -35,6 +35,7 @@ const ThemeChangeSetting: React.FC = () => {
         <SelectContent>
           <SelectItem value="light">{t("light")}</SelectItem>
           <SelectItem value="dark">{t("dark")}</SelectItem>
+          <SelectItem value="system">{t("system")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

@@ -91,7 +91,7 @@ function flatten(chapters: any) {
   );
 }
 
-export function getCfiFromHref(book: Book, href: string) {
+function getCfiFromHref(book: Book, href: string) {
   const [_, id] = href.split("#");
   const section = book.spine.get(href);
   const el = (
@@ -100,7 +100,7 @@ export function getCfiFromHref(book: Book, href: string) {
   return section.cfiFromElement(el);
 }
 
-export function getChapter(book: Book, location: Location) {
+function getChapter(book: Book, location: Location) {
   const locationHref = location.start.href;
 
   const match = flatten(book.navigation.toc)
@@ -235,6 +235,13 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
           break;
         case "light":
           rendition.themes.select("none");
+          break;
+        case "system":
+          rendition.themes.select(
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "none"
+          );
           break;
       }
     }
