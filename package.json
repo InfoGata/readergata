@@ -36,7 +36,7 @@
     "is-electron": "^2.2.2",
     "lucide-react": "^0.307.0",
     "nanoid": "^4.0.2",
-    "plugin-frame": "^0.5.1",
+    "plugin-frame": "^1.0.0",
     "posthog-js": "^1.297.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
