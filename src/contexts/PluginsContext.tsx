@@ -28,6 +28,7 @@ import {
   getPluginUrl,
   hasExtension,
   isAuthorizedDomain,
+  hasAuthentication,
 } from "../utils";
 import { mapAsync } from "@infogata/utils";
 
@@ -227,7 +228,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           }
         },
         isLoggedIn: async () => {
-          if (plugin.manifest?.authentication && plugin.id) {
+          if (await hasAuthentication() && plugin.manifest?.authentication && plugin.id) {
             return !!db.pluginAuths.get(plugin.id);
           }
           return false;
