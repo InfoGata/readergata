@@ -30,7 +30,8 @@
     "remove": "Remove",
     "extensionMessage": "Get the InfoGata extension for enhanced plugin functionality",
     "installExtension": "Install Extension",
-    "close": "Close"
+    "close": "Close",
+    "navigation": "Navigation"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

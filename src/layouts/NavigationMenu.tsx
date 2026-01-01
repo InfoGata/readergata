@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -44,7 +44,8 @@ const NavigationMenu: React.FC = () => {
 
   return (
     <Sheet open={navigationOpen} onOpenChange={setOpen}>
-      <SheetContent side="left" className="w-64 p-2 overflow-y-scroll">
+      <SheetContent side="left" className="w-64 p-2 overflow-y-scroll" aria-describedby={undefined}>
+        <SheetTitle className="sr-only">{t("navigation")}</SheetTitle>
         <div className="space-y-2 py-4 text-muted-foreground">
           {listItems.map((l) => (
             <NavigationLink key={l.title} item={l} setOpen={setOpen} />
