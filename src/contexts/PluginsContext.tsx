@@ -221,11 +221,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           toaster(notification.message);
         },
         getCorsProxy: async () => {
-          if (import.meta.env.PROD || corsProxyUrlRef.current) {
-            return corsProxyUrlRef.current;
-          } else {
-            return "http://localhost:36325/";
-          }
+          return corsProxyUrlRef.current;
         },
         isLoggedIn: async () => {
           if (await hasAuthentication() && plugin.manifest?.authentication && plugin.id) {
