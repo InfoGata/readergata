@@ -6,6 +6,7 @@
   "type": "module",
   "main": "./out/main/index.cjs",
   "dependencies": {
+    "@infogata/extension-components": "^0.1.0",
     "@infogata/shadcn-vite-theme-provider": "0.1.0",
     "@infogata/utils": "^0.1.2",
     "@piotr-cz/redux-persist-idb-storage": "^1.1.3",
