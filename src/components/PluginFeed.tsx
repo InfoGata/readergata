@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import usePlugins from "../hooks/usePlugins";
 import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import FeedContainer from "../components/FeedContainer";
@@ -29,7 +29,9 @@ const PluginFeed: React.FC<PluginFeed> = (props) => {
     }
   };
 
-  const query = useQuery(["pluginFeed", pluginId, apiId], getFeed, {
+  const query = useQuery({
+    queryKey: ["pluginFeed", pluginId, apiId],
+    queryFn: getFeed,
     enabled: pluginsLoaded && !!plugin,
   });
 

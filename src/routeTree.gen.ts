@@ -8,216 +8,95 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as ViewerRouteImport } from './routes/viewer'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PlugininstallRouteImport } from './routes/plugininstall'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as DonateRouteImport } from './routes/donate'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PluginsIndexRouteImport } from './routes/plugins.index'
+import { Route as PluginsPluginIdIndexRouteImport } from './routes/plugins/$pluginId.index'
+import { Route as PluginsPluginIdOptionsRouteImport } from './routes/plugins/$pluginId/options'
+import { Route as PluginsPluginIdFeedIndexRouteImport } from './routes/plugins/$pluginId/feed.index'
+import { Route as PluginsPluginIdFeedSearchRouteImport } from './routes/plugins/$pluginId/feed.search'
+import { Route as PluginsPluginIdFeedApiIdRouteImport } from './routes/plugins/$pluginId/feed.$apiId'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as ViewerImport } from './routes/viewer'
-import { Route as SettingsImport } from './routes/settings'
-import { Route as PrivacyImport } from './routes/privacy'
-import { Route as PlugininstallImport } from './routes/plugininstall'
-import { Route as LibraryImport } from './routes/library'
-import { Route as DonateImport } from './routes/donate'
-import { Route as AboutImport } from './routes/about'
-import { Route as IndexImport } from './routes/index'
-import { Route as PluginsIndexImport } from './routes/plugins.index'
-import { Route as PluginsPluginIdIndexImport } from './routes/plugins/$pluginId.index'
-import { Route as PluginsPluginIdOptionsImport } from './routes/plugins/$pluginId/options'
-import { Route as PluginsPluginIdFeedIndexImport } from './routes/plugins/$pluginId/feed.index'
-import { Route as PluginsPluginIdFeedSearchImport } from './routes/plugins/$pluginId/feed.search'
-import { Route as PluginsPluginIdFeedApiIdImport } from './routes/plugins/$pluginId/feed.$apiId'
-
-// Create/Update Routes
-
-const ViewerRoute = ViewerImport.update({
+const ViewerRoute = ViewerRouteImport.update({
   id: '/viewer',
   path: '/viewer',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const SettingsRoute = SettingsImport.update({
+const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PrivacyRoute = PrivacyImport.update({
+const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PlugininstallRoute = PlugininstallImport.update({
+const PlugininstallRoute = PlugininstallRouteImport.update({
   id: '/plugininstall',
   path: '/plugininstall',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LibraryRoute = LibraryImport.update({
+const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const DonateRoute = DonateImport.update({
+const DonateRoute = DonateRouteImport.update({
   id: '/donate',
   path: '/donate',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AboutRoute = AboutImport.update({
+const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PluginsIndexRoute = PluginsIndexImport.update({
+const PluginsIndexRoute = PluginsIndexRouteImport.update({
   id: '/plugins/',
   path: '/plugins/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PluginsPluginIdIndexRoute = PluginsPluginIdIndexImport.update({
+const PluginsPluginIdIndexRoute = PluginsPluginIdIndexRouteImport.update({
   id: '/plugins/$pluginId/',
   path: '/plugins/$pluginId/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PluginsPluginIdOptionsRoute = PluginsPluginIdOptionsImport.update({
+const PluginsPluginIdOptionsRoute = PluginsPluginIdOptionsRouteImport.update({
   id: '/plugins/$pluginId/options',
   path: '/plugins/$pluginId/options',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PluginsPluginIdFeedIndexRoute = PluginsPluginIdFeedIndexImport.update({
-  id: '/plugins/$pluginId/feed/',
-  path: '/plugins/$pluginId/feed/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PluginsPluginIdFeedSearchRoute = PluginsPluginIdFeedSearchImport.update({
-  id: '/plugins/$pluginId/feed/search',
-  path: '/plugins/$pluginId/feed/search',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PluginsPluginIdFeedApiIdRoute = PluginsPluginIdFeedApiIdImport.update({
-  id: '/plugins/$pluginId/feed/$apiId',
-  path: '/plugins/$pluginId/feed/$apiId',
-  getParentRoute: () => rootRoute,
-} as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
-    '/donate': {
-      id: '/donate'
-      path: '/donate'
-      fullPath: '/donate'
-      preLoaderRoute: typeof DonateImport
-      parentRoute: typeof rootRoute
-    }
-    '/library': {
-      id: '/library'
-      path: '/library'
-      fullPath: '/library'
-      preLoaderRoute: typeof LibraryImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugininstall': {
-      id: '/plugininstall'
-      path: '/plugininstall'
-      fullPath: '/plugininstall'
-      preLoaderRoute: typeof PlugininstallImport
-      parentRoute: typeof rootRoute
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyImport
-      parentRoute: typeof rootRoute
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsImport
-      parentRoute: typeof rootRoute
-    }
-    '/viewer': {
-      id: '/viewer'
-      path: '/viewer'
-      fullPath: '/viewer'
-      preLoaderRoute: typeof ViewerImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugins/': {
-      id: '/plugins/'
-      path: '/plugins'
-      fullPath: '/plugins'
-      preLoaderRoute: typeof PluginsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugins/$pluginId/options': {
-      id: '/plugins/$pluginId/options'
-      path: '/plugins/$pluginId/options'
-      fullPath: '/plugins/$pluginId/options'
-      preLoaderRoute: typeof PluginsPluginIdOptionsImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugins/$pluginId/': {
-      id: '/plugins/$pluginId/'
-      path: '/plugins/$pluginId'
-      fullPath: '/plugins/$pluginId'
-      preLoaderRoute: typeof PluginsPluginIdIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugins/$pluginId/feed/$apiId': {
-      id: '/plugins/$pluginId/feed/$apiId'
-      path: '/plugins/$pluginId/feed/$apiId'
-      fullPath: '/plugins/$pluginId/feed/$apiId'
-      preLoaderRoute: typeof PluginsPluginIdFeedApiIdImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugins/$pluginId/feed/search': {
-      id: '/plugins/$pluginId/feed/search'
-      path: '/plugins/$pluginId/feed/search'
-      fullPath: '/plugins/$pluginId/feed/search'
-      preLoaderRoute: typeof PluginsPluginIdFeedSearchImport
-      parentRoute: typeof rootRoute
-    }
-    '/plugins/$pluginId/feed/': {
-      id: '/plugins/$pluginId/feed/'
-      path: '/plugins/$pluginId/feed'
-      fullPath: '/plugins/$pluginId/feed'
-      preLoaderRoute: typeof PluginsPluginIdFeedIndexImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
+const PluginsPluginIdFeedIndexRoute =
+  PluginsPluginIdFeedIndexRouteImport.update({
+    id: '/plugins/$pluginId/feed/',
+    path: '/plugins/$pluginId/feed/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PluginsPluginIdFeedSearchRoute =
+  PluginsPluginIdFeedSearchRouteImport.update({
+    id: '/plugins/$pluginId/feed/search',
+    path: '/plugins/$pluginId/feed/search',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PluginsPluginIdFeedApiIdRoute =
+  PluginsPluginIdFeedApiIdRouteImport.update({
+    id: '/plugins/$pluginId/feed/$apiId',
+    path: '/plugins/$pluginId/feed/$apiId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -228,14 +107,13 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/viewer': typeof ViewerRoute
-  '/plugins': typeof PluginsIndexRoute
+  '/plugins/': typeof PluginsIndexRoute
   '/plugins/$pluginId/options': typeof PluginsPluginIdOptionsRoute
-  '/plugins/$pluginId': typeof PluginsPluginIdIndexRoute
+  '/plugins/$pluginId/': typeof PluginsPluginIdIndexRoute
   '/plugins/$pluginId/feed/$apiId': typeof PluginsPluginIdFeedApiIdRoute
   '/plugins/$pluginId/feed/search': typeof PluginsPluginIdFeedSearchRoute
-  '/plugins/$pluginId/feed': typeof PluginsPluginIdFeedIndexRoute
+  '/plugins/$pluginId/feed/': typeof PluginsPluginIdFeedIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
@@ -252,9 +130,8 @@ export interface FileRoutesByTo {
   '/plugins/$pluginId/feed/search': typeof PluginsPluginIdFeedSearchRoute
   '/plugins/$pluginId/feed': typeof PluginsPluginIdFeedIndexRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/donate': typeof DonateRoute
@@ -270,7 +147,6 @@ export interface FileRoutesById {
   '/plugins/$pluginId/feed/search': typeof PluginsPluginIdFeedSearchRoute
   '/plugins/$pluginId/feed/': typeof PluginsPluginIdFeedIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -282,12 +158,12 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/settings'
     | '/viewer'
-    | '/plugins'
+    | '/plugins/'
     | '/plugins/$pluginId/options'
-    | '/plugins/$pluginId'
+    | '/plugins/$pluginId/'
     | '/plugins/$pluginId/feed/$apiId'
     | '/plugins/$pluginId/feed/search'
-    | '/plugins/$pluginId/feed'
+    | '/plugins/$pluginId/feed/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -322,7 +198,6 @@ export interface FileRouteTypes {
     | '/plugins/$pluginId/feed/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
@@ -338,6 +213,109 @@ export interface RootRouteChildren {
   PluginsPluginIdFeedApiIdRoute: typeof PluginsPluginIdFeedApiIdRoute
   PluginsPluginIdFeedSearchRoute: typeof PluginsPluginIdFeedSearchRoute
   PluginsPluginIdFeedIndexRoute: typeof PluginsPluginIdFeedIndexRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/viewer': {
+      id: '/viewer'
+      path: '/viewer'
+      fullPath: '/viewer'
+      preLoaderRoute: typeof ViewerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugininstall': {
+      id: '/plugininstall'
+      path: '/plugininstall'
+      fullPath: '/plugininstall'
+      preLoaderRoute: typeof PlugininstallRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/donate': {
+      id: '/donate'
+      path: '/donate'
+      fullPath: '/donate'
+      preLoaderRoute: typeof DonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins/': {
+      id: '/plugins/'
+      path: '/plugins'
+      fullPath: '/plugins/'
+      preLoaderRoute: typeof PluginsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins/$pluginId/': {
+      id: '/plugins/$pluginId/'
+      path: '/plugins/$pluginId'
+      fullPath: '/plugins/$pluginId/'
+      preLoaderRoute: typeof PluginsPluginIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins/$pluginId/options': {
+      id: '/plugins/$pluginId/options'
+      path: '/plugins/$pluginId/options'
+      fullPath: '/plugins/$pluginId/options'
+      preLoaderRoute: typeof PluginsPluginIdOptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins/$pluginId/feed/': {
+      id: '/plugins/$pluginId/feed/'
+      path: '/plugins/$pluginId/feed'
+      fullPath: '/plugins/$pluginId/feed/'
+      preLoaderRoute: typeof PluginsPluginIdFeedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins/$pluginId/feed/search': {
+      id: '/plugins/$pluginId/feed/search'
+      path: '/plugins/$pluginId/feed/search'
+      fullPath: '/plugins/$pluginId/feed/search'
+      preLoaderRoute: typeof PluginsPluginIdFeedSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plugins/$pluginId/feed/$apiId': {
+      id: '/plugins/$pluginId/feed/$apiId'
+      path: '/plugins/$pluginId/feed/$apiId'
+      fullPath: '/plugins/$pluginId/feed/$apiId'
+      preLoaderRoute: typeof PluginsPluginIdFeedApiIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -356,75 +334,6 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsPluginIdFeedSearchRoute: PluginsPluginIdFeedSearchRoute,
   PluginsPluginIdFeedIndexRoute: PluginsPluginIdFeedIndexRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/about",
-        "/donate",
-        "/library",
-        "/plugininstall",
-        "/privacy",
-        "/settings",
-        "/viewer",
-        "/plugins/",
-        "/plugins/$pluginId/options",
-        "/plugins/$pluginId/",
-        "/plugins/$pluginId/feed/$apiId",
-        "/plugins/$pluginId/feed/search",
-        "/plugins/$pluginId/feed/"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/about": {
-      "filePath": "about.tsx"
-    },
-    "/donate": {
-      "filePath": "donate.tsx"
-    },
-    "/library": {
-      "filePath": "library.tsx"
-    },
-    "/plugininstall": {
-      "filePath": "plugininstall.tsx"
-    },
-    "/privacy": {
-      "filePath": "privacy.tsx"
-    },
-    "/settings": {
-      "filePath": "settings.tsx"
-    },
-    "/viewer": {
-      "filePath": "viewer.tsx"
-    },
-    "/plugins/": {
-      "filePath": "plugins.index.tsx"
-    },
-    "/plugins/$pluginId/options": {
-      "filePath": "plugins/$pluginId/options.tsx"
-    },
-    "/plugins/$pluginId/": {
-      "filePath": "plugins/$pluginId.index.tsx"
-    },
-    "/plugins/$pluginId/feed/$apiId": {
-      "filePath": "plugins/$pluginId/feed.$apiId.tsx"
-    },
-    "/plugins/$pluginId/feed/search": {
-      "filePath": "plugins/$pluginId/feed.search.tsx"
-    },
-    "/plugins/$pluginId/feed/": {
-      "filePath": "plugins/$pluginId/feed.index.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

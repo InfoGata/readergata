@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import usePlugins from "../hooks/usePlugins";
 import { SourceType } from "../plugintypes";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -60,7 +60,9 @@ export const Viewer: React.FC = () => {
     }
   };
 
-  const query = useQuery(["viewer", source, type, pluginId], getBookFromUrl, {
+  const query = useQuery({
+    queryKey: ["viewer", source, type, pluginId],
+    queryFn: getBookFromUrl,
     enabled: pluginsLoaded,
   });
 

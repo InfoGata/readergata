@@ -49,7 +49,7 @@ const TableOfContents: React.FC = () => {
   const getBookContents = (
     contents: BookContent[],
     isNested = false
-  ): JSX.Element[] => {
+  ): React.JSX.Element[] => {
     if (contents.length === 0) {
       return [];
     }

@@ -8,7 +8,7 @@ import "./index.css";
 import { ThemeProvider } from "@infogata/shadcn-vite-theme-provider";
 import store, { persistor } from "./store/store";
 import Router from "./router";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PluginsProvider } from "./contexts/PluginsContext";
 import { ExtensionProvider } from "./contexts/ExtensionContext";
 import { PostHogProvider } from "posthog-js/react";

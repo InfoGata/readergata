@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-router";
 import { render } from "@testing-library/react";
 import React, { PropsWithChildren } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import store from "../store/store";
 
@@ -24,7 +24,7 @@ const queryClient = new QueryClient({
 });
 
 export function renderWithProviders(ui: React.ReactElement) {
-  function Wrapper({ children }: PropsWithChildren): JSX.Element {
+  function Wrapper({ children }: PropsWithChildren): React.JSX.Element {
     const rootRoute = createRootRoute({
       component: Root,
     });

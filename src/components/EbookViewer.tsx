@@ -129,7 +129,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   const { ebook } = props;
   const theme = useTheme();
   const [rendition, setRendition] = React.useState<Rendition | null>(null);
-  const book = React.useRef<Book>();
+  const book = React.useRef<Book>(undefined);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);

@@ -1,6 +1,5 @@
-import {
-  LinkOptions
-} from "@tanstack/react-router";
+import React from "react";
+import { LinkOptions } from "@tanstack/react-router";
 import { ManifestAuthentication } from "./plugintypes";
 import { RouterType } from "./router";
 
@@ -118,5 +117,5 @@ export type LinkRouterProps = LinkOptions<RouterType>;
 export interface NavigationLinkItem {
   title: string;
   link: LinkRouterProps;
-  icon: JSX.Element;
+  icon: React.JSX.Element;
 }

@@ -1,15 +1,10 @@
 import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import {
-  Document,
-  DocumentProps,
-  PDFPageProxy,
-  Page,
-  TextLayerItemInternal,
-  pdfjs,
-} from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
+import { Document, DocumentProps, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setCurrentLocation,
@@ -65,7 +60,7 @@ function highlightPattern(text: string, pattern: string) {
 const options = {
   cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
   cMapPacked: true,
-  standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts`,
+  standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts/`,
 };
 
 interface PdfViewerProps {
@@ -168,9 +163,9 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
   const onItemClick = ({
     pageNumber: itemPageNumber,
   }: {
-    pageNumber: string;
+    pageNumber: number;
   }) => {
-    setPageNumber(Number(itemPageNumber));
+    setPageNumber(itemPageNumber);
   };
 
   const onDocumentLoad = async (pdfProxy: PDFDocumentProxy) => {
@@ -225,12 +220,12 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
   };
 
   const textRenderer = React.useCallback(
-    (textItem: TextLayerItemInternal) =>
-      highlightPattern(textItem.str, searchQuery),
+    ({ str }: { str: string; itemIndex: number }) =>
+      highlightPattern(str, searchQuery),
     [searchQuery]
   );
 
-  const onPageRender = async (page: PDFPageProxy) => {
+  const onPageLoad = async (page: { pageNumber: number }) => {
     const renderedPageNum = page.pageNumber;
     if (toc.length > 0) {
       const flatContents = toc.flatMap((t) => [t, ...t.items]);
@@ -268,7 +263,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
           <Page
             pageNumber={pageNumber || Number(currentLocation) || 1}
             customTextRenderer={textRenderer}
-            onRenderSuccess={onPageRender}
+            onLoadSuccess={onPageLoad}
           />
         </Document>
       )}

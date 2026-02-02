@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import useFindPlugin from "@/hooks/useFindPlugin";
 import usePlugins from "@/hooks/usePlugins";
 import ConfirmPluginDialog from "@/components/ConfirmPluginDialog";
@@ -30,13 +30,11 @@ const PluginFeedSearch: React.FC = () => {
     }
   };
 
-  const searchQuery = useQuery(
-    ["searchFeed", pluginId, apiId, query],
-    searchFeed,
-    {
-      enabled: pluginsLoaded && !!plugin,
-    }
-  );
+  const searchQuery = useQuery({
+    queryKey: ["searchFeed", pluginId, apiId, query],
+    queryFn: searchFeed,
+    enabled: pluginsLoaded && !!plugin,
+  });
 
   return (
     <div>

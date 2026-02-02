@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { LinkRouterProps } from "@/types";
 
 export type AboutLinkProps = {
-  icon?: JSX.Element;
+  icon?: React.JSX.Element;
   avatarSrc?: string;
   title: string;
   description?: string;
