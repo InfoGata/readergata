@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: any) => ({

@@ -58,7 +58,11 @@ const ConfirmPluginDialog: React.FC<ConfirmPluginDialogProps> = (props) => {
   const onChange = (pluginId: string) => (checked: boolean) => {
     setChecked((prev) => {
       const next = new Set(prev);
-      checked ? next.add(pluginId) : next.delete(pluginId);
+      if (checked) {
+        next.add(pluginId);
+      } else {
+        next.delete(pluginId);
+      }
       return next;
     });
   };

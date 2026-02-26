@@ -84,7 +84,6 @@ export interface PluginContextInterface {
   reloadPlugins: () => Promise<void>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const PluginsContext = React.createContext<PluginContextInterface>(undefined!);
 
 export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
@@ -149,7 +148,6 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             } else if (Object.keys(pluginAuth.domainHeaders ?? {}).length > 0) {
               const url = new URL(input);
               const domainHeaderKey = Object.keys(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 pluginAuth.domainHeaders!
               ).find((dh) => url.host.endsWith(dh));
               if (domainHeaderKey) {
@@ -159,8 +157,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
                 ]) {
                   headers.set(
                     prop,
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    pluginAuth.domainHeaders![domainHeaderKey][prop]
+                      pluginAuth.domainHeaders![domainHeaderKey][prop]
                   );
                 }
                 newInit.headers = Object.fromEntries(headers.entries());
