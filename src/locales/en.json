@@ -57,6 +57,8 @@
     "homepage": "Home Page",
     "updateUrl": "Update Url",
     "updatePlugin": "Update",
+    "updatePluginTitle": "Update Plugin",
+    "confirmUpdatePlugin": "This plugin is already installed. Would you like to update it?",
     "installPluginFromUrl": "Install plugin using a link to a plugin's manifest.json",
     "advancedOptions": "Advanced Options",
     "headerKey": "Header Key",

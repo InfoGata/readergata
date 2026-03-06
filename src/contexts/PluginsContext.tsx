@@ -31,6 +31,7 @@ import {
   hasAuthentication,
 } from "../utils";
 import { mapAsync } from "@infogata/utils";
+import ConfirmUpdatePluginDialog from "../components/ConfirmUpdatePluginDialog";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(input: string, init?: RequestInit): Promise<NetworkRequest>;
@@ -98,6 +99,8 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     PluginFrameContainer[]
   >([]);
   const [pluginMessage, setPluginMessage] = React.useState<PluginMessage>();
+  const [pendingUpdatePlugin, setPendingUpdatePlugin] =
+    React.useState<PluginInfo | null>(null);
 
   const corsProxyUrl = useAppSelector((state) => state.settings.corsProxyUrl);
   const corsProxyUrlRef = React.useRef(corsProxyUrl);
@@ -314,7 +317,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
   const addPlugin = async (plugin: PluginInfo) => {
     if (pluginFrames.some((p) => p.id === plugin.id)) {
-      toast(`A plugin with Id ${plugin.id} is already installed`);
+      setPendingUpdatePlugin(plugin);
       return;
     }
 
@@ -341,6 +344,17 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     },
     [loadPlugin, pluginFrames]
   );
+
+  const handleConfirmUpdate = React.useCallback(async () => {
+    if (pendingUpdatePlugin?.id) {
+      await updatePlugin(pendingUpdatePlugin, pendingUpdatePlugin.id);
+    }
+    setPendingUpdatePlugin(null);
+  }, [pendingUpdatePlugin, updatePlugin]);
+
+  const handleCancelUpdate = React.useCallback(() => {
+    setPendingUpdatePlugin(null);
+  }, []);
 
   React.useEffect(() => {
     const preinstall = async () => {
@@ -437,6 +451,11 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   return (
     <PluginsContext.Provider value={defaultContext}>
       {props.children}
+      <ConfirmUpdatePluginDialog
+        open={!!pendingUpdatePlugin}
+        onConfirm={handleConfirmUpdate}
+        onClose={handleCancelUpdate}
+      />
     </PluginsContext.Provider>
   );
 };
