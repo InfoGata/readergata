@@ -10,14 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Install dependencies
 npm install
 
-# Run development server (includes CORS proxy server)
+# Run development server
 npm run dev
-
-# Run just the frontend without the CORS proxy
-npm start
-
-# Run just the CORS proxy server
-npm run cors-server
 
 # Build for production
 npm run build
@@ -88,7 +82,6 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
    - Responsive design with support for different viewing modes
 
 5. **Network Handling**
-   - CORS proxy for handling cross-origin requests 
    - Extension integration for network requests to bypass CORS restrictions
 
 ## Data Flow
