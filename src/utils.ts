@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import isElectron from "is-electron";
 import { customAlphabet } from "nanoid";
 import { db } from "./database";
@@ -160,7 +161,7 @@ export const hasExtension = () => {
 };
 
 export const isCorsDisabled = () => {
-  return hasExtension() || isElectron();
+  return hasExtension() || isElectron() || Capacitor.isNativePlatform();
 };
 
 export const hasAuthentication = async () => {
@@ -169,7 +170,7 @@ export const hasAuthentication = async () => {
     const version = await window.InfoGata.getVersion();
     return semverGte(version, minVersion);
   }
-  return false;
+  return Capacitor.isNativePlatform();
 };
 
 export const getValidUrl = async (url: string, mimeType: string) => {
@@ -213,7 +214,7 @@ export const openFile = (file: File): Promise<string> => {
 };
 
 export const getPluginSubdomain = (id?: string): string => {
-  if (import.meta.env.PROD) {
+  if (import.meta.env.PROD || Capacitor.isNativePlatform()) {
     const domain = import.meta.env.VITE_DOMAIN || "readergata.com";
     const protocol = domain.startsWith("localhost")
       ? window.location.protocol
