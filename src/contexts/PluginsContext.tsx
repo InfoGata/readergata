@@ -19,7 +19,7 @@ import {
 import { Theme, useTheme } from "@infogata/shadcn-vite-theme-provider";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPluginsPreInstalled } from "../store/reducers/settingsReducer";
-import { NetworkRequest } from "../types";
+import { NetworkRequest, SiteRedirectRule } from "../types";
 import {
   isCorsDisabled,
   getFileText,
@@ -477,6 +477,37 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
     return () => clearInterval(interval);
   }, [pluginsLoaded]);
+
+  // Register site redirect rules with the extension
+  React.useEffect(() => {
+    if (!pluginsLoaded || pluginFrames.length === 0) return;
+    if (!hasExtension() || !window.InfoGata?.registerRedirects) return;
+
+    const registerRedirects = async () => {
+      const dbPlugins = await db.plugins.toArray();
+      const rules: SiteRedirectRule[] = [];
+
+      for (const plugin of dbPlugins) {
+        const siteMatch = plugin.manifest?.siteMatch;
+        if (siteMatch && siteMatch.length > 0 && plugin.id) {
+          rules.push({
+            pluginId: plugin.id,
+            pluginName: plugin.name,
+            appName: "ReaderGata",
+            appOrigin: window.location.origin,
+            siteMatchPatterns: siteMatch,
+            redirectPath: `/plugins/${plugin.id}/feed`,
+          });
+        }
+      }
+
+      if (rules.length > 0) {
+        window.InfoGata?.registerRedirects?.(rules);
+      }
+    };
+
+    registerRedirects();
+  }, [pluginsLoaded, pluginFrames]);
 
   const deletePlugin = async (pluginFrame: PluginFrameContainer) => {
     const newPlugins = pluginFrames.filter((p) => p.id !== pluginFrame.id);
