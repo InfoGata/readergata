@@ -1,6 +1,7 @@
 import { Capacitor } from "@capacitor/core";
 import isElectron from "is-electron";
 import { customAlphabet } from "nanoid";
+import { toast } from "sonner";
 import { db } from "./database";
 import i18next from "./i18n";
 import { Manifest, PluginInfo } from "./plugintypes";
@@ -39,7 +40,7 @@ export async function getPlugin(
   if (!manifest.script) {
     if (!suppressErrors) {
       const errorText = i18next.t("common:manifestNoScript");
-      alert(errorText);
+      toast.error(errorText);
     }
     return null;
   }
@@ -116,7 +117,7 @@ export async function getFileText(
     if (!file) {
       if (!suppressErrors) {
         const errorText = i18next.t("common:fileNotFound", { name });
-        alert(errorText);
+        toast.error(errorText);
       }
       return null;
     }
@@ -131,7 +132,7 @@ export async function getFileText(
     } catch {
       if (!suppressErrors) {
         const errorText = i18next.t("common:cantGetFile", { name });
-        alert(errorText);
+        toast.error(errorText);
       }
       return null;
     }
@@ -196,7 +197,7 @@ export const getValidUrl = async (url: string, mimeType: string) => {
       }
       return isCorrectMimeType(response, mimeType) ? proxyUrl : null;
     } catch {
-      alert("Could not get file");
+      toast.error("Could not get file");
     }
   }
   return null;

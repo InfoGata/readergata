@@ -27,6 +27,7 @@ import {
 import { getValidUrl } from "../utils";
 import { Button } from "./ui/button";
 import { mapAsync } from "@infogata/utils";
+import { toast } from "sonner";
 
 type PDFDocumentProxy = Parameters<
   NonNullable<DocumentProps["onLoadSuccess"]>
@@ -136,7 +137,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
         if (newUrl) {
           setFile(newUrl);
         } else {
-          alert("Could not open url");
+          toast.error("Could not open url");
         }
       } else if (
         currentPdf &&
