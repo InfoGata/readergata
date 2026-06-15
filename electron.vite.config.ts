@@ -37,6 +37,11 @@ export default defineConfig({
         },
       },
     },
-    plugins: [react(), VitePWA()],
+    plugins: [
+      react(),
+      VitePWA({
+        workbox: { maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 },
+      }),
+    ],
   },
 });
