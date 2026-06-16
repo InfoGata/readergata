@@ -3,6 +3,7 @@ import path from "path";
 import { defineConfig } from "electron-vite";
 import { resolve } from "path";
 import { VitePWA } from "vite-plugin-pwa";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   main: {
@@ -52,6 +53,7 @@ export default defineConfig({
       },
     },
     plugins: [
+      tailwindcss(),
       react(),
       VitePWA({
         workbox: { maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 },
