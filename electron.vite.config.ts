@@ -24,6 +24,10 @@ export default defineConfig({
     },
   },
   renderer: {
+    // Restore pre-Vite-8 CJS default-import interop (see vite.config.ts).
+    legacy: {
+      inconsistentCjsInterop: true,
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
