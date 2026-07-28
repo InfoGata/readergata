@@ -1,12 +1,19 @@
-import PluginFeed from "@/components/PluginFeed";
-import { createFileRoute } from "@tanstack/react-router";
-import React from "react";
+import { pluginIdParams } from "@/lib/plugin-route";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-const FeedApiId: React.FC = () => {
-  const { pluginId, apiId } = Route.useParams();
-  return <PluginFeed pluginId={pluginId} apiId={decodeURIComponent(apiId)} />;
-};
-
+/**
+ * Forwards the old content url to `/s`. `apiId` is passed through verbatim:
+ * these are catalog urls that callers already encodeURIComponent, and
+ * interpolatePath re-encodes symmetrically on the way back out.
+ */
 export const Route = createFileRoute("/plugins/$pluginId/feed/$apiId")({
-  component: FeedApiId,
+  params: pluginIdParams<{ apiId: string }>(),
+  beforeLoad: ({ params, location }) => {
+    throw redirect({
+      to: "/s/$pluginId/feed/$apiId",
+      params: { pluginId: params.pluginId, apiId: params.apiId },
+      search: location.search,
+      replace: true,
+    });
+  },
 });

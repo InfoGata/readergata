@@ -61,6 +61,21 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
    - Uses Tanstack Router (formerly React Router)
    - Route tree generated in `routeTree.gen.ts`
 
+   **Plugin URL aliases**:
+   - Plugin content lives at `/s/<alias>/feed`; `/plugins` is management only
+     (plugin list, details, options). Old `/plugins/<id>/feed...` urls redirect.
+   - An alias is a short readable name assigned *locally* at install from
+     `manifest.alias`, falling back to the plugin name and deduped to `opds-2`
+     on collision. It is renameable from the plugin details page. Plugin **ids
+     stay the identity everywhere**; the alias only ever exists in the url.
+   - `src/lib/plugin-route.ts` holds the one `params.parse`/`stringify` pair
+     every plugin route shares, so route bodies and `<Link params={{pluginId}}>`
+     keep passing ids. Never build an alias url by hand.
+   - The alias registry in `src/lib/plugin-alias.ts` is module-level state, read
+     by the router outside React. `src/router.tsx` withholds `RouterProvider`
+     until `pluginsLoaded` because TanStack parses a given url only once — an
+     empty registry at first match mis-parses an alias deep link permanently.
+
 4. **Viewers**
    - EBook Viewer: Uses epubjs to render ebooks
    - PDF Viewer: Uses react-pdf to render PDFs

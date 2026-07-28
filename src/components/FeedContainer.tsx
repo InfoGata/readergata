@@ -30,7 +30,7 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
 
     if (plugin && (await plugin.hasDefined.onSearch())) {
       navigate({
-        to: "/plugins/$pluginId/feed/search",
+        to: "/s/$pluginId/feed/search",
         params: { pluginId: plugin.id || "" },
         search: { apiId: apiId, searchInfo: searchInfo, query: query },
       });
@@ -59,7 +59,7 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
                 key={i}
                 title={c.name}
                 link={{
-                  to: "/plugins/$pluginId/feed/$apiId",
+                  to: "/s/$pluginId/feed/$apiId",
                   params: {
                     pluginId: c.pluginId || "",
                     apiId: encodeURIComponent(c.apiId || ""),

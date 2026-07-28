@@ -1,6 +1,6 @@
 import React from "react";
 import { PluginFrameContainer } from "../contexts/PluginsContext";
-import { defaultPluginMap } from "../default-plugins";
+import { findDefaultPlugin } from "../default-plugins";
 import { PluginInfo } from "../plugintypes";
 import { getFileTypeFromPluginUrl, getPlugin } from "../utils";
 
@@ -20,7 +20,9 @@ const useFindPlugin = (args: FindPluginArgs) => {
   React.useEffect(() => {
     const findPlugin = async () => {
       if (pluginsLoaded && !plugin && pluginId) {
-        const newPlugin = defaultPluginMap.get(pluginId);
+        // The url may name the plugin by alias rather than id, since aliases
+        // are what get shared.
+        const newPlugin = findDefaultPlugin(pluginId);
         if (newPlugin) {
           setIsloading(true);
           const fileType = getFileTypeFromPluginUrl(newPlugin.url);

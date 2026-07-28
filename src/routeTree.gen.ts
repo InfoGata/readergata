@@ -20,7 +20,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PluginsIndexRouteImport } from './routes/plugins.index'
 import { Route as PluginsPluginIdIndexRouteImport } from './routes/plugins/$pluginId.index'
 import { Route as PluginsPluginIdOptionsRouteImport } from './routes/plugins/$pluginId/options'
+import { Route as SPluginIdFeedIndexRouteImport } from './routes/s/$pluginId/feed.index'
 import { Route as PluginsPluginIdFeedIndexRouteImport } from './routes/plugins/$pluginId/feed.index'
+import { Route as SPluginIdFeedSearchRouteImport } from './routes/s/$pluginId/feed.search'
+import { Route as SPluginIdFeedApiIdRouteImport } from './routes/s/$pluginId/feed.$apiId'
 import { Route as PluginsPluginIdFeedSearchRouteImport } from './routes/plugins/$pluginId/feed.search'
 import { Route as PluginsPluginIdFeedApiIdRouteImport } from './routes/plugins/$pluginId/feed.$apiId'
 
@@ -79,12 +82,27 @@ const PluginsPluginIdOptionsRoute = PluginsPluginIdOptionsRouteImport.update({
   path: '/plugins/$pluginId/options',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SPluginIdFeedIndexRoute = SPluginIdFeedIndexRouteImport.update({
+  id: '/s/$pluginId/feed/',
+  path: '/s/$pluginId/feed/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PluginsPluginIdFeedIndexRoute =
   PluginsPluginIdFeedIndexRouteImport.update({
     id: '/plugins/$pluginId/feed/',
     path: '/plugins/$pluginId/feed/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SPluginIdFeedSearchRoute = SPluginIdFeedSearchRouteImport.update({
+  id: '/s/$pluginId/feed/search',
+  path: '/s/$pluginId/feed/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SPluginIdFeedApiIdRoute = SPluginIdFeedApiIdRouteImport.update({
+  id: '/s/$pluginId/feed/$apiId',
+  path: '/s/$pluginId/feed/$apiId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PluginsPluginIdFeedSearchRoute =
   PluginsPluginIdFeedSearchRouteImport.update({
     id: '/plugins/$pluginId/feed/search',
@@ -112,7 +130,10 @@ export interface FileRoutesByFullPath {
   '/plugins/$pluginId/': typeof PluginsPluginIdIndexRoute
   '/plugins/$pluginId/feed/$apiId': typeof PluginsPluginIdFeedApiIdRoute
   '/plugins/$pluginId/feed/search': typeof PluginsPluginIdFeedSearchRoute
+  '/s/$pluginId/feed/$apiId': typeof SPluginIdFeedApiIdRoute
+  '/s/$pluginId/feed/search': typeof SPluginIdFeedSearchRoute
   '/plugins/$pluginId/feed/': typeof PluginsPluginIdFeedIndexRoute
+  '/s/$pluginId/feed/': typeof SPluginIdFeedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -128,7 +149,10 @@ export interface FileRoutesByTo {
   '/plugins/$pluginId': typeof PluginsPluginIdIndexRoute
   '/plugins/$pluginId/feed/$apiId': typeof PluginsPluginIdFeedApiIdRoute
   '/plugins/$pluginId/feed/search': typeof PluginsPluginIdFeedSearchRoute
+  '/s/$pluginId/feed/$apiId': typeof SPluginIdFeedApiIdRoute
+  '/s/$pluginId/feed/search': typeof SPluginIdFeedSearchRoute
   '/plugins/$pluginId/feed': typeof PluginsPluginIdFeedIndexRoute
+  '/s/$pluginId/feed': typeof SPluginIdFeedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -145,7 +169,10 @@ export interface FileRoutesById {
   '/plugins/$pluginId/': typeof PluginsPluginIdIndexRoute
   '/plugins/$pluginId/feed/$apiId': typeof PluginsPluginIdFeedApiIdRoute
   '/plugins/$pluginId/feed/search': typeof PluginsPluginIdFeedSearchRoute
+  '/s/$pluginId/feed/$apiId': typeof SPluginIdFeedApiIdRoute
+  '/s/$pluginId/feed/search': typeof SPluginIdFeedSearchRoute
   '/plugins/$pluginId/feed/': typeof PluginsPluginIdFeedIndexRoute
+  '/s/$pluginId/feed/': typeof SPluginIdFeedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,7 +190,10 @@ export interface FileRouteTypes {
     | '/plugins/$pluginId/'
     | '/plugins/$pluginId/feed/$apiId'
     | '/plugins/$pluginId/feed/search'
+    | '/s/$pluginId/feed/$apiId'
+    | '/s/$pluginId/feed/search'
     | '/plugins/$pluginId/feed/'
+    | '/s/$pluginId/feed/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -179,7 +209,10 @@ export interface FileRouteTypes {
     | '/plugins/$pluginId'
     | '/plugins/$pluginId/feed/$apiId'
     | '/plugins/$pluginId/feed/search'
+    | '/s/$pluginId/feed/$apiId'
+    | '/s/$pluginId/feed/search'
     | '/plugins/$pluginId/feed'
+    | '/s/$pluginId/feed'
   id:
     | '__root__'
     | '/'
@@ -195,7 +228,10 @@ export interface FileRouteTypes {
     | '/plugins/$pluginId/'
     | '/plugins/$pluginId/feed/$apiId'
     | '/plugins/$pluginId/feed/search'
+    | '/s/$pluginId/feed/$apiId'
+    | '/s/$pluginId/feed/search'
     | '/plugins/$pluginId/feed/'
+    | '/s/$pluginId/feed/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -212,7 +248,10 @@ export interface RootRouteChildren {
   PluginsPluginIdIndexRoute: typeof PluginsPluginIdIndexRoute
   PluginsPluginIdFeedApiIdRoute: typeof PluginsPluginIdFeedApiIdRoute
   PluginsPluginIdFeedSearchRoute: typeof PluginsPluginIdFeedSearchRoute
+  SPluginIdFeedApiIdRoute: typeof SPluginIdFeedApiIdRoute
+  SPluginIdFeedSearchRoute: typeof SPluginIdFeedSearchRoute
   PluginsPluginIdFeedIndexRoute: typeof PluginsPluginIdFeedIndexRoute
+  SPluginIdFeedIndexRoute: typeof SPluginIdFeedIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -294,11 +333,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PluginsPluginIdOptionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/s/$pluginId/feed/': {
+      id: '/s/$pluginId/feed/'
+      path: '/s/$pluginId/feed'
+      fullPath: '/s/$pluginId/feed/'
+      preLoaderRoute: typeof SPluginIdFeedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/plugins/$pluginId/feed/': {
       id: '/plugins/$pluginId/feed/'
       path: '/plugins/$pluginId/feed'
       fullPath: '/plugins/$pluginId/feed/'
       preLoaderRoute: typeof PluginsPluginIdFeedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/s/$pluginId/feed/search': {
+      id: '/s/$pluginId/feed/search'
+      path: '/s/$pluginId/feed/search'
+      fullPath: '/s/$pluginId/feed/search'
+      preLoaderRoute: typeof SPluginIdFeedSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/s/$pluginId/feed/$apiId': {
+      id: '/s/$pluginId/feed/$apiId'
+      path: '/s/$pluginId/feed/$apiId'
+      fullPath: '/s/$pluginId/feed/$apiId'
+      preLoaderRoute: typeof SPluginIdFeedApiIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plugins/$pluginId/feed/search': {
@@ -332,7 +392,10 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsPluginIdIndexRoute: PluginsPluginIdIndexRoute,
   PluginsPluginIdFeedApiIdRoute: PluginsPluginIdFeedApiIdRoute,
   PluginsPluginIdFeedSearchRoute: PluginsPluginIdFeedSearchRoute,
+  SPluginIdFeedApiIdRoute: SPluginIdFeedApiIdRoute,
+  SPluginIdFeedSearchRoute: SPluginIdFeedSearchRoute,
   PluginsPluginIdFeedIndexRoute: PluginsPluginIdFeedIndexRoute,
+  SPluginIdFeedIndexRoute: SPluginIdFeedIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

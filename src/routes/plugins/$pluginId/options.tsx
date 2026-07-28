@@ -1,6 +1,11 @@
 import Spinner from "@/components/Spinner";
 import { db } from "@/database";
 import usePlugins from "@/hooks/usePlugins";
+import {
+  canonicalizePluginUrl,
+  findPluginByParam,
+  pluginIdParams,
+} from "@/lib/plugin-route";
 import { getPluginUrl } from "@/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
@@ -10,7 +15,7 @@ const PluginOptions: React.FC = () => {
   const { pluginId } = Route.useParams();
   const { plugins, pluginMessage, pluginsLoaded } = usePlugins();
   const ref = React.useRef<HTMLIFrameElement>(null);
-  const plugin = plugins.find((p) => p.id === pluginId);
+  const plugin = findPluginByParam(plugins, pluginId);
   const [optionsHtml, setOptionsHtml] = React.useState<string>();
   const { t } = useTranslation(["plugins", "common"]);
 
@@ -90,5 +95,7 @@ const PluginOptions: React.FC = () => {
 };
 
 export const Route = createFileRoute("/plugins/$pluginId/options")({
+  params: pluginIdParams(),
+  beforeLoad: canonicalizePluginUrl,
   component: PluginOptions,
 });

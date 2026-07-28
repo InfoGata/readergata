@@ -5,6 +5,7 @@ import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import FeedContainer from "../components/FeedContainer";
 import Spinner from "../components/Spinner";
 import useFindPlugin from "@/hooks/useFindPlugin";
+import { findPluginByParam } from "@/lib/plugin-route";
 
 type PluginFeed = {
   pluginId: string;
@@ -14,7 +15,7 @@ type PluginFeed = {
 const PluginFeed: React.FC<PluginFeed> = (props) => {
   const { plugins, pluginsLoaded } = usePlugins();
   const { pluginId, apiId } = props;
-  const plugin = plugins.find((p) => p.id === pluginId);
+  const plugin = findPluginByParam(plugins, pluginId);
 
   const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
     pluginsLoaded,

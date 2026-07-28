@@ -32,6 +32,13 @@ import {
 } from "../utils";
 import { mapAsync } from "@infogata/utils";
 import ConfirmUpdatePluginDialog from "../components/ConfirmUpdatePluginDialog";
+import {
+  AliasError,
+  aliasFromName,
+  assignAlias,
+  setPluginAliases,
+  validateAlias,
+} from "@/lib/plugin-alias";
 
 interface ApplicationPluginInterface extends PluginInterface {
   networkRequest(input: string, init?: RequestInit): Promise<NetworkRequest>;
@@ -62,6 +69,7 @@ export interface PluginMessage {
 export class PluginFrameContainer extends PluginFrame<PluginMethodInterface> {
   name?: string;
   id?: string;
+  alias?: string;
   hasOptions?: boolean;
   fileList?: FileList;
   optionsSameOrigin?: boolean;
@@ -77,6 +85,10 @@ export interface PluginContextInterface {
     pluginFiles?: FileList
   ) => Promise<void>;
   deletePlugin: (plugin: PluginFrameContainer) => Promise<void>;
+  setPluginAlias: (
+    pluginId: string,
+    alias: string
+  ) => Promise<AliasError | null>;
   plugins: PluginFrameContainer[];
   pluginMessage?: PluginMessage;
   pluginsLoaded: boolean;
@@ -98,6 +110,20 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const [pluginFrames, setPluginFrames] = React.useState<
     PluginFrameContainer[]
   >([]);
+  const pluginFramesRef = React.useRef<PluginFrameContainer[]>([]);
+
+  /**
+   * The single place plugin frames become visible. Router params.parse and
+   * stringify read the alias registry outside of React, so refresh it here:
+   * this runs before pluginsLoaded flips true, which is what gates the router
+   * from rendering at all (see src/router.tsx).
+   */
+  const publishFrames = React.useCallback((frames: PluginFrameContainer[]) => {
+    pluginFramesRef.current = frames;
+    setPluginAliases(frames);
+    setPluginFrames(frames);
+  }, []);
+
   const [pluginMessage, setPluginMessage] = React.useState<PluginMessage>();
   const [pendingUpdatePlugin, setPendingUpdatePlugin] =
     React.useState<PluginInfo | null>(null);
@@ -262,6 +288,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         sandboxAttributes: ["allow-scripts", "allow-same-origin"],
       });
       host.id = plugin.id;
+      host.alias = plugin.alias;
       host.optionsSameOrigin = plugin.optionsSameOrigin;
       host.name = plugin.name;
       host.version = plugin.version;
@@ -284,11 +311,15 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     setPluginsFailed(false);
     try {
       const plugs = await db.plugins.toArray();
+      // Publish aliases from the rows straight away: if loading a frame throws,
+      // the catch below still lets pluginsLoaded flip and the router render,
+      // and an empty registry would mis-parse every alias url on the page.
+      setPluginAliases(plugs);
 
       const framePromises = plugs.map((p) => loadPlugin(p));
       const frames = await Promise.all(framePromises);
       if (isMountedRef.current) {
-        setPluginFrames(frames);
+        publishFrames(frames);
       }
     } catch {
       if (isMountedRef.current) {
@@ -300,7 +331,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         setPluginsLoaded(true);
       }
     }
-  }, [loadPlugin, t]);
+  }, [loadPlugin, publishFrames, t]);
 
   React.useEffect(() => {
     if (loadingPlugin.current) return;
@@ -327,22 +358,67 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   const loadAndAddPlugin = React.useCallback(
     async (plugin: PluginInfo) => {
       if (!isMountedRef.current) return;
+      // The manifest's alias is a request: fall back to the name, and take a
+      // `-N` variant when another plugin already holds it. Assigned before the
+      // frame loads so the frame carries the effective alias.
+      plugin.alias = assignAlias(
+        plugin.alias || plugin.manifest?.alias || aliasFromName(plugin.name),
+        await db.plugins.toArray(),
+        plugin.id
+      );
       const pluginFrame = await loadPlugin(plugin);
-      setPluginFrames((prev) => [...prev, pluginFrame]);
       await db.plugins.put(plugin);
+      publishFrames([...pluginFramesRef.current, pluginFrame]);
     },
-    [loadPlugin]
+    [loadPlugin, publishFrames]
   );
 
   const updatePlugin = React.useCallback(
     async (plugin: PluginInfo, id: string, pluginFiles?: FileList) => {
-      const oldPlugin = pluginFrames.find((p) => p.id === id);
+      // Urls have to survive plugin updates, so keep whatever alias the plugin
+      // already has — including one the user picked — rather than letting a
+      // changed manifest alias move them. Every update path (dev auto-reload,
+      // auto-update, update from file) goes through here.
+      const existing = await db.plugins.get(id);
+      plugin.alias =
+        existing?.alias ??
+        assignAlias(
+          plugin.alias || plugin.manifest?.alias || aliasFromName(plugin.name),
+          await db.plugins.toArray(),
+          id
+        );
+      const oldPlugin = pluginFramesRef.current.find((p) => p.id === id);
       oldPlugin?.destroy();
       const pluginFrame = await loadPlugin(plugin, pluginFiles);
-      setPluginFrames(pluginFrames.map((p) => (p.id === id ? pluginFrame : p)));
       await db.plugins.put(plugin);
+      publishFrames(
+        pluginFramesRef.current.map((p) => (p.id === id ? pluginFrame : p))
+      );
     },
-    [loadPlugin, pluginFrames]
+    [loadPlugin, publishFrames]
+  );
+
+  /** Rename a plugin's url alias. Returns why it was rejected, or null. */
+  const setPluginAlias = React.useCallback(
+    async (pluginId: string, alias: string): Promise<AliasError | null> => {
+      const plugin = await db.plugins.get(pluginId);
+      if (!plugin) return "invalid";
+
+      const error = validateAlias(alias, await db.plugins.toArray(), pluginId);
+      if (error) return error;
+
+      await db.plugins.update(pluginId, { alias });
+      // Mutate the frame in place and publish a new array, so the registry and
+      // every Link pick the new alias up before the caller navigates.
+      publishFrames(
+        pluginFramesRef.current.map((p) => {
+          if (p.id === pluginId) p.alias = alias;
+          return p;
+        })
+      );
+      return null;
+    },
+    [publishFrames]
   );
 
   const handleConfirmUpdate = React.useCallback(async () => {
@@ -496,7 +572,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             appName: "ReaderGata",
             appOrigin: window.location.origin,
             siteMatchPatterns: siteMatch,
-            redirectPath: `/plugins/${plugin.id}/feed`,
+            redirectPath: `/s/${plugin.alias ?? plugin.id}/feed`,
           });
         }
       }
@@ -510,15 +586,19 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
   }, [pluginsLoaded, pluginFrames]);
 
   const deletePlugin = async (pluginFrame: PluginFrameContainer) => {
-    const newPlugins = pluginFrames.filter((p) => p.id !== pluginFrame.id);
-    setPluginFrames(newPlugins);
     await db.plugins.delete(pluginFrame.id || "");
+    // Must go through publishFrames, or the deleted plugin's alias keeps
+    // resolving to an id nothing answers to.
+    publishFrames(
+      pluginFramesRef.current.filter((p) => p.id !== pluginFrame.id)
+    );
   };
 
   const defaultContext: PluginContextInterface = {
     addPlugin: addPlugin,
     deletePlugin: deletePlugin,
     updatePlugin: updatePlugin,
+    setPluginAlias: setPluginAlias,
     plugins: pluginFrames,
     pluginsLoaded,
     pluginMessage,

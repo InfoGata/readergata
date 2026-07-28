@@ -74,6 +74,13 @@
     "installedPlugins": "Installed Plugins",
     "login": "Login",
     "logout": "Logout",
+    "urlAlias": "URL Alias",
+    "urlAliasDescription": "Used in this plugin's urls, e.g. /s/{{alias}}/feed",
+    "renameAlias": "Rename",
+    "aliasErrorInvalid": "Use lowercase letters, numbers and dashes only",
+    "aliasErrorTooShort": "Must be at least 2 characters",
+    "aliasErrorIsPluginId": "Already used as a plugin id",
+    "aliasErrorTaken": "Already used by another plugin",
     "openMenu": "Open Menu"
   },
   "settings": {

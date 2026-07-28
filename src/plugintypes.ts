@@ -78,6 +78,12 @@ export type Feed = (CatalogFeed | PublicationFeed) & FeedInfo;
 
 export interface PluginInfo {
   id?: string;
+  /**
+   * Short, human readable name used in urls (`/s/opds/feed`). Assigned locally
+   * at install time from the manifest, so it can differ from what the manifest
+   * asked for when another plugin already took it, or when the user renamed it.
+   */
+  alias?: string;
   name: string;
   script: string;
   version?: string;
@@ -97,6 +103,8 @@ export interface Manifest {
   name: string;
   script: string;
   id?: string;
+  /** Requested url alias. Only a request: ids stay the stable identity. */
+  alias?: string;
   version?: string;
   description?: string;
   options?: string | ManifestOptions;

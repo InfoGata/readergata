@@ -28,7 +28,7 @@ const Library: React.FC = () => {
     <Link
       key={p.id}
       className={buttonVariants({ variant: "outline" })}
-      to="/plugins/$pluginId/feed"
+      to="/s/$pluginId/feed"
       params={{ pluginId: p.id || "" }}
     >
       {p.name}

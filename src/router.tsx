@@ -7,6 +7,7 @@ import {
 import isElectron from "is-electron";
 import React from "react";
 import Spinner from "./components/Spinner";
+import usePlugins from "./hooks/usePlugins";
 import { routeTree } from "./routeTree.gen";
 
 const history = isElectron() ? createHashHistory() : createBrowserHistory();
@@ -24,6 +25,15 @@ declare module "@tanstack/react-router" {
 }
 
 const Router: React.FC = () => {
+  const { pluginsLoaded } = usePlugins();
+
+  // The alias registry that params.parse reads is populated as plugins are
+  // published, and TanStack only ever parses a given url once — so rendering
+  // before that would permanently mis-parse an alias deep link.
+  if (!pluginsLoaded) {
+    return <Spinner />;
+  }
+
   return <RouterProvider router={router} />
 }
 

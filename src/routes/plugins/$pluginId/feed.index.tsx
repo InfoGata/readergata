@@ -1,12 +1,19 @@
-import PluginFeed from "@/components/PluginFeed";
-import { createFileRoute } from "@tanstack/react-router";
-import React from "react";
+import { pluginIdParams } from "@/lib/plugin-route";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-const FeedIndex: React.FC = () => {
-  const { pluginId } = Route.useParams();
-  return <PluginFeed pluginId={pluginId} />;
-};
-
+/**
+ * Content moved to `/s`. These urls are out in the wild — shared links,
+ * bookmarks, extension redirects — so forward them, resolving an alias or a
+ * plugin id either way.
+ */
 export const Route = createFileRoute("/plugins/$pluginId/feed/")({
-  component: FeedIndex,
+  params: pluginIdParams(),
+  beforeLoad: ({ params, location }) => {
+    throw redirect({
+      to: "/s/$pluginId/feed",
+      params: { pluginId: params.pluginId },
+      search: location.search,
+      replace: true,
+    });
+  },
 });

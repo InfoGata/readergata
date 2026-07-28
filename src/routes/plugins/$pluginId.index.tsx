@@ -9,6 +9,12 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { db } from "@/database";
 import usePlugins from "@/hooks/usePlugins";
+import PluginAliasField from "@/components/Plugins/PluginAliasField";
+import {
+  canonicalizePluginUrl,
+  findPluginByParam,
+  pluginIdParams,
+} from "@/lib/plugin-route";
 import { FileType, NotifyLoginMessage } from "@/types";
 import {
   getPlugin,
@@ -22,9 +28,22 @@ import { Manifest } from "@/plugintypes";
 const PluginDetails: React.FC = () => {
   const { pluginId } = Route.useParams();
   const { updatePlugin, plugins } = usePlugins();
-  const plugin = plugins.find((p) => p.id === pluginId);
+  const plugin = findPluginByParam(plugins, pluginId);
   const { t } = useTranslation(["plugins", "common"]);
-  const pluginAuth = useLiveQuery(() => db.pluginAuths.get(pluginId || ""));
+  // The url segment may still be an alias — a plugin installed after this route
+  // was matched never gets re-parsed — so fall back to the alias index.
+  const pluginInfo = useLiveQuery(
+    async () =>
+      (await db.plugins.get(pluginId || "")) ??
+      (await db.plugins.where("alias").equals(pluginId || "").first()) ??
+      (plugin?.id ? await db.plugins.get(plugin.id) : undefined),
+    [pluginId, plugin?.id]
+  );
+  const resolvedId = pluginInfo?.id ?? pluginId;
+  const pluginAuth = useLiveQuery(
+    () => db.pluginAuths.get(resolvedId || ""),
+    [resolvedId]
+  );
   const [hasAuth, setHasAuth] = React.useState(false);
   const [hasUpdate, setHasUpdate] = React.useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(false);
@@ -62,7 +81,6 @@ const PluginDetails: React.FC = () => {
     setLoading(false);
   };
 
-  const pluginInfo = useLiveQuery(() => db.plugins.get(pluginId || ""));
   const scriptSize = React.useMemo(() => {
     const scriptBlob = new Blob([pluginInfo?.script || ""]);
     return scriptBlob.size;
@@ -151,8 +169,8 @@ const PluginDetails: React.FC = () => {
   };
 
   const onLogout = async () => {
-    if (pluginId) {
-      db.pluginAuths.delete(pluginId);
+    if (resolvedId) {
+      db.pluginAuths.delete(resolvedId);
       if (plugin && (await plugin.hasDefined.onPostLogout())) {
         await plugin.remote.onPostLogout();
       }
@@ -254,11 +272,23 @@ const PluginDetails: React.FC = () => {
           )}
         </div>
         {aboutLinks.map((a) => a && <AboutLink {...a} key={a.title} />)}
+        {/* A sibling rather than an aboutLinks entry: AboutLink wraps its
+            content in a link or button, which can't contain a text input. */}
+        {pluginInfo.id && (
+          <div className="m-1 py-2 pl-4 pr-16 text-sm">
+            <PluginAliasField
+              pluginId={pluginInfo.id}
+              alias={pluginInfo.alias}
+            />
+          </div>
+        )}
       </div>
     </>
   );
 };
 
 export const Route = createFileRoute("/plugins/$pluginId/")({
+  params: pluginIdParams(),
+  beforeLoad: canonicalizePluginUrl,
   component: PluginDetails,
 });
