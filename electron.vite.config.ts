@@ -39,6 +39,11 @@ export default defineConfig({
     legacy: {
       inconsistentCjsInterop: true,
     },
+    // Unique renderer port so electron:dev can run alongside the other apps.
+    server: {
+      port: 5004,
+      strictPort: true,
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
