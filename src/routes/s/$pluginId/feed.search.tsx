@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import useFindPlugin from "@/hooks/useFindPlugin";
+import usePagination from "@/hooks/usePagination";
 import usePlugins from "@/hooks/usePlugins";
 import ConfirmPluginDialog from "@/components/ConfirmPluginDialog";
 import FeedContainer from "@/components/FeedContainer";
@@ -18,6 +19,7 @@ const PluginFeedSearch: React.FC = () => {
   const { apiId, query, searchInfo } = Route.useSearch();
   const { plugins, pluginsLoaded } = usePlugins();
   const plugin = findPluginByParam(plugins, pluginId);
+  const { pageInfo, nextPage, prevPage, reset } = usePagination();
 
   const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
     pluginsLoaded,
@@ -25,21 +27,29 @@ const PluginFeedSearch: React.FC = () => {
     plugin,
   });
 
+  React.useEffect(() => {
+    reset();
+  }, [pluginId, apiId, query, reset]);
+
   const searchFeed = async () => {
     if (plugin && (await plugin.hasDefined.onSearch()) && query) {
       return await plugin.remote.onSearch({
         query: query || "",
         apiId: apiId ?? undefined,
         searchInfo: searchInfo ?? undefined,
+        pageInfo,
       });
     }
   };
 
   const searchQuery = useQuery({
-    queryKey: ["searchFeed", pluginId, apiId, query],
+    queryKey: ["searchFeed", pluginId, apiId, query, pageInfo?.offset],
     queryFn: searchFeed,
     enabled: pluginsLoaded && !!plugin,
+    placeholderData: keepPreviousData,
   });
+
+  const returnedPageInfo = searchQuery.data?.pageInfo;
 
   return (
     <div>
@@ -50,6 +60,12 @@ const PluginFeedSearch: React.FC = () => {
           plugin={plugin}
           apiId={apiId || undefined}
           searchInfo={searchInfo || undefined}
+          onNextPage={
+            returnedPageInfo ? () => nextPage(returnedPageInfo) : undefined
+          }
+          onPrevPage={
+            returnedPageInfo ? () => prevPage(returnedPageInfo) : undefined
+          }
         />
       )}
       <ConfirmPluginDialog

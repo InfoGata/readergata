@@ -26,12 +26,37 @@ export interface ImageInfo {
 
 export interface GetFeedRequest {
   apiId?: string;
+  pageInfo?: PageInfo;
 }
 
 export interface SearchRequest {
   apiId?: string;
   query: string;
   searchInfo?: string;
+  pageInfo?: PageInfo;
+}
+
+export interface PageInfo {
+  /**
+   * Total number of results returned
+   */
+  totalResults?: number;
+  /**
+   * Number of results on current page
+   */
+  resultsPerPage: number;
+  /**
+   * Current offset in the number of totalResults
+   */
+  offset: number;
+  /**
+   * Optional string containing information about next page. For example, a url to the next page.
+   */
+  nextPage?: string;
+  /**
+   * Optional string containing information about previous page. For example, a url to the next page.
+   */
+  prevPage?: string;
 }
 
 export interface GetPublicationRequest {
@@ -72,6 +97,10 @@ export type PublicationFeed = {
 export type FeedInfo = {
   hasSearch: boolean;
   searchInfo?: string;
+  /**
+   * Page the plugin returned. When set, next/previous controls are shown.
+   */
+  pageInfo?: PageInfo;
 };
 
 export type Feed = (CatalogFeed | PublicationFeed) & FeedInfo;

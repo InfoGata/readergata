@@ -31,7 +31,11 @@
     "extensionMessage": "Get the InfoGata extension for enhanced plugin functionality",
     "installExtension": "Install Extension",
     "close": "Close",
-    "navigation": "Navigation"
+    "navigation": "Navigation",
+    "next": "Next",
+    "previous": "Previous",
+    "pageRange": "{{from}}–{{to}}",
+    "pageRangeOfTotal": "{{from}}–{{to}} of {{total}}"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

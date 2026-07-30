@@ -7,19 +7,23 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import AboutLink from "./AboutLink";
 import { useNavigate } from "@tanstack/react-router";
+import { hasNextPage, hasPrevPage } from "../hooks/usePagination";
 
 interface FeedContainerProps {
   feed: Feed;
   plugin?: PluginFrameContainer;
   apiId?: string;
   searchInfo?: string;
+  onNextPage?: () => void;
+  onPrevPage?: () => void;
 }
 
 const FeedContainer: React.FC<FeedContainerProps> = (props) => {
-  const { feed, plugin, apiId, searchInfo } = props;
+  const { feed, plugin, apiId, searchInfo, onNextPage, onPrevPage } = props;
   const { t } = useTranslation();
   const [query, setQuery] = React.useState("");
   const navigate = useNavigate();
+  const pageInfo = feed.pageInfo;
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.currentTarget.value);
@@ -68,6 +72,36 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
               />
             ))}
       </div>
+      {pageInfo && (
+        <div className="flex items-center justify-between gap-2 py-4">
+          <Button
+            variant="outline"
+            disabled={!hasPrevPage(pageInfo)}
+            onClick={onPrevPage}
+          >
+            {t("previous")}
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            {pageInfo.totalResults === undefined
+              ? t("pageRange", {
+                  from: (pageInfo.offset + 1).toLocaleString(),
+                  to: (pageInfo.offset + feed.items.length).toLocaleString(),
+                })
+              : t("pageRangeOfTotal", {
+                  from: (pageInfo.offset + 1).toLocaleString(),
+                  to: (pageInfo.offset + feed.items.length).toLocaleString(),
+                  total: pageInfo.totalResults.toLocaleString(),
+                })}
+          </span>
+          <Button
+            variant="outline"
+            disabled={!hasNextPage(pageInfo)}
+            onClick={onNextPage}
+          >
+            {t("next")}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
