@@ -25,6 +25,7 @@ import { debounce, getValidUrl } from "../utils";
 import Spinner from "./Spinner";
 import { Button } from "./ui/button";
 import { useTheme } from "@infogata/shadcn-vite-theme-provider";
+import { toast } from "sonner";
 
 // https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
 const resolveURL = (url: string, relativeTo: string) => {
@@ -43,26 +44,25 @@ const navItemToContent = (book: Book, items: NavItem[]): BookContent[] => {
   }));
 };
 
-const openBook = async (ebook: EBook): Promise<Book | undefined> => {
+// Throws rather than returning undefined: every one of these failures used to
+// be swallowed, leaving the reader on a blank page with nothing to explain it.
+const openBook = async (ebook: EBook): Promise<Book> => {
   const newBook = Epub();
-  try {
-    if (ebook.sourceType === PublicationSourceType.Binary) {
-      newBook.open(ebook.source, "binary");
-      return newBook;
-    } else {
-      const validUrl = await getValidUrl(ebook.source, "application/epub+zip");
-      if (validUrl) {
-        const test = await fetch(validUrl);
-        if (test.status !== 404) {
-          const arrayBuffer = await test.arrayBuffer();
-          await newBook.open(arrayBuffer);
-          return newBook;
-        }
-      }
-    }
-  } catch {
-    /* empty */
+  if (ebook.sourceType === PublicationSourceType.Binary) {
+    newBook.open(ebook.source, "binary");
+    return newBook;
   }
+
+  const validUrl = await getValidUrl(ebook.source, "application/epub+zip");
+  if (!validUrl) {
+    throw new Error(`Could not reach an epub at ${ebook.source}`);
+  }
+  const response = await fetch(validUrl);
+  if (!response.ok) {
+    throw new Error(`${validUrl} responded with ${response.status}`);
+  }
+  await newBook.open(await response.arrayBuffer());
+  return newBook;
 };
 
 const findInSection = async (book: Book, q: string, section: Section) => {
@@ -139,7 +139,10 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   const currentSearchResult = useAppSelector(
     (state) => state.ui.currentSearchResult
   );
+  // The ref guards against overlapping loads; the state is what the spinner
+  // reads, since mutating a ref never re-renders.
   const isLoading = React.useRef(false);
+  const [loading, setLoading] = React.useState(false);
   const dispatch = useAppDispatch();
   const isStartup = React.useRef(true);
 
@@ -259,12 +262,20 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
       }
 
       isLoading.current = true;
-      const newBook = await openBook(ebook);
-      isLoading.current = true;
-      if (!newBook) {
+      setLoading(true);
+      try {
+        await loadBook(ebook);
+      } catch (e) {
+        console.error(e);
+        toast.error("Could not open publication");
+      } finally {
         isLoading.current = false;
-        return;
+        setLoading(false);
       }
+    };
+
+    const loadBook = async (ebook: EBook) => {
+      const newBook = await openBook(ebook);
 
       const viewer = containerRef?.current;
       if (viewer) {
@@ -314,14 +325,14 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
       });
 
       book.current = newBook;
-      isLoading.current = false;
     };
+
     loadEbook();
   }, [ebook, dispatch]);
 
   return (
     <>
-      <Spinner open={isLoading.current} />
+      <Spinner open={loading} />
       <div className="flex justify-center items-center">
         <Button
           onClick={onPrev}
