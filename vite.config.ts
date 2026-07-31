@@ -23,6 +23,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Bare specifier rather than a relative path so TypeScript resolves it
+      // through the ambient declarations in src/foliate-js.d.ts. A relative
+      // import would hit file resolution and fail under `allowJs: false`.
+      "foliate-js": path.resolve(__dirname, "./src/vendor/foliate-js"),
     },
   },
   plugins: [

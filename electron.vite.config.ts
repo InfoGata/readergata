@@ -47,6 +47,8 @@ export default defineConfig({
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        // Keep in sync with vite.config.ts.
+        "foliate-js": path.resolve(__dirname, "./src/vendor/foliate-js"),
       },
     },
     root: ".",

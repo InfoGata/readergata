@@ -1,0 +1,31 @@
+{
+  "repo": "https://github.com/johnfactotum/foliate-js",
+  "sha": "78914aef4466eb960965702401634c2cb348e9b1",
+  "generatedBy": "scripts/vendor-foliate.js",
+  "patched": [
+    "view.js"
+  ],
+  "excluded": [
+    "pdf.js",
+    "vendor/pdfjs"
+  ],
+  "files": {
+    "LICENSE": "5930571b73151702a913179ef5f96313ad7d25d3",
+    "README.md": "a3fe2d51104c4de6b4d116138c72ea0376f2176f",
+    "view.js": "9bdaf022e29f8b491cddfa601a643a2b9df1e990",
+    "epubcfi.js": "712ead5359b3d30e4a3dbf18de4ca0b9eb37a597",
+    "overlayer.js": "6fd03ab58505a7a3f196c570ce6a47ae437b747c",
+    "progress.js": "f01c512c77c6eea45ce9b7745eafd44283b8bb26",
+    "text-walker.js": "c1249b79c6beca30e8f4d27e96cd05fa869ef67b",
+    "paginator.js": "7980c20297049e38b5e5a1d44a9eee11b1fbd68e",
+    "fixed-layout.js": "c582abad1496874a9265cad1ab69e12a475c684d",
+    "epub.js": "e8bd70333accb9f9f6fb7389cb434b6805156da0",
+    "mobi.js": "20c77a83db677cc01a0549bc8dad073ab7e9f030",
+    "fb2.js": "74784ad177a0622b1e1b4e0f67d775306456c4f6",
+    "comic-book.js": "cf41d11f8c0ead6681c07b3a6906830397a6d1ae",
+    "search.js": "a6f176ff7c2f8fbec7401120ae917d119257995f",
+    "tts.js": "bf665c5d0d80d364361ed0ca9ae32d3804a43386",
+    "vendor/zip.js": "564d9ec409d71467877ccd9f564442095f4cf8e4",
+    "vendor/fflate.js": "fab2b3ee006a57d4a705be3a5b9e0e9cdeae7ea0"
+  }
+}
