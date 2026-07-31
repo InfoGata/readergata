@@ -143,17 +143,21 @@ export async function getFileText(
   return null;
 }
 
-const isCorrectMimeType = (response: Response, type: string): boolean => {
+// Takes a list because a publication can legitimately arrive under any of
+// several types -- an ebook may be served as its own type or as a generic
+// octet-stream, and foliate-js reads several formats.
+const isCorrectMimeType = (
+  response: Response,
+  type: string | string[]
+): boolean => {
   const mimeType = response.headers.get("Content-Type");
 
   if (!mimeType) {
     // If no content type, just return true
     return true;
-  } else if (mimeType.includes(type)) {
-    return true;
-  } else {
-    return false;
   }
+  const accepted = Array.isArray(type) ? type : [type];
+  return accepted.some((accept) => mimeType.includes(accept));
 };
 
 const proxy = import.meta.env.PROD
@@ -177,7 +181,7 @@ export const hasAuthentication = async () => {
   return Capacitor.isNativePlatform();
 };
 
-export const getValidUrl = async (url: string, mimeType: string) => {
+export const getValidUrl = async (url: string, mimeType: string | string[]) => {
   try {
     // Fetch and check the mime type
     const response = await fetch(url, { method: "HEAD" });

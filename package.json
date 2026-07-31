@@ -36,7 +36,6 @@
     "dexie": "^4.2.0",
     "dexie-react-hooks": "^4.2.0",
     "dompurify": "^3.3.2",
-    "epubjs": "^0.3.93",
     "hash-wasm": "^4.9.0",
     "i18next": "^25.6.2",
     "i18next-browser-languagedetector": "^7.0.1",
@@ -62,6 +61,7 @@
   },
   "scripts": {
     "copy-worker": "node ./scripts/copy-worker.js",
+    "vendor:foliate": "node ./scripts/vendor-foliate.js",
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",

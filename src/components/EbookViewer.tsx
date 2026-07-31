@@ -1,8 +1,20 @@
-import Epub, { Book, EpubCFI, Location, NavItem, Rendition } from "epubjs";
-import Section from "epubjs/types/section";
+import type { View as FoliateView } from "foliate-js/view.js";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { toast } from "sonner";
+import { useTheme } from "@infogata/shadcn-vite-theme-provider";
+import {
+  EBOOK_ACCEPTED_MIME_TYPES,
+  excerptToText,
+  formatContributor,
+  formatLanguageMap,
+  getBookCss,
+  publicationToFile,
+  tocItemToBookContent,
+  tocToBookContents,
+} from "../lib/ebook";
+import { useAppDispatch, useAppSelector, useAppStore } from "../store/hooks";
 import {
   setCurrentLocation,
   setPublicationData,
@@ -15,111 +27,47 @@ import {
   setTitle,
   setToc,
 } from "../store/reducers/uiReducer";
-import {
-  BookContent,
-  EBook,
-  PublicationSourceType,
-  SearchResult,
-} from "../types";
-import { debounce, getValidUrl } from "../utils";
+import { EBook, PublicationSourceType, SearchResult } from "../types";
+import { getValidUrl } from "../utils";
 import Spinner from "./Spinner";
 import { Button } from "./ui/button";
-import { useTheme } from "@infogata/shadcn-vite-theme-provider";
-import { toast } from "sonner";
 
-// https://github.com/johnfactotum/foliate/blob/b6b9f6a5315446aebcfee18c07641b7bcf3a43d0/src/web/utils.js#L54
-const resolveURL = (url: string, relativeTo: string) => {
-  const baseUrl = "https://example.com/";
-  return new URL(url, baseUrl + relativeTo).href.replace(baseUrl, "");
-};
-
-const navItemToContent = (book: Book, items: NavItem[]): BookContent[] => {
-  if (items.length === 0) return [];
-  const path = book.packaging.navPath || book.packaging.ncxPath;
-
-  return items.map((t) => ({
-    title: t.label,
-    location: resolveURL(t.href, path),
-    items: navItemToContent(book, t.subitems || []),
-  }));
-};
-
-// Throws rather than returning undefined: every one of these failures used to
-// be swallowed, leaving the reader on a blank page with nothing to explain it.
-const openBook = async (ebook: EBook): Promise<Book> => {
-  const newBook = Epub();
+const ebookToFile = async (ebook: EBook): Promise<File> => {
   if (ebook.sourceType === PublicationSourceType.Binary) {
-    newBook.open(ebook.source, "binary");
-    return newBook;
+    return publicationToFile(ebook);
   }
 
-  const validUrl = await getValidUrl(ebook.source, "application/epub+zip");
+  // Still goes through getValidUrl so the CORS-proxy fallback applies; passing
+  // the url straight to foliate-js would bypass it.
+  const validUrl = await getValidUrl(ebook.source, EBOOK_ACCEPTED_MIME_TYPES);
   if (!validUrl) {
-    throw new Error(`Could not reach an epub at ${ebook.source}`);
+    throw new Error(`Could not reach a publication at ${ebook.source}`);
   }
   const response = await fetch(validUrl);
   if (!response.ok) {
     throw new Error(`${validUrl} responded with ${response.status}`);
   }
-  await newBook.open(await response.arrayBuffer());
-  return newBook;
+  return publicationToFile(ebook, await response.blob());
 };
 
-const findInSection = async (book: Book, q: string, section: Section) => {
-  await section.load(book.load.bind(book));
-  const results = await section.search(q);
-  section.unload();
-  return results;
+/**
+ * Whether a saved location still points somewhere in this book. Worth checking
+ * before `init`, because `init` silently falls back to the first page when a
+ * location does not resolve, and the resulting relocation would overwrite the
+ * reader's saved position. May reject: MOBI resolves hrefs asynchronously.
+ */
+const canResolve = async (view: FoliateView, target: string) => {
+  try {
+    return Boolean(await view.resolveNavigation(target));
+  } catch {
+    return false;
+  }
 };
 
-const search = async (book: Book, query: string) => {
-  const arr = await Promise.all(
-    book.spine.spineItems.map((section) => findInSection(book, query, section))
-  );
-  const results = arr.reduce((a, b) => a.concat(b), []);
-  return results;
-};
-
-// https://github.com/futurepress/epub.js/issues/759#issuecomment-1399499918
-function flatten(chapters: any) {
-  // eslint-disable-next-line prefer-spread
-  return [].concat.apply(
-    [],
-    chapters.map((chapter: NavItem) =>
-      [].concat.apply([chapter], flatten(chapter.subitems))
-    )
-  );
-}
-
-function getCfiFromHref(book: Book, href: string) {
-  const [_, id] = href.split("#");
-  const section = book.spine.get(href);
-  const el = (
-    id ? section.document.getElementById(id) : section.document.body
-  ) as Element;
-  return section.cfiFromElement(el);
-}
-
-function getChapter(book: Book, location: Location) {
-  const locationHref = location.start.href;
-
-  const match = flatten(book.navigation.toc)
-    .filter((chapter: NavItem) => {
-      return book
-        .canonical(chapter.href)
-        .includes(book.canonical(locationHref));
-    }, null)
-    .reduce((result: NavItem | null, chapter: NavItem) => {
-      const locationAfterChapter =
-        EpubCFI.prototype.compare(
-          location.start.cfi,
-          getCfiFromHref(book, chapter.href)
-        ) > 0;
-      return locationAfterChapter ? chapter : result;
-    }, null);
-
-  return match;
-}
+const prefersDark = (theme: string) =>
+  theme === "dark" ||
+  (theme === "system" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches);
 
 interface EbookViewerProps {
   ebook: EBook;
@@ -128,9 +76,20 @@ interface EbookViewerProps {
 const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   const { ebook } = props;
   const theme = useTheme();
-  const [rendition, setRendition] = React.useState<Rendition | null>(null);
-  const book = React.useRef<Book>(undefined);
+  const { t } = useTranslation();
+  const [view, setView] = React.useState<FoliateView | null>(null);
+  const [loading, setLoading] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  // Bumped on every load and on cleanup, so a load that is overtaken by a
+  // newer one bails at its next await instead of racing it.
+  const loadGeneration = React.useRef(0);
+  // The last location this viewer produced. Locations arriving from elsewhere
+  // (a bookmark) differ from it and are treated as a navigation request.
+  const lastEmittedLocation = React.useRef<string | undefined>(undefined);
+  // Indirection so the listener inside the book iframe survives onKeyUp being
+  // recreated, without re-registering it on every render.
+  const onKeyUpRef = React.useRef<(event: KeyboardEvent) => void>(() => {});
+
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const content = useAppSelector((state) => state.ui.content);
   const currentLocation = useAppSelector(
@@ -139,67 +98,182 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   const currentSearchResult = useAppSelector(
     (state) => state.ui.currentSearchResult
   );
-  // The ref guards against overlapping loads; the state is what the spinner
-  // reads, since mutating a ref never re-renders.
-  const isLoading = React.useRef(false);
-  const [loading, setLoading] = React.useState(false);
   const dispatch = useAppDispatch();
-  const isStartup = React.useRef(true);
+  const store = useAppStore();
 
   React.useEffect(() => {
-    if (rendition && isStartup) {
-      if (currentLocation) {
-        rendition.display(currentLocation);
-      }
-      isStartup.current = false;
-    }
-  }, [rendition, currentLocation]);
+    if (!ebook) return;
 
-  React.useEffect(() => {
-    let searchResults: SearchResult[] = [];
-    const searchBook = async () => {
-      if (searchQuery && book.current) {
-        const results = await search(book.current, searchQuery);
-        searchResults = results.map(
-          (s): SearchResult => ({
-            location: s.cfi,
-            text: s.excerpt,
-          })
-        );
-        dispatch(setSearchResults(searchResults));
+    const generation = ++loadGeneration.current;
+    let cancelled = false;
+    const isStale = () => cancelled || generation !== loadGeneration.current;
+    let created: FoliateView | null = null;
+    let foliate: typeof import("foliate-js/view.js") | undefined;
 
-        searchResults.forEach((r) => {
-          if (r.location) {
-            rendition?.annotations.highlight(r.location);
-          }
+    const load = async () => {
+      setLoading(true);
+      try {
+        // Dynamic so the custom element is not defined at module scope: it
+        // cannot render under jsdom, and this keeps it out of the main chunk.
+        foliate = await import("foliate-js/view.js");
+        if (isStale()) return;
+
+        const container = containerRef.current;
+        if (!container) return;
+
+        const file = await ebookToFile(ebook);
+        if (isStale()) return;
+
+        const element = document.createElement("foliate-view") as FoliateView;
+        element.style.display = "block";
+        element.style.width = "100%";
+        element.style.height = "100%";
+        // Must be in the document before open(): the renderer sizes itself
+        // from a ResizeObserver, which needs real layout.
+        container.append(element);
+        created = element;
+
+        element.addEventListener("relocate", (event) => {
+          const { cfi, tocItem } = event.detail;
+          // Recorded before dispatching, so the value coming back through
+          // redux is recognised as our own echo rather than a navigation.
+          lastEmittedLocation.current = cfi;
+          dispatch(setCurrentLocation(cfi));
+          if (tocItem) dispatch(setCurrentChapter(tocItemToBookContent(tocItem)));
         });
+        element.addEventListener("load", (event) => {
+          // Key events inside the book's iframe do not reach document.body.
+          event.detail.doc.addEventListener("keyup", (keyEvent) =>
+            onKeyUpRef.current(keyEvent as KeyboardEvent)
+          );
+        });
+
+        await element.open(file);
+        if (isStale()) return;
+
+        dispatch(clearBookData());
+        dispatch(setToc(tocToBookContents(element.book.toc)));
+        const title =
+          formatLanguageMap(element.book.metadata?.title) ||
+          ebook.fileName ||
+          "";
+        const author = formatContributor(element.book.metadata?.author);
+        dispatch(setTitle(title));
+        dispatch(setPublicationData({ title, author }));
+
+        // Optional: the fixed-layout renderer used for comics has no
+        // setStyles, and inverting artwork for dark mode would be wrong anyway.
+        element.renderer.setStyles?.(getBookCss(prefersDark(theme.theme)));
+
+        const saved = store.getState().document.currentLocation;
+        const lastLocation =
+          saved && (await canResolve(element, saved)) ? saved : undefined;
+        if (isStale()) return;
+        if (saved && !lastLocation) {
+          toast.warning(t("couldNotRestorePosition"));
+        }
+        lastEmittedLocation.current = lastLocation;
+        await element.init({ lastLocation });
+        if (isStale()) return;
+
+        setView(element);
+      } catch (e) {
+        console.error(e);
+        if (foliate && e instanceof foliate.UnsupportedTypeError) {
+          toast.error(t("unsupportedFileType"));
+        } else {
+          toast.error(t("couldNotOpenPublication"));
+        }
+      } finally {
+        if (!isStale()) setLoading(false);
       }
     };
-    searchBook();
+
+    load();
 
     return () => {
-      searchResults.forEach((r) => {
-        if (r.location) {
-          rendition?.annotations.remove(r.location, "highlight");
+      cancelled = true;
+      setView(null);
+      if (created) {
+        // The renderer dereferences its view unguarded, which is null when no
+        // section ever rendered -- as after a failed open.
+        try {
+          created.close();
+        } catch (e) {
+          console.error(e);
         }
-      });
+        created.book?.destroy?.();
+        created.remove();
+      }
     };
-  }, [searchQuery, dispatch, rendition]);
+    // theme is read once at load; the effect below keeps it current.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ebook, dispatch, store, t]);
+
+  // A location this viewer did not produce -- a bookmark jump.
+  React.useEffect(() => {
+    if (!view || !currentLocation) return;
+    if (currentLocation === lastEmittedLocation.current) return;
+    lastEmittedLocation.current = currentLocation;
+    view.goTo(currentLocation);
+  }, [view, currentLocation]);
 
   React.useEffect(() => {
-    if (currentSearchResult) {
-      rendition?.display(currentSearchResult.location);
+    if (!view) return;
+    if (!searchQuery) {
+      view.clearSearch();
+      dispatch(setSearchResults([]));
+      return;
+    }
+
+    let cancelled = false;
+    const runSearch = async () => {
+      const results: SearchResult[] = [];
+      for await (const result of view.search({ query: searchQuery })) {
+        if (cancelled) break;
+        if (result === "done" || !("subitems" in result)) continue;
+        for (const { cfi, excerpt } of result.subitems) {
+          results.push({ location: cfi, text: excerptToText(excerpt) });
+        }
+        // Dispatched per section rather than once at the end: whole-book search
+        // is slow, and SearchMenu renders straight from this list.
+        dispatch(setSearchResults([...results]));
+      }
+    };
+    runSearch();
+
+    return () => {
+      cancelled = true;
+      // Also removes the highlights the search drew.
+      view.clearSearch();
+    };
+  }, [view, searchQuery, dispatch]);
+
+  React.useEffect(() => {
+    if (currentSearchResult?.location) {
+      view?.goTo(currentSearchResult.location);
       dispatch(setCurrentSearchResult(undefined));
     }
-  }, [rendition, currentSearchResult, dispatch]);
+  }, [view, currentSearchResult, dispatch]);
+
+  // Table of contents click
+  React.useEffect(() => {
+    if (content && content.location) {
+      view?.goTo(content.location);
+    }
+  }, [content, view]);
+
+  React.useEffect(() => {
+    view?.renderer.setStyles?.(getBookCss(prefersDark(theme.theme)));
+  }, [view, theme]);
 
   const onNext = React.useCallback(() => {
-    rendition?.next();
-  }, [rendition]);
+    view?.next();
+  }, [view]);
 
   const onPrev = React.useCallback(() => {
-    rendition?.prev();
-  }, [rendition]);
+    view?.prev();
+  }, [view]);
 
   const onKeyUp = React.useCallback(
     (event: KeyboardEvent) => {
@@ -214,121 +288,14 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
   );
 
   React.useEffect(() => {
+    onKeyUpRef.current = onKeyUp;
+  }, [onKeyUp]);
+
+  React.useEffect(() => {
     document.body.addEventListener("keyup", onKeyUp);
 
     return () => document.body.removeEventListener("keyup", onKeyUp);
   }, [onKeyUp]);
-
-  React.useEffect(() => {
-    rendition?.on("keyup", onKeyUp);
-  }, [rendition, onKeyUp]);
-
-  // Table of contents click
-  React.useEffect(() => {
-    if (content && content.location) {
-      rendition?.display(content.location);
-    }
-  }, [content, rendition]);
-
-  React.useEffect(() => {
-    if (rendition) {
-      switch (theme.theme) {
-        case "dark":
-          rendition.themes.select("dark");
-          break;
-        case "light":
-          rendition.themes.select("none");
-          break;
-        case "system":
-          rendition.themes.select(
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "none"
-          );
-          break;
-      }
-    }
-  }, [rendition, theme]);
-
-  React.useEffect(() => {
-    const loadEbook = async () => {
-      if (isLoading.current) return;
-
-      if (book.current) {
-        book.current.destroy();
-      }
-      if (!ebook) {
-        return;
-      }
-
-      isLoading.current = true;
-      setLoading(true);
-      try {
-        await loadBook(ebook);
-      } catch (e) {
-        console.error(e);
-        toast.error("Could not open publication");
-      } finally {
-        isLoading.current = false;
-        setLoading(false);
-      }
-    };
-
-    const loadBook = async (ebook: EBook) => {
-      const newBook = await openBook(ebook);
-
-      const viewer = containerRef?.current;
-      if (viewer) {
-        const rend = newBook.renderTo(viewer, {
-          width: "100vw",
-          height: "90vh",
-        });
-        rend.on("relocated", (location: Location) => {
-          const newLocation = location.start.cfi;
-          dispatch(setCurrentLocation(newLocation));
-
-          const currentChapter = getChapter(newBook, location);
-          if (currentChapter) {
-            const currentContent = navItemToContent(newBook, [currentChapter]);
-            if (currentContent.length > 0) {
-              dispatch(setCurrentChapter(currentContent[0]));
-            }
-          }
-        });
-        rend.on(
-          "selected",
-          debounce((cfiRange: Range) => {
-            const selCfi = new EpubCFI(cfiRange);
-            selCfi.collapse();
-            const compare =
-              EpubCFI.prototype.compare(selCfi, rend.location.end.cfi) >= 0;
-            if (compare) rend?.next();
-          }, 500)
-        );
-        rend.themes.register("dark", {
-          body: { "background-color": "#0b0c0e", color: "#fff" },
-          "a:link": { color: "#0B4085" },
-        });
-        rend.display();
-        dispatch(clearBookData());
-        setRendition(rend);
-      }
-      newBook.loaded.navigation.then((navigation) => {
-        const contents = navItemToContent(newBook, navigation.toc);
-        dispatch(setToc(contents));
-      });
-      newBook.loaded.metadata.then((metadata) => {
-        const author = metadata.creator;
-        const title = metadata.title;
-        dispatch(setTitle(title));
-        dispatch(setPublicationData({ title, author }));
-      });
-
-      book.current = newBook;
-    };
-
-    loadEbook();
-  }, [ebook, dispatch]);
 
   return (
     <>
@@ -341,9 +308,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
         >
           <FaChevronLeft />
         </Button>
-        <div className="absolute top-10">
-          <div ref={containerRef}></div>
-        </div>
+        <div ref={containerRef} className="absolute top-10 w-screen h-[90vh]" />
         <Button
           onClick={onNext}
           variant="ghost"

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import useOpenDocument from "../hooks/useOpenDocument";
 import { buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { FILE_INPUT_ACCEPT } from "@/lib/ebook";
 
 const OpenFileButton: React.FC = () => {
   const openDocument = useOpenDocument();
@@ -28,7 +29,7 @@ const OpenFileButton: React.FC = () => {
         type="file"
         onChange={onFileChange}
         hidden
-        accept="application/pdf,application/epub+zip"
+        accept={FILE_INPUT_ACCEPT}
       />
     </label>
   );

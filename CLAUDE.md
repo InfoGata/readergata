@@ -80,8 +80,28 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
      empty registry at first match mis-parses an alias deep link permanently.
 
 4. **Viewers**
-   - EBook Viewer: Uses epubjs to render ebooks
+   - EBook Viewer: Uses foliate-js to render EPUB, MOBI, AZW3, FB2 and CBZ
    - PDF Viewer: Uses react-pdf to render PDFs
+
+   There is no shared viewer abstraction — the two are independent components
+   selected by `src/routes/viewer.tsx`, and redux *is* the interface between
+   them and the rest of the app: both dispatch the same actions
+   (`setCurrentLocation`, `setToc`, `setCurrentChapter`, `setSearchResults`, …)
+   and read the same slices. Note `document.currentLocation` is a single
+   untyped string that means an EPUB CFI for ebooks and a page number for PDFs.
+
+   **foliate-js is vendored**, not an npm dependency: the package on npm is
+   published by a third party rather than the author, and upstream has no
+   release and warns the API may change. `src/vendor/foliate-js` is generated
+   by `npm run vendor:foliate` from a commit pinned in
+   `scripts/vendor-foliate.js` — never edit it by hand, and use
+   `npm run vendor:foliate -- --check` to verify it still matches. The copy
+   excludes foliate's experimental PDF adapter (and its ~10MB vendored pdfjs),
+   so `view.js` carries one patch making the PDF branch throw. It is imported
+   through the bare `foliate-js/...` specifier, aliased in both `vite.config.ts`
+   and `electron.vite.config.ts`, with hand-written types in
+   `src/foliate-js.d.ts` — a relative import would fail `tsc`, since `allowJs`
+   is off.
 
 5. **Internationalization**
    - Uses i18next for translations

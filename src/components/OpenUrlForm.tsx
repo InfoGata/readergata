@@ -8,10 +8,11 @@ import { Input } from "./ui/input";
 import { RadioGroupItem, RadioGroup as ShRadioGroup } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import { useNavigate } from "@tanstack/react-router";
+import { getMimeTypeForName, isPdfName } from "@/lib/ebook";
 
 const OpenUrlForm: React.FC = () => {
   const [inputUrl, setInputUrl] = React.useState("");
-  const [urlType, setUrlType] = React.useState("epub");
+  const [urlType, setUrlType] = React.useState("ebook");
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const OpenUrlForm: React.FC = () => {
     if (inputUrl) {
       const url = new URL(inputUrl);
       const fileName = url.pathname.split("/").pop();
-      if (urlType === "epub") {
+      if (urlType === "ebook") {
         dispatch(
           setPublication({
             type: "ebook",
@@ -48,15 +49,11 @@ const OpenUrlForm: React.FC = () => {
     const value = e.target.value;
     setInputUrl(value);
     try {
-      const url = new URL(value);
-      const ext = url.pathname.split(".").pop();
-      switch (ext) {
-        case "epub":
-          setUrlType("epub");
-          break;
-        case "pdf":
-          setUrlType("pdf");
-          break;
+      const { pathname } = new URL(value);
+      if (isPdfName(pathname)) {
+        setUrlType("pdf");
+      } else if (getMimeTypeForName(pathname)) {
+        setUrlType("ebook");
       }
     } catch {
       /* empty */
@@ -78,14 +75,14 @@ const OpenUrlForm: React.FC = () => {
           className="rounded-none py-6"
         />
         <ShRadioGroup
-          defaultValue="epub"
+          defaultValue="ebook"
           className="flex flex-row justify-center"
           value={urlType}
           onValueChange={onRadioChange}
         >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="epub" id="r1" />
-            <Label htmlFor="r1">EPUB</Label>
+            <RadioGroupItem value="ebook" id="r1" />
+            <Label htmlFor="r1">{t("ebook")}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="pdf" id="r2" />

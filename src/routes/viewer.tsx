@@ -12,6 +12,7 @@ import OpenFileButton from "../components/OpenFileButton";
 import PdfViewer from "../components/PdfViewer";
 import Spinner from "../components/Spinner";
 import { z } from "zod";
+import { getFileNameFromUrl } from "../lib/ebook";
 
 const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   switch (sourceType) {
@@ -45,15 +46,28 @@ export const Viewer: React.FC = () => {
         sourceType = sourceTypeToPulicationSourceType(publication.sourceType);
       }
 
+      // The plugin may hand back binary data rather than a url, in which case
+      // neither of these parses and fileName stays undefined. It is worth
+      // deriving where possible: foliate-js sniffs zip-based formats from the
+      // file name, and comic archives take their title from it.
+      const fileName =
+        getFileNameFromUrl(src) ?? getFileNameFromUrl(decodeURIComponent(source));
+
       if (type && type.includes("pdf")) {
         dispatch(
-          setPublication({ type: "pdf", source: src, sourceType: sourceType })
+          setPublication({
+            type: "pdf",
+            source: src,
+            sourceType: sourceType,
+            fileName,
+          })
         );
       } else {
         const book: EBook = {
           type: "ebook",
           source: src,
           sourceType: sourceType,
+          fileName,
         };
         dispatch(setPublication(book));
       }

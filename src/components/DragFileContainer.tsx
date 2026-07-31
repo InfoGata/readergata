@@ -1,6 +1,7 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import useOpenDocument from "../hooks/useOpenDocument";
+import { DROPZONE_ACCEPT } from "@/lib/ebook";
 
 const DragFileContainer: React.FC<React.PropsWithChildren> = (props) => {
   const openDocument = useOpenDocument();
@@ -15,7 +16,7 @@ const DragFileContainer: React.FC<React.PropsWithChildren> = (props) => {
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: { "application/pdf": [".pdf"], "application/epub+zip": [".epub"] },
+    accept: DROPZONE_ACCEPT,
     onDrop,
     noClick: true,
   });
