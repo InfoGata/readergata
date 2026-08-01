@@ -16,6 +16,13 @@ export interface PluginDescription {
 
 export const defaultPlugins: PluginDescription[] = [
   {
+    id: "S3CirQTl9LBaSsSdkAh3K",
+    alias: "archive",
+    name: "Internet Archive",
+    description: "Read books and PDFs from the Internet Archive.",
+    url: "https://cdn.jsdelivr.net/gh/InfoGata/internetarchive-readergata@latest/manifest.json",
+  },
+  {
     id: "P5oPcz76xlHWUtp5AzLzg",
     alias: "humblebundle",
     name: "Plugin for HumbleBundle",
