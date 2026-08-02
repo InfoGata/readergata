@@ -27,6 +27,7 @@ export interface ImageInfo {
 export interface GetFeedRequest {
   apiId?: string;
   pageInfo?: PageInfo;
+  filters?: FilterValues;
 }
 
 export interface SearchRequest {
@@ -34,6 +35,49 @@ export interface SearchRequest {
   query: string;
   searchInfo?: string;
   pageInfo?: PageInfo;
+  filters?: FilterValues;
+}
+
+/**
+ * Chosen filter values, keyed by `Filter.id`. This is all a plugin is sent
+ * back — the rest of a `Filter` only describes how to render it.
+ */
+export type FilterValues = Record<string, string>;
+
+export interface FilterInfo {
+  filters: Filter[];
+}
+
+export type FilterType = "radio" | "select" | "text";
+
+export interface Filter {
+  /**
+   * Unique identifier of filter.
+   */
+  id: string;
+  /**
+   * Name of filter that will be displayed to user.
+   */
+  displayName: string;
+  /**
+   * Type of filter used to determine if filter will be displayed
+   * as a radio field, select tag, or text field.
+   */
+  type: FilterType;
+  /**
+   * Value that this filter is set to.
+   */
+  value?: string;
+  /**
+   * Selectable options for filter used when filter
+   * is type "radio" or "select"
+   */
+  options?: FilterOption[];
+}
+
+export interface FilterOption {
+  displayName: string;
+  value: string;
 }
 
 export interface PageInfo {
@@ -101,6 +145,11 @@ export type FeedInfo = {
    * Page the plugin returned. When set, next/previous controls are shown.
    */
   pageInfo?: PageInfo;
+  /**
+   * Filters the plugin supports for this feed. When set, filter controls are
+   * shown and the chosen values are sent back as `filters`.
+   */
+  filterInfo?: FilterInfo;
 };
 
 export type Feed = (CatalogFeed | PublicationFeed) & FeedInfo;

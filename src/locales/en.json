@@ -39,7 +39,9 @@
     "next": "Next",
     "previous": "Previous",
     "pageRange": "{{from}}–{{to}}",
-    "pageRangeOfTotal": "{{from}}–{{to}} of {{total}}"
+    "pageRangeOfTotal": "{{from}}–{{to}} of {{total}}",
+    "filters": "Filters",
+    "applyFilters": "Apply Filters"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",

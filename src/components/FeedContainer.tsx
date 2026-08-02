@@ -1,8 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { PluginFrameContainer } from "../contexts/PluginsContext";
-import { Feed } from "../plugintypes";
+import { Feed, FilterValues } from "../plugintypes";
 import PublicationInfo from "./PublicationInfo";
+import Filtering from "./Filtering";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import AboutLink from "./AboutLink";
@@ -14,12 +15,23 @@ interface FeedContainerProps {
   plugin?: PluginFrameContainer;
   apiId?: string;
   searchInfo?: string;
+  filters?: FilterValues;
+  onApplyFilters?: (values: FilterValues) => void;
   onNextPage?: () => void;
   onPrevPage?: () => void;
 }
 
 const FeedContainer: React.FC<FeedContainerProps> = (props) => {
-  const { feed, plugin, apiId, searchInfo, onNextPage, onPrevPage } = props;
+  const {
+    feed,
+    plugin,
+    apiId,
+    searchInfo,
+    filters,
+    onApplyFilters,
+    onNextPage,
+    onPrevPage,
+  } = props;
   const { t } = useTranslation();
   const [query, setQuery] = React.useState("");
   const navigate = useNavigate();
@@ -36,7 +48,14 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
       navigate({
         to: "/s/$pluginId/feed/search",
         params: { pluginId: plugin.id || "" },
-        search: { apiId: apiId, searchInfo: searchInfo, query: query },
+        // Filters carry over: searching from a filtered feed narrows what the
+        // user is already looking at rather than starting from scratch.
+        search: {
+          apiId: apiId,
+          searchInfo: searchInfo,
+          query: query,
+          filters: filters,
+        },
       });
     }
   };
@@ -52,6 +71,13 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
           />
           <Button type="submit">{t("search")}</Button>
         </form>
+      )}
+      {feed.filterInfo && onApplyFilters && (
+        <Filtering
+          filterInfo={feed.filterInfo}
+          values={filters}
+          onApply={onApplyFilters}
+        />
       )}
       <div>
         {feed.type === "publication"

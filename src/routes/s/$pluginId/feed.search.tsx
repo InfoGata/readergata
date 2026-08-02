@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import React from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import useFindPlugin from "@/hooks/useFindPlugin";
@@ -12,14 +12,22 @@ import {
   findPluginByParam,
   pluginIdParams,
 } from "@/lib/plugin-route";
+import {
+  cleanFilterValues,
+  filterKey,
+  filtersSearchSchema,
+} from "@/lib/filters";
+import { FilterValues } from "@/plugintypes";
 import { z } from "zod";
 
 const PluginFeedSearch: React.FC = () => {
   const { pluginId } = Route.useParams();
-  const { apiId, query, searchInfo } = Route.useSearch();
+  const { apiId, query, searchInfo, filters } = Route.useSearch();
   const { plugins, pluginsLoaded } = usePlugins();
   const plugin = findPluginByParam(plugins, pluginId);
   const { pageInfo, nextPage, prevPage, reset } = usePagination();
+  const navigate = useNavigate();
+  const filtersKey = filterKey(filters);
 
   const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
     pluginsLoaded,
@@ -27,9 +35,19 @@ const PluginFeedSearch: React.FC = () => {
     plugin,
   });
 
+  // Changing a filter changes what the result set is, so the page the user was
+  // on no longer refers to anything.
   React.useEffect(() => {
     reset();
-  }, [pluginId, apiId, query, reset]);
+  }, [pluginId, apiId, query, filtersKey, reset]);
+
+  const onApplyFilters = (values: FilterValues) => {
+    navigate({
+      to: "/s/$pluginId/feed/search",
+      params: { pluginId },
+      search: (prev) => ({ ...prev, filters: cleanFilterValues(values) }),
+    });
+  };
 
   const searchFeed = async () => {
     if (plugin && (await plugin.hasDefined.onSearch()) && query) {
@@ -38,12 +56,20 @@ const PluginFeedSearch: React.FC = () => {
         apiId: apiId ?? undefined,
         searchInfo: searchInfo ?? undefined,
         pageInfo,
+        filters,
       });
     }
   };
 
   const searchQuery = useQuery({
-    queryKey: ["searchFeed", pluginId, apiId, query, pageInfo?.offset],
+    queryKey: [
+      "searchFeed",
+      pluginId,
+      apiId,
+      query,
+      pageInfo?.offset,
+      filtersKey,
+    ],
     queryFn: searchFeed,
     enabled: pluginsLoaded && !!plugin,
     placeholderData: keepPreviousData,
@@ -60,6 +86,8 @@ const PluginFeedSearch: React.FC = () => {
           plugin={plugin}
           apiId={apiId || undefined}
           searchInfo={searchInfo || undefined}
+          filters={filters}
+          onApplyFilters={onApplyFilters}
           onNextPage={
             returnedPageInfo ? () => nextPage(returnedPageInfo) : undefined
           }
@@ -81,6 +109,7 @@ const feedSearchSchema = z.object({
   query: z.string().optional().catch(undefined),
   apiId: z.string().optional().catch(undefined),
   searchInfo: z.string().optional().catch(undefined),
+  ...filtersSearchSchema,
 });
 
 export const Route = createFileRoute("/s/$pluginId/feed/search")({

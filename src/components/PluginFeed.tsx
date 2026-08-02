@@ -7,17 +7,22 @@ import Spinner from "../components/Spinner";
 import useFindPlugin from "@/hooks/useFindPlugin";
 import usePagination from "@/hooks/usePagination";
 import { findPluginByParam } from "@/lib/plugin-route";
+import { filterKey } from "@/lib/filters";
+import { FilterValues } from "@/plugintypes";
 
 type PluginFeed = {
   pluginId: string;
   apiId?: string;
+  filters?: FilterValues;
+  onApplyFilters?: (values: FilterValues) => void;
 };
 
 const PluginFeed: React.FC<PluginFeed> = (props) => {
   const { plugins, pluginsLoaded } = usePlugins();
-  const { pluginId, apiId } = props;
+  const { pluginId, apiId, filters, onApplyFilters } = props;
   const plugin = findPluginByParam(plugins, pluginId);
   const { pageInfo, nextPage, prevPage, reset } = usePagination();
+  const filtersKey = filterKey(filters);
 
   const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
     pluginsLoaded,
@@ -25,19 +30,21 @@ const PluginFeed: React.FC<PluginFeed> = (props) => {
     plugin,
   });
 
+  // Changing a filter changes what the result set is, so the page the user was
+  // on no longer refers to anything.
   React.useEffect(() => {
     reset();
-  }, [pluginId, apiId, reset]);
+  }, [pluginId, apiId, filtersKey, reset]);
 
   const getFeed = async () => {
     if (plugin && (await plugin.hasDefined.onGetFeed())) {
-      const feed = await plugin.remote.onGetFeed({ apiId, pageInfo });
+      const feed = await plugin.remote.onGetFeed({ apiId, pageInfo, filters });
       return feed;
     }
   };
 
   const query = useQuery({
-    queryKey: ["pluginFeed", pluginId, apiId, pageInfo?.offset],
+    queryKey: ["pluginFeed", pluginId, apiId, pageInfo?.offset, filtersKey],
     queryFn: getFeed,
     enabled: pluginsLoaded && !!plugin,
     placeholderData: keepPreviousData,
@@ -54,6 +61,8 @@ const PluginFeed: React.FC<PluginFeed> = (props) => {
           plugin={plugin}
           searchInfo={query.data.searchInfo}
           apiId={apiId}
+          filters={filters}
+          onApplyFilters={onApplyFilters}
           onNextPage={
             returnedPageInfo ? () => nextPage(returnedPageInfo) : undefined
           }
