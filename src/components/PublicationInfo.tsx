@@ -1,9 +1,13 @@
 import DOMPurify from "dompurify";
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { ExternalLink } from "lucide-react";
 import { Publication } from "../plugintypes";
 import { searchThumbnailSize } from "../utils";
 import PublicationSourceButton from "./PublicationSourceButton";
 import { Dialog, DialogContent } from "./ui/dialog";
+import { buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
 import AboutLink from "./AboutLink";
 import { getThumbnailImage } from "@infogata/utils";
 
@@ -13,6 +17,7 @@ interface PublicationInfoProps {
 
 const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
   const { publication } = props;
+  const { t } = useTranslation();
   const sanitizer = DOMPurify.sanitize;
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -50,6 +55,17 @@ const PublicationInfo: React.FC<PublicationInfoProps> = (props) => {
                   pluginId={publication.pluginId}
                 />
               ))}
+              {publication.originalUrl && (
+                <a
+                  href={publication.originalUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={cn(buttonVariants({ variant: "outline" }), "gap-2")}
+                >
+                  <ExternalLink className="size-4" />
+                  {t("originalUrl")}
+                </a>
+              )}
             </div>
           </div>
         </DialogContent>

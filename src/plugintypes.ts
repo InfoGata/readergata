@@ -6,6 +6,7 @@ export interface Publication {
   apiId?: string;
   sources?: PublicationSource[];
   pluginId?: string;
+  originalUrl?: string;
 }
 
 export interface PublicationSource {
