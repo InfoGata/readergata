@@ -38,8 +38,8 @@ export const Viewer: React.FC = () => {
     if (source) {
       let src = decodeURIComponent(source);
       let sourceType = PublicationSourceType.Url;
-      if (plugin && (await plugin.hasDefined.onGetPublication())) {
-        const publication = await plugin.remote.onGetPublication({
+      if (plugin && (await plugin.hasDefined.onGetPublicationSource())) {
+        const publication = await plugin.remote.onGetPublicationSource({
           source: src,
         });
         src = publication.source;

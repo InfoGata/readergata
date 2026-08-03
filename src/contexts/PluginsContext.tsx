@@ -9,11 +9,13 @@ import { defaultPlugins } from "../default-plugins";
 import {
   Feed,
   GetFeedRequest,
-  GetPublicationRequest,
-  GetPublicationResponse,
+  GetPublicationDetailsRequest,
+  GetPublicationSourceRequest,
+  GetPublicationSourceResponse,
   Manifest,
   NotificationMessage,
   PluginInfo,
+  Publication,
   SearchRequest,
 } from "../plugintypes";
 import { Theme, useTheme } from "@infogata/shadcn-vite-theme-provider";
@@ -50,9 +52,12 @@ interface ApplicationPluginInterface extends PluginInterface {
 }
 
 export interface PluginMethodInterface {
-  onGetPublication(
-    request: GetPublicationRequest
-  ): Promise<GetPublicationResponse>;
+  onGetPublicationSource(
+    request: GetPublicationSourceRequest
+  ): Promise<GetPublicationSourceResponse>;
+  onGetPublicationDetails(
+    request: GetPublicationDetailsRequest
+  ): Promise<Publication>;
   onGetFeed(request: GetFeedRequest): Promise<Feed>;
   onSearch(request: SearchRequest): Promise<Feed>;
   onUiMessage(message: any): Promise<void>;
@@ -278,6 +283,15 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             i.pluginId = plugin.id;
           });
           return feed;
+        },
+        // Stamped for the same reason feed items are: the publication page
+        // builds source links out of it, and the viewer needs to know which
+        // plugin to ask to resolve the source it was handed.
+        onGetPublicationDetails: (publication: Publication) => {
+          if (publication) {
+            publication.pluginId = plugin.id;
+          }
+          return publication;
         },
       };
 

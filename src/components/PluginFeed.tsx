@@ -15,13 +15,23 @@ type PluginFeed = {
   apiId?: string;
   filters?: FilterValues;
   onApplyFilters?: (values: FilterValues) => void;
+  offset?: number;
+  /**
+   * Navigating belongs to the route: this component is shared by the plain
+   * feed and the one addressed by `apiId`, which have different urls.
+   */
+  onOffsetChange: (offset?: number) => void;
 };
 
 const PluginFeed: React.FC<PluginFeed> = (props) => {
   const { plugins, pluginsLoaded } = usePlugins();
-  const { pluginId, apiId, filters, onApplyFilters } = props;
+  const { pluginId, apiId, filters, onApplyFilters, offset, onOffsetChange } =
+    props;
   const plugin = findPluginByParam(plugins, pluginId);
-  const { pageInfo, nextPage, prevPage, reset } = usePagination();
+  const { pageInfo, nextPage, prevPage } = usePagination({
+    offset,
+    onOffsetChange,
+  });
   const filtersKey = filterKey(filters);
 
   const { isLoading, pendingPlugin, removePendingPlugin } = useFindPlugin({
@@ -29,12 +39,6 @@ const PluginFeed: React.FC<PluginFeed> = (props) => {
     pluginId,
     plugin,
   });
-
-  // Changing a filter changes what the result set is, so the page the user was
-  // on no longer refers to anything.
-  React.useEffect(() => {
-    reset();
-  }, [pluginId, apiId, filtersKey, reset]);
 
   const getFeed = async () => {
     if (plugin && (await plugin.hasDefined.onGetFeed())) {

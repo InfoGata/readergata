@@ -74,6 +74,10 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
    - `src/lib/plugin-route.ts` holds the one `params.parse`/`stringify` pair
      every plugin route shares, so route bodies and `<Link params={{pluginId}}>`
      keep passing ids. Never build an alias url by hand.
+   - The redirect-only mirrors under `/plugins/<alias>/...` exist solely to
+     forward urls that predate the move to `/s`. **New routes get no mirror** —
+     a redirect that can never fire is dead code, and it would advertise a
+     second canonical url. `/s/<alias>/publication/<apiId>` is the example.
    - The alias registry in `src/lib/plugin-alias.ts` is module-level state, read
      by the router outside React. `src/router.tsx` withholds `RouterProvider`
      until `pluginsLoaded` because TanStack parses a given url only once — an

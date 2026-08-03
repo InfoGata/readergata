@@ -2,13 +2,13 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { PluginFrameContainer } from "../contexts/PluginsContext";
 import { Feed, FilterValues } from "../plugintypes";
-import PublicationInfo from "./PublicationInfo";
+import PublicationLink from "./PublicationLink";
 import Filtering from "./Filtering";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import AboutLink from "./AboutLink";
 import { useNavigate } from "@tanstack/react-router";
-import { hasNextPage, hasPrevPage } from "../hooks/usePagination";
+import { hasNextPage, hasPrevPage } from "../lib/pagination";
 
 interface FeedContainerProps {
   feed: Feed;
@@ -81,9 +81,7 @@ const FeedContainer: React.FC<FeedContainerProps> = (props) => {
       )}
       <div>
         {feed.type === "publication"
-          ? feed.items.map((p, i) => (
-              <PublicationInfo key={i} publication={p} />
-            ))
+          ? feed.items.map((p, i) => <PublicationLink key={i} publication={p} />)
           : feed.items.map((c, i) => (
               <AboutLink
                 key={i}

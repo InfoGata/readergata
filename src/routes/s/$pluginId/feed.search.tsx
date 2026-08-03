@@ -17,15 +17,15 @@ import {
   filterKey,
   filtersSearchSchema,
 } from "@/lib/filters";
+import { offsetSearchSchema } from "@/lib/pagination";
 import { FilterValues } from "@/plugintypes";
 import { z } from "zod";
 
 const PluginFeedSearch: React.FC = () => {
   const { pluginId } = Route.useParams();
-  const { apiId, query, searchInfo, filters } = Route.useSearch();
+  const { apiId, query, searchInfo, filters, offset } = Route.useSearch();
   const { plugins, pluginsLoaded } = usePlugins();
   const plugin = findPluginByParam(plugins, pluginId);
-  const { pageInfo, nextPage, prevPage, reset } = usePagination();
   const navigate = useNavigate();
   const filtersKey = filterKey(filters);
 
@@ -35,19 +35,34 @@ const PluginFeedSearch: React.FC = () => {
     plugin,
   });
 
-  // Changing a filter changes what the result set is, so the page the user was
-  // on no longer refers to anything.
-  React.useEffect(() => {
-    reset();
-  }, [pluginId, apiId, query, filtersKey, reset]);
-
   const onApplyFilters = (values: FilterValues) => {
     navigate({
       to: "/s/$pluginId/feed/search",
       params: { pluginId },
-      search: (prev) => ({ ...prev, filters: cleanFilterValues(values) }),
+      // A different filter is a different result set, so the page the reader
+      // was on no longer refers to anything.
+      search: (prev) => ({
+        ...prev,
+        filters: cleanFilterValues(values),
+        offset: undefined,
+      }),
     });
   };
+
+  const onOffsetChange = React.useCallback(
+    (next?: number) =>
+      navigate({
+        to: "/s/$pluginId/feed/search",
+        params: { pluginId },
+        search: (prev) => ({ ...prev, offset: next }),
+      }),
+    [navigate, pluginId]
+  );
+
+  const { pageInfo, nextPage, prevPage } = usePagination({
+    offset,
+    onOffsetChange,
+  });
 
   const searchFeed = async () => {
     if (plugin && (await plugin.hasDefined.onSearch()) && query) {
@@ -110,6 +125,7 @@ const feedSearchSchema = z.object({
   apiId: z.string().optional().catch(undefined),
   searchInfo: z.string().optional().catch(undefined),
   ...filtersSearchSchema,
+  ...offsetSearchSchema,
 });
 
 export const Route = createFileRoute("/s/$pluginId/feed/search")({

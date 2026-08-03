@@ -285,4 +285,38 @@ export const debounce = <T extends (...args: any[]) => void>(
 
 export const searchThumbnailSize = 40;
 
+const byteUnits = ["B", "KB", "MB", "GB", "TB"];
+
+/**
+ * Decimal units rather than binary, to match how the sites publications come
+ * from report their own file sizes.
+ */
+export const formatBytes = (bytes: number): string => {
+  if (!Number.isFinite(bytes) || bytes < 0) return "";
+  const exponent = Math.min(
+    byteUnits.length - 1,
+    bytes === 0 ? 0 : Math.floor(Math.log10(bytes) / 3)
+  );
+  const value = bytes / 1000 ** exponent;
+  // Whole bytes never want a decimal point; larger units read better with one.
+  const digits = exponent === 0 ? 0 : value < 10 ? 1 : 0;
+  return `${value.toFixed(digits)} ${byteUnits[exponent]}`;
+};
+
+/**
+ * Formats a `Publication.published` value for display.
+ *
+ * These arrive as anything ISO 8601 permits, and a bare year is the common
+ * case for older books — so a year stays a year rather than becoming January
+ * 1st in whatever timezone the reader happens to be in.
+ */
+export const formatPublished = (published: string): string => {
+  const yearOnly = /^\d{4}$/.exec(published.trim());
+  if (yearOnly) return yearOnly[0];
+
+  const parsed = new Date(published);
+  if (Number.isNaN(parsed.getTime())) return published;
+  return parsed.toLocaleDateString();
+};
+
 export const drawerWidth = 240;

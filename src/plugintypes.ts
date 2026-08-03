@@ -1,22 +1,79 @@
 export interface Publication {
   title: string;
+  subtitle?: string;
   images?: ImageInfo[];
+  /** May contain html, which is sanitized before rendering. */
   summary?: string;
   authors?: Author[];
+  publisher?: string;
+  languages?: string[];
+  /**
+   * ISO 8601 string — "2019", "2019-04-02" or a full timestamp. A string
+   * rather than a `Date` because values cross the plugin frame's postMessage
+   * boundary, which a `Date` does not survive intact.
+   */
+  published?: string;
+  categories?: Category[];
+  series?: Series;
+  pageCount?: number;
+  rights?: string;
+  identifiers?: Identifier[];
+  /** 0 to 5. */
+  rating?: number;
+  /**
+   * Id from the third party service. Both what the publication's own url is
+   * built from and what is handed back to `onGetPublicationDetails`, so a
+   * publication without one has no page of its own.
+   */
   apiId?: string;
   sources?: PublicationSource[];
   pluginId?: string;
   originalUrl?: string;
 }
 
+export interface Category {
+  name: string;
+  /** Vocabulary `name` is drawn from. Unset for a free-form tag. */
+  scheme?: string;
+}
+
+export interface Series {
+  name: string;
+  /** Position within the series, counting from 1. */
+  position?: number;
+}
+
+export interface Identifier {
+  /** Lowercase scheme: "isbn", "issn", "doi", "asin", "oclc", "uuid". */
+  type: string;
+  value: string;
+}
+
+/** How a source is obtained, following the OPDS acquisition relations. */
+export type AcquisitionType =
+  | "open-access"
+  | "borrow"
+  | "buy"
+  | "sample"
+  | "subscribe";
+
 export interface PublicationSource {
   name?: string;
+  /** Opaque to ReaderGata: handed straight back to `onGetPublicationSource`. */
   source: string;
   type?: string;
+  /** Bytes. */
+  size?: number;
+  price?: number;
+  /** ISO 4217 code for `price`. */
+  currency?: string;
+  /** Treated as "open-access" when unset. */
+  acquisitionType?: AcquisitionType;
 }
 
 export interface Author {
   name: string;
+  url?: string;
 }
 
 export interface ImageInfo {
@@ -27,7 +84,7 @@ export interface ImageInfo {
 
 export interface GetFeedRequest {
   apiId?: string;
-  pageInfo?: PageInfo;
+  pageInfo?: PageRequest;
   filters?: FilterValues;
 }
 
@@ -35,7 +92,7 @@ export interface SearchRequest {
   apiId?: string;
   query: string;
   searchInfo?: string;
-  pageInfo?: PageInfo;
+  pageInfo?: PageRequest;
   filters?: FilterValues;
 }
 
@@ -81,6 +138,22 @@ export interface FilterOption {
   value: string;
 }
 
+/**
+ * The page being asked for.
+ *
+ * Only `offset` is certain: the page a user is on lives in the url, so a link
+ * into the middle of a feed arrives with no page size in hand. The plugin
+ * picks its own and reports it back in `PageInfo`.
+ */
+export interface PageRequest {
+  offset: number;
+  /** Page size last seen from this feed, when there was one. Advisory. */
+  resultsPerPage?: number;
+}
+
+/**
+ * The page a plugin returned.
+ */
 export interface PageInfo {
   /**
    * Total number of results returned
@@ -104,13 +177,17 @@ export interface PageInfo {
   prevPage?: string;
 }
 
-export interface GetPublicationRequest {
+export interface GetPublicationSourceRequest {
   source: string;
+}
+
+export interface GetPublicationDetailsRequest {
+  apiId: string;
 }
 
 export type SourceType = "url" | "binary";
 
-export interface GetPublicationResponse {
+export interface GetPublicationSourceResponse {
   /**
    * Binary data or url for the pdf/epub
    */
@@ -140,7 +217,7 @@ export type PublicationFeed = {
 };
 
 export type FeedInfo = {
-  hasSearch: boolean;
+  hasSearch?: boolean;
   searchInfo?: string;
   /**
    * Page the plugin returned. When set, next/previous controls are shown.
@@ -198,7 +275,7 @@ export interface ManifestAuthentication {
   cookiesToFind?: string[];
   loginButton?: string;
   headersToFind?: string[];
-  domainHeadersToFind: Record<string, string[]>;
+  domainHeadersToFind?: Record<string, string[]>;
   completionUrl?: string;
 }
 
