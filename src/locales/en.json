@@ -100,5 +100,24 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "library": {
+    "browseSources": "Browse Sources",
+    "documentCount_one": "{{count}} document",
+    "documentCount_other": "{{count}} documents",
+    "filteredCount_one": "{{count}} of {{total}} documents",
+    "filteredCount_other": "{{count}} of {{total}} documents",
+    "searchPlaceholder": "Search library",
+    "noResults": "Nothing in your library matches \"{{query}}\"",
+    "emptyTitle": "Your library is empty",
+    "emptyDescription": "Books and PDFs you open show up here, along with your reading position and bookmarks.",
+    "browsePlugins": "Add a plugin to browse catalogs",
+    "untitled": "Untitled document",
+    "inProgress": "In progress",
+    "locateFile": "Locate file",
+    "locateFileHint": "This was opened from your device, so only the reading position was saved. Choose the file again to continue reading.",
+    "bookActions": "Actions for {{title}}",
+    "confirmRemoveTitle": "Remove from library?",
+    "confirmRemoveDescription": "This deletes the saved reading position and bookmarks for \"{{title}}\". The file itself is not deleted."
   }
 }
