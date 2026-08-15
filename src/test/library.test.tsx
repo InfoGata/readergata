@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, screen, waitFor } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import LibraryBooks from "@/components/Library/LibraryBooks";
 import { db } from "@/database";
@@ -92,11 +92,9 @@ describe("LibraryBooks", () => {
 
   test("shows an empty state when nothing has been opened", async () => {
     renderWithProviders(<LibraryBooks />);
-    await waitFor(() =>
-      expect(
-        screen.queryByText(i18next.t("library:emptyTitle"))
-      ).toBeInTheDocument()
-    );
+    expect(
+      await screen.findByText(i18next.t("library:emptyTitle"))
+    ).toBeInTheDocument();
   });
 
   test("links a url document to the viewer", async () => {
@@ -132,11 +130,7 @@ describe("LibraryBooks", () => {
 
     renderWithProviders(<LibraryBooks />);
 
-    await waitFor(() =>
-      expect(
-        screen.queryByText(i18next.t("library:untitled"))
-      ).toBeInTheDocument()
-    );
+    await screen.findByText(i18next.t("library:untitled"));
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.getByText(i18next.t("library:locateFile"))).toBeInTheDocument();
   });

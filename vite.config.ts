@@ -19,6 +19,10 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["fake-indexeddb/auto", "src/test/before.ts"],
     teardownTimeout: 10000,
+    // Has to clear the 10s `asyncUtilTimeout` set in src/test/before.ts, or a
+    // slow wait dies here first and reports a timeout instead of naming the
+    // element it never found.
+    testTimeout: 20000,
   },
   resolve: {
     alias: {

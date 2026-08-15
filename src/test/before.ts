@@ -1,3 +1,15 @@
+import { configure } from "@testing-library/react";
+
+// Every component test mounts the whole app shell through
+// `renderWithProviders` -- router, plugins, extension and query providers --
+// and only then gets to the component, whose own first paint usually waits on
+// a dexie `useLiveQuery`. Measured cold, that lands anywhere from 0.6s to 2s
+// on an idle machine, so the 1s these helpers default to was under the real
+// cost rather than over it, and the suite lost tests to load rather than to
+// breakage. Ten seconds is picked to be past the worst of it; nothing but a
+// genuinely failing assertion ever waits that long.
+configure({ asyncUtilTimeout: 10_000 });
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: any) => ({
