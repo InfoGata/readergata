@@ -172,7 +172,7 @@ const PublicationDetails: React.FC<PublicationDetailsProps> = (props) => {
             {/* Summaries arrive as html from most catalogs, so this one field
                 can't go through AboutLink's plain-text description. */}
             <div
-              className="text-sm text-muted-foreground break-words"
+              className="text-sm text-muted-foreground wrap-break-word"
               dangerouslySetInnerHTML={{
                 __html: sanitizer(publication.summary),
               }}

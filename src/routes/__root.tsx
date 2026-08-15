@@ -20,7 +20,7 @@ export const Root: React.FC = () => {
       <Toaster closeButton />
       <TopBar />
       <NavigationMenu />
-      <main className="flex-grow p-1 overflow-auto pt-16">
+      <main className="grow p-1 overflow-auto pt-16">
         <Outlet />
       </main>
       <TocMenu />
