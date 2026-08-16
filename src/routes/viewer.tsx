@@ -12,6 +12,14 @@ import {
 } from "../store/reducers/documentReducer";
 import { PublicationSourceType } from "../types";
 import { toPublicationSource } from "../lib/publication-source";
+import {
+  beginDownload,
+  cancelDownload,
+  downloadWasCancelled,
+  endDownload,
+} from "../lib/publication-download";
+import useDownloadProgress from "../hooks/useDownloadProgress";
+import DownloadProgress from "../components/DownloadProgress";
 import DragFileContainer from "../components/DragFileContainer";
 import EbookViewer from "../components/EbookViewer";
 import OpenFileButton from "../components/OpenFileButton";
@@ -33,6 +41,7 @@ const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
 export const Viewer: React.FC = () => {
   const { plugins, pluginsLoaded } = usePlugins();
   const { t } = useTranslation();
+  const download = useDownloadProgress();
   const dispatch = useAppDispatch();
   const currentPublication = useAppSelector(
     (state) => state.document.currentPublication
@@ -57,11 +66,19 @@ export const Viewer: React.FC = () => {
     let src: string | Blob = requested;
     let sourceType = PublicationSourceType.Url;
     if (plugin && (await plugin.hasDefined.onGetPublicationSource())) {
-      const publication = await plugin.remote.onGetPublicationSource({
-        source: requested,
-      });
-      src = publication.source;
-      sourceType = sourceTypeToPulicationSourceType(publication.sourceType);
+      // Open around the whole call rather than the fetch inside it: the plugin
+      // decides how many requests a source takes, and the reader is waiting on
+      // all of them.
+      beginDownload(plugin.id);
+      try {
+        const publication = await plugin.remote.onGetPublicationSource({
+          source: requested,
+        });
+        src = publication.source;
+        sourceType = sourceTypeToPulicationSourceType(publication.sourceType);
+      } finally {
+        endDownload();
+      }
     }
 
     // The plugin may hand back the bytes rather than a url, in which case only
@@ -102,6 +119,9 @@ export const Viewer: React.FC = () => {
   const { error } = query;
   React.useEffect(() => {
     if (!error) return;
+    // A cancelled transfer fails like any other, and the reader who cancelled
+    // it does not need to be told the book did not open.
+    if (downloadWasCancelled()) return;
     // Nothing else reports this: the publication never reached redux, so no
     // viewer mounts to fail visibly.
     console.error(error);
@@ -110,7 +130,12 @@ export const Viewer: React.FC = () => {
 
   return (
     <DragFileContainer>
-      <Spinner open={query.isLoading} />
+      {/* The panel takes over from the spinner once there is a number to
+          show, so a long download is not an unexplained wait. */}
+      <Spinner open={query.isLoading && !download} />
+      {download && (
+        <DownloadProgress progress={download} onCancel={cancelDownload} />
+      )}
       {!currentPublication ? (
         <div>
           <OpenFileButton />

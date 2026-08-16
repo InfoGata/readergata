@@ -13,6 +13,8 @@
     "unsupportedFileType": "That file type can't be opened",
     "couldNotOpenPublication": "Could not open publication",
     "couldNotRestorePosition": "Could not restore your last reading position",
+    "downloading": "Downloading publication",
+    "downloadedOf": "{{loaded}} of {{total}}",
     "ebook": "Ebook",
     "submit": "Submit",
     "plugins": "Plugins",

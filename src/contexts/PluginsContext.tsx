@@ -32,6 +32,10 @@ import {
   isAuthorizedDomain,
   hasAuthentication,
 } from "../utils";
+import {
+  downloadSignal,
+  readWithProgress,
+} from "../lib/publication-download";
 import { mapAsync } from "@infogata/utils";
 import ConfirmUpdatePluginDialog from "../components/ConfirmUpdatePluginDialog";
 import {
@@ -199,10 +203,17 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             }
           }
 
-          const directRequest = async () => {
-            const response = await fetch(input, newInit);
+          // Set only while this plugin is fetching a publication for the
+          // viewer, so a feed loading elsewhere is neither counted against the
+          // progress bar nor abortable by the reader's cancel button.
+          const signal = downloadSignal(plugin.id);
 
-            const body = await response.blob();
+          const directRequest = async () => {
+            const response = await fetch(input, { ...newInit, signal });
+
+            const body = signal
+              ? await readWithProgress(response)
+              : await response.blob();
 
             const responseHeaders = Object.fromEntries(
               response.headers.entries()
@@ -223,29 +234,40 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             return result;
           };
 
-          if (hasExtension()) {
+          const viaExtension = async () =>
+            await window.InfoGata.networkRequest(input, newInit, {
+              auth: plugin.manifest?.authentication,
+            });
+
+          // The extension is here to get past CORS, and for a feed that is all
+          // that matters. A publication is different: the extension answers in
+          // one message, so it can report no progress and honour no cancel,
+          // and chrome's messaging refuses it past 64 MiB besides. So a
+          // transfer the reader is watching is fetched directly when it can
+          // be, and the extension becomes the fallback rather than the first
+          // choice.
+          const attempts = !hasExtension()
+            ? [directRequest]
+            : signal
+              ? [directRequest, viaExtension]
+              : [viaExtension, directRequest];
+
+          let firstError: unknown;
+          for (const attempt of attempts) {
             try {
-              return await window.InfoGata.networkRequest(input, newInit, {
-                auth: plugin.manifest?.authentication,
-              });
+              return await attempt();
             } catch (e) {
-              // The extension answers over chrome's messaging, which refuses
-              // anything past 64 MiB -- a limit publications reach and feeds
-              // never do. The extension is only here to get past CORS, so a
-              // host that does not need it can still be read directly.
+              // Cancelling is not a failure to route around -- falling through
+              // here would fetch the whole publication again by another road.
+              if (signal?.aborted) throw e;
               console.error(e);
-              try {
-                return await directRequest();
-              } catch {
-                // The extension's failure is the one worth reporting: a
-                // direct request that CORS refused says nothing about why the
-                // request was routed through the extension to begin with.
-                throw e;
-              }
+              firstError ??= e;
             }
           }
-
-          return await directRequest();
+          // The route that was preferred is the one whose failure explains the
+          // request: a CORS refusal from a fallback says nothing about why the
+          // extension was reached for first.
+          throw firstError;
         },
         isNetworkRequestCorsDisabled: async () => {
           return isCorsDisabled();
