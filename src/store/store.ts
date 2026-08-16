@@ -26,12 +26,32 @@ const persistConfig: IdbPersistConfig = {
   transforms: [publicationSourceTransform],
 };
 
+/**
+ * The immutability check walks state with `for...in`, which reaches accessors
+ * on the prototype -- and a publication's `source` is whatever the file picker
+ * handed over, so in Chrome that includes `File.prototype.lastModifiedDate`,
+ * a deprecated getter that builds a fresh `Date` on every read. Two reads of
+ * an untouched file therefore never compare equal, the check calls it a
+ * mutation, and it *throws*: in dev, every dispatch after a book is opened
+ * dies, starting with the one behind the menu button.
+ *
+ * Declaring blobs immutable is the truthful answer rather than a workaround --
+ * their contents genuinely cannot change -- and it stops the walk at the blob
+ * instead of ignoring one hardcoded path.
+ */
+const isImmutable = (value: unknown) =>
+  typeof value !== "object" ||
+  value === null ||
+  Object.isFrozen(value) ||
+  value instanceof Blob;
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       // Setting to false because it causes a warning when using redux-persist
       serializableCheck: false,
+      immutableCheck: { isImmutable },
     }),
   reducer: persistedReducer,
 });
