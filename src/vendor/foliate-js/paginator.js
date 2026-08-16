@@ -284,6 +284,11 @@ class View {
     }
     render(layout) {
         if (!layout) return
+        // PATCHED by scripts/vendor-foliate.js: a resize can land while the
+        // iframe is still loading, when the document has no body yet and
+        // columnize()/scrolled() would throw. load() renders again once the
+        // document is ready.
+        if (!this.document?.body) return
         this.#column = layout.flow !== 'scrolled'
         this.#layout = layout
         if (this.#column) this.columnize(layout)

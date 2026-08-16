@@ -27,3 +27,7 @@ experimental PDF adapter and its ~10MB vendored pdfjs build are not copied.
 
 `view.js` -- the PDF branch of `makeBook()` throws `UnsupportedTypeError`
 instead of dynamically importing the excluded `pdf.js`.
+
+`paginator.js` -- `View.render()` returns early when the view's iframe has no
+document body yet, instead of throwing out of the Paginator's ResizeObserver
+when a resize lands mid-load.

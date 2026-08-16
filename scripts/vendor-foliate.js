@@ -70,8 +70,37 @@ const PDF_BRANCH_TO = `    // PATCHED by scripts/vendor-foliate.js: PDFs are ren
         throw new UnsupportedTypeError('PDF is not supported by this viewer')
     }`;
 
+// The Paginator's own ResizeObserver reacts to a size change by re-rendering
+// the current view, and `#createView()` publishes `this.#view` and appends its
+// element *before* `view.load()` navigates the iframe. So a resize can land
+// while that iframe is partway through loading the section, holding a document
+// that has a documentElement but not yet a body. `columnize()` styles the
+// documentElement first and then destructures `doc.body.style`, which throws
+// out of the observer callback:
+//
+//   TypeError: Cannot destructure property 'style' of 'el' as it is null
+//
+// Guarding is only a matter of not throwing: every path here already renders
+// again once the document is ready -- `load()` calls `render()` from the
+// iframe's load handler -- so the pass being skipped is one that could not
+// have styled anything anyway. Reported upstream behaviour as of the pinned
+// commit; re-check on the next bump.
+const VIEW_RENDER_FROM = `    render(layout) {
+        if (!layout) return
+        this.#column = layout.flow !== 'scrolled'`;
+
+const VIEW_RENDER_TO = `    render(layout) {
+        if (!layout) return
+        // PATCHED by scripts/vendor-foliate.js: a resize can land while the
+        // iframe is still loading, when the document has no body yet and
+        // columnize()/scrolled() would throw. load() renders again once the
+        // document is ready.
+        if (!this.document?.body) return
+        this.#column = layout.flow !== 'scrolled'`;
+
 const PATCHES = {
   "view.js": [{ from: PDF_BRANCH_FROM, to: PDF_BRANCH_TO }],
+  "paginator.js": [{ from: VIEW_RENDER_FROM, to: VIEW_RENDER_TO }],
 };
 
 /** The sha git would give this content, so we pin bytes and not just a ref. */
@@ -165,6 +194,10 @@ experimental PDF adapter and its ~10MB vendored pdfjs build are not copied.
 
 \`view.js\` -- the PDF branch of \`makeBook()\` throws \`UnsupportedTypeError\`
 instead of dynamically importing the excluded \`pdf.js\`.
+
+\`paginator.js\` -- \`View.render()\` returns early when the view's iframe has no
+document body yet, instead of throwing out of the Paginator's ResizeObserver
+when a resize lands mid-load.
 `;
 
 const collect = async () => {

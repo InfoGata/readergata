@@ -3,7 +3,8 @@
   "sha": "78914aef4466eb960965702401634c2cb348e9b1",
   "generatedBy": "scripts/vendor-foliate.js",
   "patched": [
-    "view.js"
+    "view.js",
+    "paginator.js"
   ],
   "excluded": [
     "pdf.js",

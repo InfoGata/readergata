@@ -101,7 +101,9 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
    `scripts/vendor-foliate.js` — never edit it by hand, and use
    `npm run vendor:foliate -- --check` to verify it still matches. The copy
    excludes foliate's experimental PDF adapter (and its ~10MB vendored pdfjs),
-   so `view.js` carries one patch making the PDF branch throw. It is imported
+   so `view.js` carries a patch making the PDF branch throw; `paginator.js`
+   carries a second one guarding `View.render()` against a resize that lands
+   before the section's iframe has a document body. It is imported
    through the bare `foliate-js/...` specifier, aliased in both `vite.config.ts`
    and `electron.vite.config.ts`, with hand-written types in
    `src/foliate-js.d.ts` — a relative import would fail `tsc`, since `allowJs`
