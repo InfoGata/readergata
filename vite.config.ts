@@ -38,7 +38,11 @@ export default defineConfig({
     tailwindcss(),
     tanstackRouter({ target: "react"}),
     VitePWA({
-      registerType: "prompt",
+      // "autoUpdate" bakes skipWaiting/clientsClaim into the generated sw.js, so a
+      // client stuck on a stale precached index.html recovers on its own. Under
+      // "prompt" the only way to activate a waiting worker was for the page to post
+      // SKIP_WAITING — impossible when the stale build is what failed to boot.
+      registerType: "autoUpdate",
       workbox: {
         navigateFallback: "/",
         navigateFallbackDenylist: [
