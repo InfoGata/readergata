@@ -179,6 +179,11 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
         setView(element);
       } catch (e) {
         console.error(e);
+        // A superseded load fails on the way out -- the cleanup below closes
+        // and removes its element mid-open. Only the current load's failure is
+        // the reader's problem; toasting a stale one reports a book that did
+        // open as broken.
+        if (isStale()) return;
         if (foliate && e instanceof foliate.UnsupportedTypeError) {
           toast.error(t("unsupportedFileType"));
         } else {
