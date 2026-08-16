@@ -72,7 +72,8 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
   const { currentPdf } = props;
   const [numPages, setNumPages] = React.useState<number>();
   const [pageNumber, setPageNumber] = React.useState<number>();
-  const [file, setFile] = React.useState<string | { data: string }>("");
+  // react-pdf takes a url or a Blob; a binary source is already the latter.
+  const [file, setFile] = React.useState<string | Blob>("");
   const [pageText, setPageText] = React.useState<string[]>([]);
   const searchQuery = useAppSelector((state) => state.ui.searchQuery);
   const toc = useAppSelector((state) => state.ui.contents);
@@ -143,7 +144,7 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
         currentPdf &&
         currentPdf.sourceType === PublicationSourceType.Binary
       ) {
-        setFile({ data: currentPdf.source });
+        setFile(currentPdf.source);
       }
     };
     loadPdf();

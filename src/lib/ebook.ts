@@ -118,33 +118,19 @@ export const getFileNameFromUrl = (url: string): string | undefined => {
 };
 
 /**
- * `openFile` in ../utils reads publications with `readAsBinaryString`, so a
- * binary source is a string whose char codes are the bytes. That format is load
- * bearing -- it is hashed with xxhash64 and its `.length` is half of the
- * `[xxhash64+fileSize]` key every saved reading position and bookmark is stored
- * under -- so convert here at open time rather than changing how it is stored.
- */
-export const binaryStringToBytes = (source: string) => {
-  const bytes = new Uint8Array(source.length);
-  for (let i = 0; i < source.length; i++) {
-    bytes[i] = source.charCodeAt(i) & 0xff;
-  }
-  return bytes;
-};
-
-/**
  * foliate-js opens a File or Blob. `blob` is supplied for url sources, which
  * the caller fetches so the CORS-proxy fallback in `getValidUrl` still applies.
+ * A binary source already is the bytes, so it is wrapped rather than copied.
  */
 export const publicationToFile = (ebook: EBook, blob?: Blob): File => {
+  const isBinary = ebook.sourceType === PublicationSourceType.Binary;
   const fileName =
-    ebook.fileName ?? getFileNameFromUrl(ebook.source) ?? "publication.epub";
+    ebook.fileName ??
+    (isBinary ? undefined : getFileNameFromUrl(ebook.source)) ??
+    "publication.epub";
   const type = getMimeTypeForName(fileName) || EBOOK_EXTENSIONS[".epub"];
-  const parts =
-    ebook.sourceType === PublicationSourceType.Binary
-      ? [binaryStringToBytes(ebook.source)]
-      : [blob as Blob];
-  return new File(parts, fileName, { type });
+  const part = isBinary ? ebook.source : (blob as Blob);
+  return new File([part], fileName, { type });
 };
 
 /** Titles and names may be localized maps; take the first entry. */

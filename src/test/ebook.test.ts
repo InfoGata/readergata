@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  binaryStringToBytes,
   DROPZONE_ACCEPT,
   EBOOK_ACCEPTED_MIME_TYPES,
   excerptToText,
@@ -14,6 +13,7 @@ import {
   publicationToFile,
   tocToBookContents,
 } from "@/lib/ebook";
+import { toPublicationSource } from "@/lib/publication-source";
 import { EBook, PublicationSourceType } from "@/types";
 
 describe("getMimeTypeForName", () => {
@@ -144,31 +144,10 @@ describe("getFileNameFromUrl", () => {
   });
 });
 
-describe("binaryStringToBytes", () => {
-  it("round-trips the output of readAsBinaryString", () => {
-    const bytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x00, 0xff]);
-    const binaryString = String.fromCharCode(...bytes);
-    expect(Array.from(binaryStringToBytes(binaryString))).toEqual(
-      Array.from(bytes)
-    );
-  });
-
-  it("preserves the zip magic number foliate sniffs on", () => {
-    const bytes = binaryStringToBytes("PK\x03\x04rest");
-    expect([bytes[0], bytes[1], bytes[2], bytes[3]]).toEqual([
-      0x50, 0x4b, 0x03, 0x04,
-    ]);
-  });
-
-  it("produces an empty array for an empty source", () => {
-    expect(binaryStringToBytes("").length).toBe(0);
-  });
-});
-
 describe("publicationToFile", () => {
   const binary = (source: string, fileName?: string): EBook => ({
     type: "ebook",
-    source,
+    source: toPublicationSource(source),
     sourceType: PublicationSourceType.Binary,
     fileName,
   });

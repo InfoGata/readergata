@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "../store/hooks";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
 import { PublicationSourceType } from "../types";
-import { openFile } from "../utils";
 import { getPublicationTypeForFile } from "../lib/ebook";
 import { setPublication } from "../store/reducers/documentReducer";
 import { useNavigate } from "@tanstack/react-router";
@@ -21,13 +20,12 @@ const useOpenDocument = () => {
       return;
     }
 
-    const data = await openFile(file);
-    if (!data) return;
-
+    // The File is already a Blob, and the bytes never have to be read to open
+    // it -- foliate-js and react-pdf both slice what they need.
     dispatch(
       setPublication({
         type,
-        source: data,
+        source: file,
         sourceType: PublicationSourceType.Binary,
         fileName: file.name,
       })

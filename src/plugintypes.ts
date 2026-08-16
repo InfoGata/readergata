@@ -190,8 +190,14 @@ export type SourceType = "url" | "binary";
 export interface GetPublicationSourceResponse {
   /**
    * Binary data or url for the pdf/epub
+   *
+   * Binary data may be a string of char codes, one per byte, as
+   * `FileReader.readAsBinaryString` produces -- the only form this took
+   * historically. Prefer a `Blob`: it crosses the plugin frame intact under
+   * structured clone, and a string costs two bytes of heap per byte of
+   * publication, which is what large books are lost to.
    */
-  source: string;
+  source: string | Blob;
   /**
    * Whether source is a url or binary data
    * If undefined, source will be treated as binary data

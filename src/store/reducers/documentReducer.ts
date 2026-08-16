@@ -6,7 +6,7 @@ import {
 } from "../../types";
 import { AppThunk } from "../store";
 import { db } from "../../database";
-import { xxhash64 } from "hash-wasm";
+import { hashPublicationSource } from "../../lib/publication-source";
 import { getDocumentData } from "../../utils";
 
 interface DocumentState {
@@ -46,7 +46,7 @@ const ensureDocumentDataExists = async (
           id,
           bookmarks: [],
           xxhash64: publication.hash,
-          fileSize: publication.source.length,
+          fileSize: publication.source.size,
           fileName: publication.fileName,
         };
         await db.documentData.add(documentData);
@@ -69,8 +69,7 @@ export const setPublication =
   (publication: PublicationType): AppThunk =>
   async (dispatch) => {
     if (publication.sourceType === PublicationSourceType.Binary) {
-      const hash = await xxhash64(publication.source);
-      publication.hash = hash;
+      publication.hash = await hashPublicationSource(publication.source);
     }
     const documentData = await ensureDocumentDataExists(publication);
     dispatch(documentSlice.actions.setPublication(publication));

@@ -76,20 +76,38 @@ export enum PublicationSourceType {
   Binary,
 }
 
-export interface Publication {
+interface UrlSource {
+  sourceType: PublicationSourceType.Url;
   source: string;
-  sourceType: PublicationSourceType;
+}
+
+/**
+ * The bytes themselves, as a `Blob` rather than the string of char codes the
+ * plugin interface speaks in. A publication is as large as the reader's
+ * library allows -- 650 MB epubs exist on archive.org -- and a js string costs
+ * two bytes of heap per byte of file, on top of the copy it is decoded from.
+ * A `Blob` is a handle: it survives the plugin boundary, `redux-persist` and
+ * `URL.createObjectURL` without the bytes ever entering the heap.
+ */
+interface BinarySource {
+  sourceType: PublicationSourceType.Binary;
+  source: Blob;
   hash?: string;
+}
+
+export type PublicationSourceData = UrlSource | BinarySource;
+
+export type Publication = PublicationSourceData & {
   fileName?: string;
-}
+};
 
-export interface EBook extends Publication {
+export type EBook = Publication & {
   type: "ebook";
-}
+};
 
-export interface Pdf extends Publication {
+export type Pdf = Publication & {
   type: "pdf";
-}
+};
 
 export type PublicationType = EBook | Pdf;
 

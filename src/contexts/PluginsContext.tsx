@@ -199,33 +199,53 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             }
           }
 
-          if (hasExtension()) {
-            return await window.InfoGata.networkRequest(input, newInit, {
-              auth: plugin.manifest?.authentication,
-            });
-          }
+          const directRequest = async () => {
+            const response = await fetch(input, newInit);
 
-          const response = await fetch(input, newInit);
+            const body = await response.blob();
 
-          const body = await response.blob();
+            const responseHeaders = Object.fromEntries(
+              response.headers.entries()
+            );
 
-          const responseHeaders = Object.fromEntries(
-            response.headers.entries()
-          );
+            // Remove forbidden header
+            if (responseHeaders["set-cookie"]) {
+              delete responseHeaders["set-cookie"];
+            }
 
-          // Remove forbidden header
-          if (responseHeaders["set-cookie"]) {
-            delete responseHeaders["set-cookie"];
-          }
-
-          const result = {
-            body: body,
-            headers: responseHeaders,
-            status: response.status,
-            statusText: response.statusText,
-            url: response.url,
+            const result = {
+              body: body,
+              headers: responseHeaders,
+              status: response.status,
+              statusText: response.statusText,
+              url: response.url,
+            };
+            return result;
           };
-          return result;
+
+          if (hasExtension()) {
+            try {
+              return await window.InfoGata.networkRequest(input, newInit, {
+                auth: plugin.manifest?.authentication,
+              });
+            } catch (e) {
+              // The extension answers over chrome's messaging, which refuses
+              // anything past 64 MiB -- a limit publications reach and feeds
+              // never do. The extension is only here to get past CORS, so a
+              // host that does not need it can still be read directly.
+              console.error(e);
+              try {
+                return await directRequest();
+              } catch {
+                // The extension's failure is the one worth reporting: a
+                // direct request that CORS refused says nothing about why the
+                // request was routed through the extension to begin with.
+                throw e;
+              }
+            }
+          }
+
+          return await directRequest();
         },
         isNetworkRequestCorsDisabled: async () => {
           return isCorsDisabled();

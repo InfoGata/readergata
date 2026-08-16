@@ -23,7 +23,7 @@ export const getDocumentData = (publication?: PublicationType) => {
         if (publication.hash) {
           return table
             .where(["xxhash64", "fileSize"])
-            .equals([publication.hash, publication.source.length]);
+            .equals([publication.hash, publication.source.size]);
         }
     }
   }
@@ -208,17 +208,6 @@ export const getValidUrl = async (url: string, mimeType: string | string[]) => {
     }
   }
   return null;
-};
-
-export const openFile = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (res) => {
-      resolve(res.target?.result as string);
-    };
-    reader.onerror = (err) => reject(err);
-    reader.readAsBinaryString(file);
-  });
 };
 
 export const getPluginSubdomain = (id?: string): string => {

@@ -10,7 +10,8 @@ import {
   clearPublication,
   setPublication,
 } from "../store/reducers/documentReducer";
-import { EBook, PublicationSourceType } from "../types";
+import { PublicationSourceType } from "../types";
+import { toPublicationSource } from "../lib/publication-source";
 import DragFileContainer from "../components/DragFileContainer";
 import EbookViewer from "../components/EbookViewer";
 import OpenFileButton from "../components/OpenFileButton";
@@ -52,41 +53,37 @@ export const Viewer: React.FC = () => {
     // previously opened book, which reads as if the wrong book had opened.
     dispatch(clearPublication());
 
-    let src = decodeURIComponent(source);
+    const requested = decodeURIComponent(source);
+    let src: string | Blob = requested;
     let sourceType = PublicationSourceType.Url;
     if (plugin && (await plugin.hasDefined.onGetPublicationSource())) {
       const publication = await plugin.remote.onGetPublicationSource({
-        source: src,
+        source: requested,
       });
       src = publication.source;
       sourceType = sourceTypeToPulicationSourceType(publication.sourceType);
     }
 
-    // The plugin may hand back binary data rather than a url, in which case
-    // neither of these parses and fileName stays undefined. It is worth
-    // deriving where possible: foliate-js sniffs zip-based formats from the
-    // file name, and comic archives take their title from it.
+    // The plugin may hand back the bytes rather than a url, in which case only
+    // the source token is left to read a name off. It is worth deriving where
+    // possible: foliate-js sniffs zip-based formats from the file name, and
+    // comic archives take their title from it.
     const fileName =
-      getFileNameFromUrl(src) ?? getFileNameFromUrl(decodeURIComponent(source));
+      (typeof src === "string" ? getFileNameFromUrl(src) : undefined) ??
+      getFileNameFromUrl(requested);
 
-    if (type && type.includes("pdf")) {
-      dispatch(
-        setPublication({
-          type: "pdf",
-          source: src,
-          sourceType: sourceType,
-          fileName,
-        })
-      );
-    } else {
-      const book: EBook = {
-        type: "ebook",
-        source: src,
-        sourceType: sourceType,
-        fileName,
-      };
-      dispatch(setPublication(book));
-    }
+    const publication =
+      sourceType === PublicationSourceType.Binary
+        ? { source: toPublicationSource(src), sourceType, fileName }
+        : { source: src as string, sourceType, fileName };
+
+    dispatch(
+      setPublication(
+        type && type.includes("pdf")
+          ? { type: "pdf", ...publication }
+          : { type: "ebook", ...publication }
+      )
+    );
     return source;
   };
 
