@@ -11,7 +11,7 @@
     "@capacitor/core": "^8.2.0",
     "@capacitor/keyboard": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
-    "@infogata/extension-components": "^0.1.0",
+    "@infogata/extension-components": "^0.1.1",
     "@infogata/shadcn-vite-theme-provider": "0.1.0",
     "@infogata/utils": "^0.1.2",
     "@piotr-cz/redux-persist-idb-storage": "^1.1.3",
