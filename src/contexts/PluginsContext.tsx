@@ -6,6 +6,7 @@ import semverValid from "semver/functions/parse";
 import { toast } from "sonner";
 import { db } from "../database";
 import { defaultPlugins } from "../default-plugins";
+import { useExtension } from "../hooks/useExtension";
 import {
   Feed,
   GetFeedRequest,
@@ -116,6 +117,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
   const [pluginsFailed, setPluginsFailed] = React.useState(false);
   const dispatch = useAppDispatch();
+  const { extensionDetected } = useExtension();
   const [pluginFrames, setPluginFrames] = React.useState<
     PluginFrameContainer[]
   >([]);
@@ -639,7 +641,9 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     };
 
     registerRedirects();
-  }, [pluginsLoaded, pluginFrames]);
+    // extensionDetected is a dependency so this retries once the extension
+    // injects window.InfoGata, which can happen after the app has rendered.
+  }, [pluginsLoaded, pluginFrames, extensionDetected]);
 
   const deletePlugin = async (pluginFrame: PluginFrameContainer) => {
     await db.plugins.delete(pluginFrame.id || "");

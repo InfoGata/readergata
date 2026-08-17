@@ -2,11 +2,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { PluginDescription, defaultPlugins } from "../../default-plugins";
 import usePlugins from "../../hooks/usePlugins";
+import { useCorsDisabled } from "../../hooks/useCorsDisabled";
 import {
   generatePluginId,
   getFileTypeFromPluginUrl,
   getPlugin,
-  isCorsDisabled,
 } from "../../utils";
 import Spinner from "../Spinner";
 import PluginCard from "./PluginCard";
@@ -18,6 +18,7 @@ const PluginCards: React.FC = () => {
   const { plugins, addPlugin, pluginsLoaded, preinstallComplete } =
     usePlugins();
   const [backdropOpen, setBackdropOpen] = React.useState(false);
+  const corsDisabled = useCorsDisabled();
   const navigate = useNavigate();
 
   const onAddPlugin = async (description: PluginDescription) => {
@@ -42,7 +43,7 @@ const PluginCards: React.FC = () => {
       (dp) =>
         !plugins.some((p) => dp.id === p.id) &&
         (preinstallComplete || !dp.preinstall) &&
-        (!dp.requiresCorsDisabled || isCorsDisabled())
+        (!dp.requiresCorsDisabled || corsDisabled)
     )
     .map((dp) => (
       <PluginCard addPlugin={onAddPlugin} plugin={dp} key={dp.id} />
