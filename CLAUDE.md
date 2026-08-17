@@ -39,6 +39,13 @@ npm run electron:build
 npm run electron:start
 ```
 
+Since Electron 42 the `electron` package no longer downloads its binary from a
+postinstall script — that was dropped to keep an install from executing one.
+A fresh `npm install` therefore leaves `node_modules/electron` with no `dist/`
+and no `path.txt`, and the ~300MB binary is fetched on first run instead. That
+first run is just slow, not broken, but somewhere offline or in CI it fails; run
+`npx install-electron` to fetch it up front.
+
 ## Project Architecture
 
 ReaderGata is a plugin-based reading application for ebooks and PDFs, built with React, Redux, and TypeScript.
