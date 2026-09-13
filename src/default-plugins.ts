@@ -28,6 +28,11 @@ export const defaultPlugins: PluginDescription[] = [
     name: "Plugin for HumbleBundle",
     description: "Get books from Humble Bundle",
     url: "https://cdn.jsdelivr.net/gh/InfoGata/humblebundle-readergata@latest/manifest.json",
+    // The library only exists signed in: signed out, the plugin's proxied
+    // request carries no session and answers an empty list. Signing in goes
+    // through the extension's login window, so a plain browser tab could
+    // install this and never see a single book.
+    requiresCorsDisabled: true,
   },
   {
     id: "tJlCCR6lCfx7XeU_9LQum",
