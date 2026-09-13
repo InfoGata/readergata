@@ -528,6 +528,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     const checkUpdate = async () => {
       if (pluginsLoaded && !disableAutoUpdatePlugins && !hasUpdated.current) {
         hasUpdated.current = true;
+        const updated: string[] = [];
         await mapAsync(pluginFrames, async (p) => {
           if (!isMountedRef.current) return;
           if (p.manifestUrl) {
@@ -559,15 +560,34 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
                   // url it fetched from when a manifest names no updateUrl, so
                   // a plugin that says nothing keeps the channel it had.
                   await updatePlugin(newPlugin, p.id);
+                  updated.push(
+                    t("pluginUpdated", {
+                      name: newPlugin.name || p.name || p.id,
+                      version: manifest.version,
+                    })
+                  );
                 }
               }
             }
           }
         });
+
+        if (updated.length === 0) return;
+        // Logged as well as shown: plugin code changing underneath someone is
+        // worth being able to find afterwards, and a toast is easy to miss or
+        // to land while the tab is in the background.
+        console.info("[plugins] Updated:", updated.join(", "));
+        if (updated.length === 1) {
+          toast.message(updated[0]);
+        } else {
+          toast.message(t("pluginsUpdated", { count: updated.length }), {
+            description: updated.join(", "),
+          });
+        }
       }
     };
     checkUpdate();
-  }, [pluginsLoaded, pluginFrames, disableAutoUpdatePlugins, updatePlugin]);
+  }, [pluginsLoaded, pluginFrames, disableAutoUpdatePlugins, updatePlugin, t]);
 
   // Auto-poll localhost plugins for changes during development
   const updatePluginRef = React.useRef(updatePlugin);
