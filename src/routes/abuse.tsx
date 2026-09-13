@@ -37,10 +37,9 @@ const Abuse: React.FC = () => {
           ReaderGata is a reader. When you browse a source, the plugin for it
           fetches from that source directly, from your device. What the app
           keeps — the book you’re reading, your positions and bookmarks — stays
-          in your browser on that device, not with us. Some
-          requests pass through a CORS relay we run, which forwards each
-          response as it arrives and keeps no copy. That limit is what shapes
-          everything below.
+          in your browser on that device, not with us. Some requests pass
+          through CORS relays we run, which forward each response as it
+          arrives and keep no copy. That limit is what shapes everything below.
         </p>
       </div>
 
@@ -63,7 +62,7 @@ const Abuse: React.FC = () => {
             </li>
             <li>
               <strong className="text-foreground">
-                The app, this site and the relay.
+                The app, this site and the relays.
               </strong>{" "}
               Anything we actually run.
             </li>

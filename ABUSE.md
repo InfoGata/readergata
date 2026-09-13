@@ -5,9 +5,10 @@ source, the plugin for it fetches from that source directly, from your own
 device. What the app keeps — the book you're reading, your reading positions
 and bookmarks — stays in your browser's storage on that device, not with us.
 
-The one exception is a CORS relay we run for requests a browser would otherwise
-refuse to make across sites. It forwards each response as it arrives and keeps
-no copy, so it gives us nothing to take down either.
+The one exception is the CORS relays we run, used by the app and some of our
+plugins for requests a browser would otherwise refuse to make across sites.
+They forward each response as it arrives and keep no copy, so they give us
+nothing to take down either.
 
 That shapes what a report to us can and can't achieve, so it's worth being
 direct about it before you write one.
@@ -20,7 +21,7 @@ direct about it before you write one.
 - **Plugins we publish.** The plugins under the
   [InfoGata](https://github.com/InfoGata) organization are ours, and we can
   change or withdraw them.
-- **The app, this site and the relay.** Anything we actually run.
+- **The app, this site and the relays.** Anything we actually run.
 
 ## What we can't act on
 
