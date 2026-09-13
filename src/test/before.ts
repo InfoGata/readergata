@@ -1,4 +1,11 @@
-import { configure } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
+import { afterEach } from "vitest";
+
+// Vitest globals are off, so testing-library never registers its automatic
+// cleanup. Without it a file's last render stays mounted past the end of the
+// file, and React's scheduled work can run against a torn-down JSDOM. Here
+// rather than per file so a new test can't reintroduce it.
+afterEach(cleanup);
 
 // Every component test mounts the whole app shell through
 // `renderWithProviders` -- router, plugins, extension and query providers --

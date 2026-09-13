@@ -121,7 +121,16 @@ const fetchOk = async (url, init) => {
 const getTree = async () => {
   const response = await fetchOk(
     `https://api.github.com/repos/${REPO}/git/trees/${SHA}?recursive=1`,
-    { headers: { Accept: "application/vnd.github+json" } }
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        // Unauthenticated calls share a 60/hour limit per IP, which a CI
+        // runner's address can already have spent. Used when CI provides one.
+        ...(process.env.GITHUB_TOKEN && {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        }),
+      },
+    }
   );
   const { tree, truncated } = await response.json();
   if (truncated) throw new Error("GitHub returned a truncated tree");
