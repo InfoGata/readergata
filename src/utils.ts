@@ -130,7 +130,17 @@ export async function getFileText(
     const encodedName = encodeURIComponent(name);
     const newUrl = fileType.url.url.replace("manifest.json", encodedName);
     try {
-      const result = await fetch(newUrl, { headers: fileType.url.headers });
+      // Revalidate rather than trust the browser's copy. jsdelivr serves the
+      // mutable @latest refs with `max-age=604800`, so a plain fetch can answer
+      // an update check with a manifest from a week ago, and purging the CDN
+      // can't reach the reader's own cache. "no-cache" revalidates rather than
+      // refetches: an unchanged file is a 304 with no body. The manifest and
+      // the script it names are separate cache entries, so both need it or a
+      // version can be paired with code that isn't it.
+      const result = await fetch(newUrl, {
+        headers: fileType.url.headers,
+        cache: "no-cache",
+      });
       return await result.text();
     } catch {
       if (!suppressErrors) {

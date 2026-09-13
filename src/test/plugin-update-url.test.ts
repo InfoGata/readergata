@@ -26,6 +26,22 @@ const serve = (body: object) =>
 
 afterEach(() => vi.unstubAllGlobals());
 
+describe("fetching plugin files", () => {
+  it("revalidates instead of trusting a cached copy", async () => {
+    serve(manifest());
+
+    await getPlugin(getFileTypeFromPluginUrl(INSTALLED_FROM));
+
+    const calls = vi.mocked(globalThis.fetch).mock.calls;
+    expect(calls.length).toBeGreaterThan(1);
+    // The manifest and the script are separate cache entries; both have to be
+    // fresh or a version can be paired with code that isn't it.
+    for (const [, init] of calls) {
+      expect(init?.cache).toBe("no-cache");
+    }
+  });
+});
+
 describe("where the next update is fetched from", () => {
   it("takes the url the new manifest asks for", async () => {
     // This is what lets a plugin be moved to another host.
