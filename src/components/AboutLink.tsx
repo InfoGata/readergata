@@ -29,7 +29,7 @@ const AboutLink: React.FC<AboutLinkProps> = (props) => {
     }
     if (action) {
       return (
-        <button className="w-full" onClick={action}>
+        <button className="w-full text-left" onClick={action}>
           {props.children}
         </button>
       );

@@ -5,6 +5,7 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
+import { buildInfoDefine } from "./build-info";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +16,8 @@ export default defineConfig({
   legacy: {
     inconsistentCjsInterop: true,
   },
+  // Version and commit, so a bug report can name the build it came from.
+  define: buildInfoDefine(),
   test: {
     environment: "jsdom",
     setupFiles: ["fake-indexeddb/auto", "src/test/before.ts"],

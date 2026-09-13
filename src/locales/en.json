@@ -69,7 +69,10 @@
     "tryAgain": "Try again",
     "resetAppData": "Reset app data",
     "resetAppDataConfirm": "This removes your installed plugins, saved logins, library, reading positions, bookmarks and settings, then reloads. It can't be undone.",
-    "showDetails": "Details"
+    "showDetails": "Details",
+    "version": "Version",
+    "buildDetailsCopied": "Build details copied",
+    "buildDetailsCopyFailed": "Couldn't copy the build details"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
