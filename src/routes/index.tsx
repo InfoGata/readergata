@@ -5,7 +5,7 @@ import PluginCards from "@/components/PluginCards/PluginCards";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 
-export const Index: React.FC = () => {
+const Index: React.FC = () => {
   return (
     <DragFileContainer>
       <ExtensionBanner />

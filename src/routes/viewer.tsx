@@ -38,7 +38,7 @@ const sourceTypeToPulicationSourceType = (sourceType?: SourceType) => {
   return PublicationSourceType.Binary;
 };
 
-export const Viewer: React.FC = () => {
+const Viewer: React.FC = () => {
   const { plugins, pluginsLoaded } = usePlugins();
   const { t } = useTranslation();
   const download = useDownloadProgress();

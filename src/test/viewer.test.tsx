@@ -3,7 +3,11 @@ import { cleanup, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import i18next from "../i18n";
 import { renderWithProviders } from "./renderWithProviders";
-import { Viewer } from "@/routes/viewer";
+import { Route } from "@/routes/viewer";
+
+// Reached through the route rather than exported: autoCodeSplitting can only
+// move a route component into its own chunk when nothing else imports it.
+const Viewer = Route.options.component!;
 
 describe("Viewer", () => {
   afterEach(() => {
