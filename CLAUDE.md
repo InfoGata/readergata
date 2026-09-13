@@ -67,9 +67,24 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
    - Redux for state management with redux-persist for persistence
    - Three main slices: document, settings, and UI
 
+   **Boot**: `src/main.tsx` is only a bootstrap; the app root is `src/app.tsx`.
+   The split exists for "Reset app data" in `AppErrorBoundary`: the reset runs
+   on the next boot, and `deleteDatabase` blocks while any connection is open.
+   redux-persist uses IndexedDB (`keyval-store`) and opens it as soon as
+   `store/store.ts` is *imported*, and static imports all run before a
+   top-level await — so the reset must finish before `app.tsx` is dynamically
+   imported. Don't statically import the store or database into `main.tsx`, and
+   keep `APP_DATABASES` in `src/lib/reset-app-data.ts` in step with any new
+   database.
+
 3. **Routing**
    - Uses Tanstack Router (formerly React Router)
    - Route tree generated in `routeTree.gen.ts`
+   - `autoCodeSplitting` gives each route its own chunk; `tanstackRouter()` must
+     stay before `react()` in `vite.config.ts`. **Don't export a route's
+     component** — the splitter leaves an exported component in the shell, which
+     is how pdfjs ended up loading on every page. Tests reach one through
+     `Route.options.component`.
 
    **Plugin URL aliases**:
    - Plugin content lives at `/s/<alias>/feed`; `/plugins` is management only
@@ -118,6 +133,21 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
 
 5. **Internationalization**
    - Uses i18next for translations
+
+6. **PWA and build identity**
+   - `vite-plugin-pwa` (web build only) precaches every chunk plus
+     `public/pdf.worker.mjs` — `.mjs` isn't in workbox's default patterns, and
+     `maximumFileSizeToCacheInBytes` sits above the ~1.9MB worker because
+     workbox drops an oversized file with only a warning. `navigateFallback`
+     must be `/index.html` (the precache key), not `/`, or every offline deep
+     link fails. The `.html` denylist keeps `pluginframe.html` and `ui.html`
+     from being answered with the app shell.
+   - `package.json` is the only place the version lives. `build-info.ts` stamps
+     it and `git describe` into both vite configs, `android/app/build.gradle`
+     derives `versionCode` from it, and the About page shows it.
+   - Analytics: PostHog is mounted only when `VITE_PUBLIC_POSTHOG_KEY` is set
+     (`AnalyticsProvider`), and `AnalyticsPreference` applies
+     `settings.disableAnalytics` with Do Not Track as a veto.
 
 ### Key Subsystems
 
