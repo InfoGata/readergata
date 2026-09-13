@@ -11,7 +11,8 @@ import Router from "./router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PluginsProvider } from "./contexts/PluginsContext";
 import { ExtensionProvider } from "./contexts/ExtensionContext";
-import { PostHogProvider } from "posthog-js/react";
+import AnalyticsProvider from "./components/AnalyticsProvider";
+import AnalyticsPreference from "./components/AnalyticsPreference";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 
 // Only ever imported by main.tsx, after any pending data reset has run — see
@@ -34,17 +35,12 @@ root.render(
     {/* Outermost on purpose: everything below can throw during first render,
         and the router's own error component only covers routes. */}
     <AppErrorBoundary>
-      <PostHogProvider
-        apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-        options={{
-          api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-          defaults: '2025-05-24',
-          capture_exceptions: true,
-          cookieless_mode: "always",
-        }}
-      >
+      <AnalyticsProvider>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
+            {/* Inside PersistGate so it acts on the remembered choice rather
+                than the default, and inside the provider so there is a client. */}
+            <AnalyticsPreference />
             <ThemeProvider defaultTheme="light">
               <ExtensionProvider>
                 <IconContext.Provider value={{ className: "size-5" }}>
@@ -58,7 +54,7 @@ root.render(
             </ThemeProvider>
           </PersistGate>
         </Provider>
-      </PostHogProvider>
+      </AnalyticsProvider>
     </AppErrorBoundary>
   </React.StrictMode>
 );

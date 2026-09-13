@@ -3,6 +3,7 @@ import React from "react";
 import DisableAutoUpdateSetting from "../components/Settings/DisableAutoUpdateSetting";
 import UpdateCorsSetting from "../components/Settings/UpdateCorsSetting";
 import ThemeChangeSetting from "../components/Settings/ThemeChangeSetting";
+import AnalyticsSetting from "../components/Settings/AnalyticsSetting";
 
 const Settings: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ const Settings: React.FC = () => {
       <DisableAutoUpdateSetting />
       <UpdateCorsSetting />
       <ThemeChangeSetting />
+      <AnalyticsSetting />
     </div>
   );
 };

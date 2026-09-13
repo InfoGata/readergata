@@ -129,7 +129,11 @@
     "corsProxy": "Cors Proxy Url",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "analytics": "Anonymous usage analytics",
+    "analyticsDescription": "Cookieless usage data that shows which parts of the app get used and what breaks. Nothing that identifies you.",
+    "analyticsDoNotTrack": "Your browser sends Do Not Track, so nothing is collected regardless of this setting.",
+    "analyticsPrivacyLink": "What's collected"
   },
   "library": {
     "browseSources": "Browse Sources",
