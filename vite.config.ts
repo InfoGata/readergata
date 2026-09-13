@@ -57,12 +57,15 @@ export default defineConfig({
         // The default patterns skip `.mjs`, which left public/pdf.worker.mjs
         // out of the precache: ebooks opened offline and PDFs didn't.
         globPatterns: ["**/*.{js,mjs,css,html,wasm}"],
-        // Set above the current build rather than to it. Both the pdf worker
-        // (~1.9MB) and the entry chunk sit just under workbox's 2MiB default,
-        // and workbox drops an oversized asset with only a warning -- so the
-        // first build to cross it would install and then fail offline.
+        // Set above the current build rather than to it. The pdf worker
+        // (~1.9MB) sits just under workbox's 2MiB default, and workbox drops an
+        // oversized asset with only a warning -- so an upgrade that crossed it
+        // would install and then fail offline.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        navigateFallback: "/",
+        // The precached shell is keyed as index.html. "/" is not a precache
+        // entry, so a fallback bound to it had nothing to serve: `/` itself
+        // loaded offline, but every deep link failed to the browser error page.
+        navigateFallback: "/index.html",
         // public/ holds real pages the app shell must never answer for:
         // pluginframe.html is the iframe every plugin runs in, ui.html backs
         // the plugin options screen.
