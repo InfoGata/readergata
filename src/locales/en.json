@@ -63,7 +63,13 @@
     "acquisitionBorrow": "Borrow",
     "acquisitionBuy": "Buy",
     "acquisitionSample": "Sample",
-    "acquisitionSubscribe": "Subscribe"
+    "acquisitionSubscribe": "Subscribe",
+    "appCrashTitle": "ReaderGata couldn't start",
+    "appCrashDescription": "Something went wrong before the app finished loading. Trying again is usually enough; if it keeps happening, resetting removes the stored data that's most likely causing it.",
+    "tryAgain": "Try again",
+    "resetAppData": "Reset app data",
+    "resetAppDataConfirm": "This removes your installed plugins, saved logins, library, reading positions, bookmarks and settings, then reloads. It can't be undone.",
+    "showDetails": "Details"
   },
   "plugins": {
     "addPlugin_one": "Add Plugin",
