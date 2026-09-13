@@ -44,12 +44,19 @@ export default defineConfig({
       // SKIP_WAITING — impossible when the stale build is what failed to boot.
       registerType: "autoUpdate",
       workbox: {
+        // The default patterns skip `.mjs`, which left public/pdf.worker.mjs
+        // out of the precache: ebooks opened offline and PDFs didn't.
+        globPatterns: ["**/*.{js,mjs,css,html,wasm}"],
+        // Set above the current build rather than to it. Both the pdf worker
+        // (~1.9MB) and the entry chunk sit just under workbox's 2MiB default,
+        // and workbox drops an oversized asset with only a warning -- so the
+        // first build to cross it would install and then fail offline.
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         navigateFallback: "/",
-        navigateFallbackDenylist: [
-          /\.html$/,
-          /\.html\?/,
-          /login_popup\.html/,
-        ],
+        // public/ holds real pages the app shell must never answer for:
+        // pluginframe.html is the iframe every plugin runs in, ui.html backs
+        // the plugin options screen.
+        navigateFallbackDenylist: [/\.html$/, /\.html\?/],
       },
       manifest: {
         short_name: "ReaderGata",
