@@ -4,6 +4,8 @@ on:
   push:
     branches: [master]
   pull_request:
+  # Re-run on demand, e.g. to check master again without pushing a commit.
+  workflow_dispatch:
 
 # Nothing here writes to the repo; a fork's pull request gets a read-only token.
 permissions:
