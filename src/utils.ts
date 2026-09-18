@@ -12,6 +12,7 @@ import {
   PublicationType,
 } from "./types";
 import semverGte from "semver/functions/gte";
+import { hasExtension } from "@infogata/extension-components";
 
 export const getDocumentData = (publication?: PublicationType) => {
   if (publication) {
@@ -174,9 +175,11 @@ const proxy = import.meta.env.PROD
   ? "https://cloudcors-readergata.audio-pwa.workers.dev?url="
   : "http://localhost:36325/";
 
-export const hasExtension = () => {
-  return typeof window !== "undefined" && typeof window.InfoGata !== "undefined";
-};
+// Re-exported so the rest of the app keeps importing detection from one place.
+// The shared version also honours `?noextension`, which makes the app behave as
+// if the extension were not installed -- the only way to exercise that path in
+// a browser that has it.
+export { hasExtension };
 
 export const isCorsDisabled = () => {
   return hasExtension() || isElectron() || Capacitor.isNativePlatform();

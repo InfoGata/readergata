@@ -23,6 +23,14 @@ npm test
 npm run lint
 ```
 
+Plugins take a different path depending on whether the InfoGata extension is
+present: with it they fetch directly, without it they go through whatever proxy
+the plugin falls back to. Load any page with `?noextension` to take the second
+path in a browser that has the extension installed -- `hasExtension` comes from
+`@infogata/extension-components` and reports the extension as absent for that
+tab until `?noextension=0`. Removing the origin from the extension's own list is
+the only other way, and it affects every app.
+
 Ports are unique per app in `~/projects/webapps` and `strictPort` is on, so a
 collision fails instead of drifting: dev 3004, preview 4004, electron renderer 5004.
 
