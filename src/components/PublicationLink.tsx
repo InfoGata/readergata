@@ -2,6 +2,7 @@ import React from "react";
 import { Publication } from "../plugintypes";
 import { searchThumbnailSize } from "../utils";
 import AboutLink from "./AboutLink";
+import PublicationSourceButton from "./PublicationSourceButton";
 import { getThumbnailImage } from "@infogata/utils";
 
 interface PublicationLinkProps {
@@ -25,15 +26,29 @@ const PublicationLink: React.FC<PublicationLinkProps> = (props) => {
   const description = publication.authors?.map((a) => a.name).join(", ");
 
   // Without an apiId there is no url to point at, and a plugin that sets no
-  // pluginId hasn't come through onGetFeed. Either way the row still lists the
-  // publication, it just doesn't lead anywhere.
+  // pluginId hasn't come through onGetFeed. Either way the row can't lead to a
+  // page, so it offers the downloads itself — otherwise a catalog whose
+  // entries don't link to themselves would list books nobody can open.
   if (!publication.apiId || !publication.pluginId) {
     return (
-      <AboutLink
-        title={publication.title}
-        description={description}
-        avatarSrc={icon}
-      />
+      <div>
+        <AboutLink
+          title={publication.title}
+          description={description}
+          avatarSrc={icon}
+        />
+        {!!publication.sources?.length && (
+          <div className="flex flex-wrap gap-2 pb-2 pl-4">
+            {publication.sources.map((s, i) => (
+              <PublicationSourceButton
+                key={i}
+                source={s}
+                pluginId={publication.pluginId}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     );
   }
 
