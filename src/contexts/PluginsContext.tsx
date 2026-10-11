@@ -1,3 +1,5 @@
+import { Capacitor } from "@capacitor/core";
+import { nativeNetworkRequest } from "@/lib/native-http";
 import { PluginInterface, PluginFrame } from "plugin-frame";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -35,6 +37,7 @@ import {
 } from "../utils";
 import {
   downloadSignal,
+  reportDownloadProgress,
   readWithProgress,
 } from "../lib/publication-download";
 import { mapAsync } from "@infogata/utils";
@@ -211,6 +214,22 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           const signal = downloadSignal(plugin.id);
 
           const directRequest = async () => {
+            if (Capacitor.isNativePlatform()) {
+              const result = await nativeNetworkRequest(input, {
+                ...newInit,
+                signal,
+              });
+              if (result) {
+                delete result.headers["set-cookie"];
+                // Native answers in one message, so there is no progress to
+                // count until it is all here.
+                if (signal) {
+                  const loaded = result.body.size;
+                  reportDownloadProgress({ loaded, total: loaded }, true);
+                }
+                return result;
+              }
+            }
             const response = await fetch(input, { ...newInit, signal });
 
             const body = signal
