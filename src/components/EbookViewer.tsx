@@ -313,7 +313,7 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
         >
           <FaChevronLeft />
         </Button>
-        <div ref={containerRef} className="absolute top-10 w-screen h-[90vh]" />
+        <div ref={containerRef} className="absolute top-[calc(2.5rem+env(safe-area-inset-top))] w-screen h-[calc(90vh-env(safe-area-inset-top)-env(safe-area-inset-bottom))]" />
         <Button
           onClick={onNext}
           variant="ghost"
