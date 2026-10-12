@@ -9,6 +9,7 @@
     "@capacitor/android": "^8.2.0",
     "@capacitor/app": "^8.0.1",
     "@capacitor/core": "^8.2.0",
+    "@capacitor/ios": "^8.5.3",
     "@capacitor/keyboard": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
     "@infogata/extension-components": "^0.2.0",
@@ -71,7 +72,8 @@
     "electron:start": "electron-vite preview",
     "electron:dev": "electron-vite dev",
     "electron:build": "electron-vite build",
-    "android": "npm run build && cap run android"
+    "android": "npm run build && cap run android",
+    "ios": "npm run build && cap run ios"
   },
   "browserslist": {
     "production": [

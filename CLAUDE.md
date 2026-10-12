@@ -54,6 +54,23 @@ and no `path.txt`, and the ~300MB binary is fetched on first run instead. That
 first run is just slow, not broken, but somewhere offline or in CI it fails; run
 `npx install-electron` to fetch it up front.
 
+### iOS
+
+```bash
+# Build and run on a simulator/device (macOS only)
+npm run ios
+```
+
+iOS needs Xcode, so it is built on the Mac mini (`ssh mac`; its node comes from
+nvm, so use a login shell: `zsh -lc`). Its checkout is
+`~/projects/webapps/readergata`. The project uses Swift Package Manager, not
+CocoaPods: `cap sync` writes `ios/App/CapApp-SPM/Package.swift`, and the
+resolved versions are pinned in `Package.resolved`. The iOS WebView's origin is
+`capacitor://localhost`, which `vercel.json`'s `frame-ancestors` has to allow or
+every plugin frame is refused. `viewport-fit=cover` lets the page run under the
+status bar and home indicator, so anything fixed to an edge pads by
+`env(safe-area-inset-*)`, which is 0 everywhere else.
+
 ## Project Architecture
 
 ReaderGata is a plugin-based reading application for ebooks and PDFs, built with React, Redux, and TypeScript.
@@ -152,7 +169,9 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
      from being answered with the app shell.
    - `package.json` is the only place the version lives. `build-info.ts` stamps
      it and `git describe` into both vite configs, `android/app/build.gradle`
-     derives `versionCode` from it, and the About page shows it.
+     derives `versionCode` from it, the iOS target's "Version from package.json"
+     build phase sets `CFBundleShortVersionString` and `CFBundleVersion` with
+     the same formula, and the About page shows it.
    - Analytics: PostHog is mounted only when `VITE_PUBLIC_POSTHOG_KEY` is set
      (`AnalyticsProvider`), and `AnalyticsPreference` applies
      `settings.disableAnalytics` with Do Not Track as a veto.
