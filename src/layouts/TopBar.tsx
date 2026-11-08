@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setNavigationOpen } from "../store/reducers/uiReducer";
 import { useRouterState } from "@tanstack/react-router";
 import BookmarksButton from "./BookmarksButton";
+import ChatButton from "./ChatButton";
 import SearchButton from "./SearchButton";
 import Title from "./Title";
 import TocButton from "./TocButton";
@@ -33,9 +34,12 @@ const TopBar: React.FC = () => {
                 <SearchButton />
                 <BookmarksButton />
                 <TocButton />
+                <ChatButton />
               </div>
             </>
-          ) : null}
+          ) : (
+            <ChatButton />
+          )}
         </div>
       </div>
     </header>

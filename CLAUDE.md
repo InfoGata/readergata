@@ -13,6 +13,9 @@ npm install
 # Run development server
 npm run dev
 
+# CORS proxy the dev server falls back to (run alongside `npm run dev`)
+npm run dev:proxy
+
 # Build for production
 npm run build
 
@@ -33,6 +36,22 @@ the only other way, and it affects every app.
 
 Ports are unique per app in `~/projects/webapps` and `strictPort` is on, so a
 collision fails instead of drifting: dev 3004, preview 4004, electron renderer 5004.
+
+The app's own requests to other sites (opening a book by url, the viewers'
+downloads, the assistant's web tools) go through `corsFetch` in
+`src/utils.ts`: directly first, then through the extension's
+`networkRequest` if it's installed, then through the CORS proxy (`toProxyUrl`).
+The extension answers in one message, so that route has no progress or
+cancel and fails past chrome's 64 MiB limit, which is why the proxy still
+backs it. A PDF reached only through the extension is handed to react-pdf as
+a whole Blob (`getPdfFile`), since pdf.js can't fetch through it. The proxy is
+the Cloudflare worker in production, and
+`http://localhost:36325/<host>/<path>` in development, which is
+`npm run dev:proxy` (`scripts/dev-proxy.js`). With neither the extension nor
+the proxy, opening a book by url from a site that sends no CORS headers
+(Project Gutenberg, most of them) fails in a plain browser. Electron and the
+native apps need neither. The dev proxy listens on 127.0.0.1 only, since it
+fetches any url it's given.
 
 ### Electron Commands
 
@@ -196,6 +215,26 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
 
 5. **Network Handling**
    - Extension integration for network requests to bypass CORS restrictions
+
+6. **Assistant chat** (`src/lib/chat/`, `ChatContext`, `ChatMenu`)
+   - An LLM with tools finds a book and opens it: `search_plugins` /
+     `get_publication` call plugins' `onSearch` / `onGetPublicationDetails`;
+     `open_publication` / `open_url` navigate to `/viewer` exactly as
+     `PublicationSourceButton` does. Plugin sources are opaque, so the model
+     only sees short refs (`refs.ts`) that resolve to them.
+   - Provider-agnostic through the Vercel AI SDK, with the user's own key
+     (`settings.chat`): Anthropic, OpenAI, Gemini, or any OpenAI-compatible
+     endpoint. The browser calls the provider directly; there is no backend.
+   - Web search is the provider's own where it has one (`config.ts`
+     `getChatCapabilities`). Otherwise the app-side `web_search` (Tavily/Brave
+     key) and `fetch_page` tools stand in. Gemini only gets native search
+     from 3.0, which is the first version that mixes it with function tools.
+   - `engine.ts` is the only module that imports `ai` / `@ai-sdk/*`, and
+     `ChatContext` loads it with a dynamic import. Importing the SDK anywhere
+     else statically puts ~900KB back into the app shell; `config.ts` and
+     `refs.ts` exist so the UI can avoid it.
+   - Providers get `window.CapacitorWebFetch` rather than the CapacitorHttp-
+     patched `fetch`, which buffers whole responses and would kill streaming.
 
 ## Data Flow
 

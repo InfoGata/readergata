@@ -28,7 +28,7 @@ import {
   setToc,
 } from "../store/reducers/uiReducer";
 import { EBook, PublicationSourceType, SearchResult } from "../types";
-import { getValidUrl } from "../utils";
+import { corsFetch, isCorrectMimeType } from "../utils";
 import Spinner from "./Spinner";
 import { Button } from "./ui/button";
 
@@ -37,15 +37,19 @@ const ebookToFile = async (ebook: EBook): Promise<File> => {
     return publicationToFile(ebook);
   }
 
-  // Still goes through getValidUrl so the CORS-proxy fallback applies; passing
-  // the url straight to foliate-js would bypass it.
-  const validUrl = await getValidUrl(ebook.source, EBOOK_ACCEPTED_MIME_TYPES);
-  if (!validUrl) {
+  // Fetched here rather than handed to foliate-js as a url, so a site that
+  // refuses CORS can still be reached through the extension or the proxy.
+  let response: Response;
+  try {
+    response = await corsFetch(ebook.source);
+  } catch {
     throw new Error(`Could not reach a publication at ${ebook.source}`);
   }
-  const response = await fetch(validUrl);
   if (!response.ok) {
-    throw new Error(`${validUrl} responded with ${response.status}`);
+    throw new Error(`${ebook.source} responded with ${response.status}`);
+  }
+  if (!isCorrectMimeType(response, EBOOK_ACCEPTED_MIME_TYPES)) {
+    throw new Error(`${ebook.source} is not an ebook`);
   }
   return publicationToFile(ebook, await response.blob());
 };
@@ -139,7 +143,8 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
           // redux is recognised as our own echo rather than a navigation.
           lastEmittedLocation.current = cfi;
           dispatch(setCurrentLocation(cfi));
-          if (tocItem) dispatch(setCurrentChapter(tocItemToBookContent(tocItem)));
+          if (tocItem)
+            dispatch(setCurrentChapter(tocItemToBookContent(tocItem)));
         });
         element.addEventListener("load", (event) => {
           // Key events inside the book's iframe do not reach document.body.
@@ -313,7 +318,10 @@ const EbookViewer: React.FC<EbookViewerProps> = (props) => {
         >
           <FaChevronLeft />
         </Button>
-        <div ref={containerRef} className="absolute top-[calc(2.5rem+env(safe-area-inset-top))] w-screen h-[calc(90vh-env(safe-area-inset-top)-env(safe-area-inset-bottom))]" />
+        <div
+          ref={containerRef}
+          className="absolute top-[calc(2.5rem+env(safe-area-inset-top))] w-screen h-[calc(90vh-env(safe-area-inset-top)-env(safe-area-inset-bottom))]"
+        />
         <Button
           onClick={onNext}
           variant="ghost"

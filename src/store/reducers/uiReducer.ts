@@ -7,6 +7,7 @@ interface UiState {
   tocOpen: boolean;
   searchOpen: boolean;
   bookmarksOpen: boolean;
+  chatOpen: boolean;
   contents: BookContent[];
   content?: BookContent;
   currentChapter?: BookContent;
@@ -22,6 +23,7 @@ const initialState: UiState = {
   tocOpen: false,
   searchOpen: false,
   bookmarksOpen: false,
+  chatOpen: false,
   contents: [],
   searchQuery: "",
   searchResults: [],
@@ -46,6 +48,9 @@ const uiSlice = createSlice({
     },
     setBookmarksOpen(state, action: PayloadAction<boolean>) {
       state.bookmarksOpen = action.payload;
+    },
+    setChatOpen(state, action: PayloadAction<boolean>) {
+      state.chatOpen = action.payload;
     },
     setToc(state, action: PayloadAction<BookContent[]>) {
       state.contents = action.payload;
@@ -98,6 +103,7 @@ export const {
   setSearchOpen,
   clearSearch,
   setBookmarksOpen,
+  setChatOpen,
   setCurrentChapter,
 } = uiSlice.actions;
 

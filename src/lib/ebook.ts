@@ -119,7 +119,8 @@ export const getFileNameFromUrl = (url: string): string | undefined => {
 
 /**
  * foliate-js opens a File or Blob. `blob` is supplied for url sources, which
- * the caller fetches so the CORS-proxy fallback in `getValidUrl` still applies.
+ * the caller fetches with `corsFetch`, so a site that refuses CORS is still
+ * reachable through the extension or the proxy.
  * A binary source already is the bytes, so it is wrapped rather than copied.
  */
 export const publicationToFile = (ebook: EBook, blob?: Blob): File => {

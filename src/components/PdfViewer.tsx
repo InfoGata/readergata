@@ -24,7 +24,7 @@ import {
   PublicationSourceType,
   SearchResult,
 } from "../types";
-import { getValidUrl } from "../utils";
+import { getPdfFile } from "../utils";
 import { Button } from "./ui/button";
 import { mapAsync } from "@infogata/utils";
 import { toast } from "sonner";
@@ -134,9 +134,9 @@ const PdfViewer: React.FC<PdfViewerProps> = (props) => {
   React.useEffect(() => {
     const loadPdf = async () => {
       if (currentPdf && currentPdf.sourceType === PublicationSourceType.Url) {
-        const newUrl = await getValidUrl(currentPdf.source, "application/pdf");
-        if (newUrl) {
-          setFile(newUrl);
+        const pdfFile = await getPdfFile(currentPdf.source);
+        if (pdfFile) {
+          setFile(pdfFile);
         } else {
           toast.error("Could not open url");
         }

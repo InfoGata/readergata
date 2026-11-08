@@ -8,9 +8,11 @@ import { Manifest, PluginInfo } from "./plugintypes";
 import {
   DirectoryFile,
   FileType,
+  NetworkRequest,
   PublicationSourceType,
   PublicationType,
 } from "./types";
+import { PDF_MIME_TYPE } from "./lib/ebook";
 import semverGte from "semver/functions/gte";
 import { hasExtension } from "@infogata/extension-components";
 
@@ -157,7 +159,7 @@ export async function getFileText(
 // Takes a list because a publication can legitimately arrive under any of
 // several types -- an ebook may be served as its own type or as a generic
 // octet-stream, and foliate-js reads several formats.
-const isCorrectMimeType = (
+export const isCorrectMimeType = (
   response: Response,
   type: string | string[]
 ): boolean => {
@@ -174,6 +176,10 @@ const isCorrectMimeType = (
 const proxy = import.meta.env.PROD
   ? "https://cloudcors-readergata.audio-pwa.workers.dev?url="
   : "http://localhost:36325/";
+
+/** The url routed through the app's CORS proxy. */
+export const toProxyUrl = (url: string) =>
+  `${proxy}${url.replace(/(^\w+:|^)\/\//, "")}`;
 
 // Re-exported so the rest of the app keeps importing detection from one place.
 // The shared version also honours `?noextension`, which makes the app behave as
@@ -194,33 +200,108 @@ export const hasAuthentication = async () => {
   return Capacitor.isNativePlatform();
 };
 
-export const getValidUrl = async (url: string, mimeType: string | string[]) => {
-  try {
-    // Fetch and check the mime type
-    const response = await fetch(url, { method: "HEAD" });
-    if (response.status === 404) {
-      // HEAD will sometimes return 404
-      // But GET returns successfully
-      return url;
+export type CorsRoute = "direct" | "extension" | "proxy";
+
+// Statuses whose Response may not carry a body; the constructor throws if
+// given one.
+const NULL_BODY_STATUSES = new Set([101, 103, 204, 205, 304]);
+
+/** The extension's answer as a standard Response. */
+export const networkRequestToResponse = (result: NetworkRequest): Response => {
+  if (result.status < 200 || result.status > 599) {
+    throw new Error(`The extension returned status ${result.status}`);
+  }
+  return new Response(
+    NULL_BODY_STATUSES.has(result.status) ? null : result.body,
+    {
+      status: result.status,
+      statusText: result.statusText,
+      headers: result.headers,
     }
-    return isCorrectMimeType(response, mimeType) ? url : null;
-  } catch {
-    // Determine if error is because of cors
-    const noProtocol = url.replace(/(^\w+:|^)\/\//, "");
-    const proxyUrl = `${proxy}${noProtocol}`;
+  );
+};
+
+const fetchViaExtension = async (
+  url: string,
+  init?: RequestInit
+): Promise<Response> => {
+  // An AbortSignal can't be sent to the extension, and it couldn't act on one
+  // anyway: it answers in a single message. Cancelling only discards the
+  // answer.
+  const { signal, ...rest } = init ?? {};
+  const result = await window.InfoGata.networkRequest(url, rest);
+  signal?.throwIfAborted();
+  return networkRequestToResponse(result);
+};
+
+/**
+ * Fetches a url from another site, getting past CORS when it has to.
+ *
+ * 1. Directly. The only route with streaming, progress and cancelling, so it
+ *    always goes first.
+ * 2. Through the extension, when it's installed. It can reach any site, but
+ *    answers in one message: no progress, and chrome refuses messages past
+ *    64 MiB, so a failure here still falls through.
+ * 3. Through the CORS proxy (the Cloudflare worker in production,
+ *    `npm run dev:proxy` in development).
+ *
+ * A CORS refusal surfaces as a thrown TypeError, never as a status, so any
+ * response, even an error status, ends the search.
+ */
+export const corsFetchWithRoute = async (
+  url: string,
+  init?: RequestInit
+): Promise<{ response: Response; route: CorsRoute; url: string }> => {
+  try {
+    return { response: await fetch(url, init), route: "direct", url };
+  } catch (error) {
+    if (init?.signal?.aborted) throw error;
+  }
+  if (hasExtension()) {
     try {
-      const response = await fetch(proxyUrl, { method: "HEAD" });
-      if (response.status === 404) {
-        // HEAD will sometimes return 404
-        // But GET returns successfully
-        return proxyUrl;
-      }
-      return isCorrectMimeType(response, mimeType) ? proxyUrl : null;
-    } catch {
-      toast.error("Could not get file");
+      return {
+        response: await fetchViaExtension(url, init),
+        route: "extension",
+        url,
+      };
+    } catch (error) {
+      if (init?.signal?.aborted) throw error;
+      console.warn("Extension request failed, trying the CORS proxy", error);
     }
   }
-  return null;
+  const proxied = toProxyUrl(url);
+  return { response: await fetch(proxied, init), route: "proxy", url: proxied };
+};
+
+export const corsFetch = async (
+  url: string,
+  init?: RequestInit
+): Promise<Response> => (await corsFetchWithRoute(url, init)).response;
+
+/**
+ * What to hand react-pdf for a PDF url: a url it can fetch itself, which
+ * lets pdf.js load the file in pieces, or, when only the extension can reach
+ * the site, the whole file. Null if it isn't a PDF or can't be reached.
+ */
+export const getPdfFile = async (
+  url: string
+): Promise<string | Blob | null> => {
+  let head: Awaited<ReturnType<typeof corsFetchWithRoute>>;
+  try {
+    head = await corsFetchWithRoute(url, { method: "HEAD" });
+  } catch {
+    return null;
+  }
+  // Some servers answer HEAD with 404 but serve the file to GET.
+  if (
+    head.response.status !== 404 &&
+    !isCorrectMimeType(head.response, PDF_MIME_TYPE)
+  ) {
+    return null;
+  }
+  if (head.route !== "extension") return head.url;
+  const response = await corsFetch(url);
+  return response.ok ? await response.blob() : null;
 };
 
 export const getPluginSubdomain = (id?: string): string => {
