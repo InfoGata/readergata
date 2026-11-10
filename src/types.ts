@@ -13,6 +13,11 @@ export interface NetworkRequest {
 
 export interface NetworkRequestOptions {
   auth?: ManifestAuthentication;
+  /**
+   * Extension 1.6.0+ only: an older one fails the request outright, so go
+   * through `extensionNetworkRequest`, which checks.
+   */
+  onProgress?: (progress: { loaded: number; total?: number }) => void;
 }
 
 declare global {

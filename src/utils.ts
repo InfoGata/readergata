@@ -13,6 +13,7 @@ import {
   PublicationType,
 } from "./types";
 import { PDF_MIME_TYPE } from "./lib/ebook";
+import { extensionNetworkRequest } from "./lib/extension-request";
 import semverGte from "semver/functions/gte";
 import { hasExtension } from "@infogata/extension-components";
 
@@ -224,15 +225,10 @@ export const networkRequestToResponse = (result: NetworkRequest): Response => {
 const fetchViaExtension = async (
   url: string,
   init?: RequestInit
-): Promise<Response> => {
-  // An AbortSignal can't be sent to the extension, and it couldn't act on one
-  // anyway: it answers in a single message. Cancelling only discards the
-  // answer.
-  const { signal, ...rest } = init ?? {};
-  const result = await window.InfoGata.networkRequest(url, rest);
-  signal?.throwIfAborted();
-  return networkRequestToResponse(result);
-};
+): Promise<Response> =>
+  // From extension 1.6.0 the signal cancels the download in the extension
+  // too; before that, cancelling only discards the answer.
+  networkRequestToResponse(await extensionNetworkRequest(url, init, undefined));
 
 /**
  * Fetches a url from another site, getting past CORS when it has to.

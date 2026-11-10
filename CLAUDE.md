@@ -41,9 +41,12 @@ The app's own requests to other sites (opening a book by url, the viewers'
 downloads, the assistant's web tools) go through `corsFetch` in
 `src/utils.ts`: directly first, then through the extension's
 `networkRequest` if it's installed, then through the CORS proxy (`toProxyUrl`).
-The extension answers in one message, so that route has no progress or
-cancel and fails past chrome's 64 MiB limit, which is why the proxy still
-backs it. A PDF reached only through the extension is handed to react-pdf as
+Extension 1.6.0+ streams the response, so that route reports progress and
+honours `signal`; `src/lib/extension-request.ts` checks the version and only
+then passes them, since an older extension fails any request whose options
+carry a function. Before 1.6.0 it answered in one message: no progress, no
+cancel, and nothing past chrome's 64 MiB message limit, which is why the
+proxy still backs it. A PDF reached only through the extension is handed to react-pdf as
 a whole Blob (`getPdfFile`), since pdf.js can't fetch through it. The proxy is
 the Cloudflare worker in production, and
 `http://localhost:36325/<host>/<path>` in development, which is

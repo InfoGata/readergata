@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { InfoGataExtension, NetworkRequest } from "../types";
+import { resetExtensionStreamingCache } from "../lib/extension-request";
 import {
   corsFetchWithRoute,
   getPdfFile,
@@ -28,11 +29,16 @@ const answer = (
   url: "",
 });
 
-const installExtension = () => {
-  window.InfoGata = { networkRequest } as unknown as InfoGataExtension;
+/** Without a version, an extension from before streaming (1.6.0). */
+const installExtension = (version?: string) => {
+  window.InfoGata = {
+    networkRequest,
+    ...(version ? { getVersion: async () => version } : {}),
+  } as unknown as InfoGataExtension;
 };
 
 beforeEach(() => {
+  resetExtensionStreamingCache();
   fetchMock.mockReset();
   networkRequest.mockReset();
   vi.stubGlobal("fetch", fetchMock);
@@ -75,10 +81,29 @@ describe("corsFetchWithRoute", () => {
       "application/epub+zip"
     );
     expect(await result.response.text()).toBe("book");
-    // A signal can't be sent to the extension.
-    expect(networkRequest).toHaveBeenCalledWith(url, { method: "GET" });
+    // An extension before 1.6.0 takes no signal.
+    expect(networkRequest).toHaveBeenCalledWith(
+      url,
+      { method: "GET" },
+      undefined
+    );
     // The proxy was never needed.
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets a streaming extension cancel the download itself", async () => {
+    installExtension("1.6.0");
+    fetchMock.mockImplementationOnce(corsRefusal);
+    networkRequest.mockResolvedValueOnce(answer(200, {}, bytes("book")));
+    const controller = new AbortController();
+
+    await corsFetchWithRoute(url, { signal: controller.signal });
+
+    expect(networkRequest).toHaveBeenCalledWith(
+      url,
+      { signal: controller.signal },
+      undefined
+    );
   });
 
   it("falls back to the proxy when the extension fails", async () => {

@@ -40,6 +40,7 @@ import {
   reportDownloadProgress,
   readWithProgress,
 } from "../lib/publication-download";
+import { extensionNetworkRequest } from "../lib/extension-request";
 import { mapAsync } from "@infogata/utils";
 import ConfirmUpdatePluginDialog from "../components/ConfirmUpdatePluginDialog";
 import {
@@ -200,7 +201,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
                 ]) {
                   headers.set(
                     prop,
-                      pluginAuth.domainHeaders![domainHeaderKey][prop]
+                    pluginAuth.domainHeaders![domainHeaderKey][prop]
                   );
                 }
                 newInit.headers = Object.fromEntries(headers.entries());
@@ -255,18 +256,35 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             return result;
           };
 
-          const viaExtension = async () =>
-            await window.InfoGata.networkRequest(input, newInit, {
-              auth: plugin.manifest?.authentication,
-            });
+          const viaExtension = async () => {
+            const result = await extensionNetworkRequest(
+              input,
+              newInit,
+              { auth: plugin.manifest?.authentication },
+              signal
+                ? { signal, onProgress: (p) => reportDownloadProgress(p) }
+                : {}
+            );
+            if (signal) {
+              // The last update has to land whatever the throttle says, and
+              // an extension before 1.6.0 reports nothing until now.
+              const loaded =
+                result.body instanceof Blob
+                  ? result.body.size
+                  : (result.body?.byteLength ?? 0);
+              reportDownloadProgress({ loaded, total: loaded }, true);
+            }
+            return result;
+          };
 
           // The extension is here to get past CORS, and for a feed that is all
-          // that matters. A publication is different: the extension answers in
-          // one message, so it can report no progress and honour no cancel,
-          // and chrome's messaging refuses it past 64 MiB besides. So a
-          // transfer the reader is watching is fetched directly when it can
-          // be, and the extension becomes the fallback rather than the first
-          // choice.
+          // that matters. For a publication, a direct fetch is still better
+          // when the site allows it: the browser streams it straight into a
+          // Blob. Through the extension every byte is base64'd across its
+          // messaging, and before 1.6.0 it also answered in one message, with
+          // no progress or cancel and nothing past 64 MiB. So a transfer the
+          // reader is watching is fetched directly when it can be, and the
+          // extension becomes the fallback rather than the first choice.
           const attempts = !hasExtension()
             ? [directRequest]
             : signal
@@ -318,7 +336,11 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
           return corsProxyUrlRef.current;
         },
         isLoggedIn: async () => {
-          if (await hasAuthentication() && plugin.manifest?.authentication && plugin.id) {
+          if (
+            (await hasAuthentication()) &&
+            plugin.manifest?.authentication &&
+            plugin.id
+          ) {
             return !!db.pluginAuths.get(plugin.id);
           }
           return false;
@@ -420,8 +442,8 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-    }
-  }, [])
+    };
+  }, []);
 
   const addPlugin = async (plugin: PluginInfo) => {
     if (pluginFrames.some((p) => p.id === plugin.id)) {
