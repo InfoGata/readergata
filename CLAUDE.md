@@ -189,6 +189,11 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
      must be `/index.html` (the precache key), not `/`, or every offline deep
      link fails. The `.html` denylist keeps `pluginframe.html` and `ui.html`
      from being answered with the app shell.
+   - The worker is registered by `src/hooks/useUpdateServiceWorker.tsx`
+     (`virtual:pwa-register`; importing it is why the plugin injects no
+     `registerSW` script). On native it registers nothing and instead removes
+     any worker plus its `workbox-*` caches (`src/lib/service-worker.ts`),
+     since a worker would keep serving the old bundle after an OTA update.
    - `package.json` is the only place the version lives. `build-info.ts` stamps
      it and `git describe` into both vite configs, `android/app/build.gradle`
      derives `versionCode` from it, the iOS target's "Version from package.json"
@@ -197,6 +202,39 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
    - Analytics: PostHog is mounted only when `VITE_PUBLIC_POSTHOG_KEY` is set
      (`AnalyticsProvider`), and `AnalyticsPreference` applies
      `settings.disableAnalytics` with Do Not Track as a veto.
+
+7. **OTA updates (native app)**
+   - `@capgo/capacitor-updater`, self-hosted, with `autoUpdate: false` and
+     stats off, so nothing goes to Capgo. `npm run ota:publish`
+     (`scripts/ota-publish.ts`) builds, zips `dist`, and attaches the zip plus
+     `ota.json` to GitHub release `v<version>`. `src/lib/ota-update.ts` reads
+     `releases/latest/download/ota.json`. `server.androidScheme` must stay
+     `https`: the origin is where every book and setting is stored.
+   - A bundle is only installed on a binary with the same **native
+     fingerprint** (`native-fingerprint.ts`): a hash of the Java/Swift, the
+     gradle files, `capacitor.config.ts`, `ota-public-key.pem` and installed
+     native plugin versions. The binary gets it through the CapacitorUpdater
+     `version` (`<version>+native.<hash>`), the bundle through
+     `__NATIVE_FINGERPRINT__`. Changing any hashed file means the next release
+     needs a store build. Don't add `cap sync`-generated files to the hash:
+     sync writes them after it reads the config, so the binary would get a
+     stale fingerprint. `capacitor.config.ts` is transpiled to CJS by the
+     Capacitor CLI, so no `import.meta` in it or anything it imports.
+   - `notifyAppReady` runs from `components/OtaUpdates.tsx` (inside
+     `AppErrorBoundary`) after the first commit. A bundle that doesn't reach
+     it within 10s is rolled back and kept as `error`
+     (`autoDeleteFailed: false`), so it is never downloaded again.
+   - One OTA per version: the app only installs versions newer than the one
+     it is running.
+   - **Signed**: `capacitor.config.ts` embeds `ota-public-key.pem` as Capgo's
+     `publicKey`, and Capgo refuses any bundle without a session key and
+     checksum made by the private key (`scripts/ota-crypto.ts`, the
+     "encryption v2" format, 2048-bit PKCS#1). The private key is outside the
+     repo (`scripts/ota-paths.ts`, `OTA_PRIVATE_KEY_PATH`). The signature
+     doesn't cover the version label in `ota.json`, so downloads are labelled
+     `<version>+native.<fingerprint>` and a running bundle whose label doesn't
+     match its own `__APP_VERSION__` and fingerprint marks itself failed and
+     resets.
 
 ### Key Subsystems
 

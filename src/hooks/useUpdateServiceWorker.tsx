@@ -1,9 +1,11 @@
+import { Capacitor } from "@capacitor/core";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useRegisterSW } from "virtual:pwa-register/react";
+import { removeServiceWorker } from "@/lib/service-worker";
 
-const useUpdateServiceWorker = () => {
+const useRegisterServiceWorker = () => {
   const { t } = useTranslation();
 
   // onNeedReload is registered once, so read t() through a ref to keep the toast
@@ -28,5 +30,21 @@ const useUpdateServiceWorker = () => {
     },
   });
 };
+
+// In the native app the worker would keep serving the old bundle after an
+// over-the-air update, so it is never registered there and any worker left
+// from an older install is removed (src/lib/service-worker.ts). Electron is
+// unchanged: its production build loads from file://, where registration
+// fails quietly.
+const useRemoveServiceWorker = () => {
+  React.useEffect(() => {
+    void removeServiceWorker();
+  }, []);
+};
+
+// Picked once at load, so each platform always calls the same hooks.
+const useUpdateServiceWorker = Capacitor.isNativePlatform()
+  ? useRemoveServiceWorker
+  : useRegisterServiceWorker;
 
 export default useUpdateServiceWorker;

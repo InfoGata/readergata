@@ -14,6 +14,7 @@ import { ExtensionProvider } from "./contexts/ExtensionContext";
 import AnalyticsProvider from "./components/AnalyticsProvider";
 import AnalyticsPreference from "./components/AnalyticsPreference";
 import AppErrorBoundary from "./components/AppErrorBoundary";
+import OtaUpdates from "./components/OtaUpdates";
 
 // Only ever imported by main.tsx, after any pending data reset has run — see
 // there for why this can't be the entry module itself.
@@ -35,6 +36,7 @@ root.render(
     {/* Outermost on purpose: everything below can throw during first render,
         and the router's own error component only covers routes. */}
     <AppErrorBoundary>
+      <OtaUpdates />
       <AnalyticsProvider>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
