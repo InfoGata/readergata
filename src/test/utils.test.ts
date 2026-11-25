@@ -1,4 +1,4 @@
-import { formatBytes, formatPublished } from "@/utils";
+import { formatBytes, formatPublished, isAuthorizedDomain } from "@/utils";
 import { describe, expect, it } from "vitest";
 
 describe("formatBytes", () => {
@@ -41,5 +41,38 @@ describe("formatPublished", () => {
     expect(formatPublished("sometime in the 1820s")).toBe(
       "sometime in the 1820s"
     );
+  });
+});
+
+describe("isAuthorizedDomain", () => {
+  const humble = {
+    loginUrl:
+      "https://auth.humblebundle.com/self-service/login/browser?return_to=x",
+    completionUrl: "https://www.humblebundle.com/home/library?*",
+  };
+
+  it("allows the login and completion hosts", () => {
+    expect(
+      isAuthorizedDomain("https://www.humblebundle.com/api/x", humble)
+    ).toBe(true);
+    expect(isAuthorizedDomain("https://auth.humblebundle.com/x", humble)).toBe(
+      true
+    );
+  });
+
+  it("refuses any other host", () => {
+    expect(isAuthorizedDomain("https://dl.humble.com/book.epub", humble)).toBe(
+      false
+    );
+    expect(isAuthorizedDomain("not a url", humble)).toBe(false);
+  });
+
+  it("allows the declared header domains", () => {
+    expect(
+      isAuthorizedDomain("https://music.youtube.com/x", {
+        loginUrl: "https://accounts.google.com/login",
+        domainHeadersToFind: { ".youtube.com": ["Authorization"] },
+      })
+    ).toBe(true);
   });
 });

@@ -274,6 +274,14 @@ export interface Manifest {
   updateUrl?: string;
   authentication?: ManifestAuthentication;
   siteMatch?: string[];
+  /**
+   * Url patterns the extension should request from a page on that site
+   * rather than from its background worker, for sites that answer on where a
+   * request came from. Humble's Next.js server actions are one: they refuse a
+   * POST whose `Origin` isn't the site's own. Only a nomination -- the
+   * extension asks the user before it borrows a page.
+   */
+  pageContextRequests?: string[];
 }
 
 export interface ManifestAuthentication {

@@ -173,11 +173,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
 
           if (
             !plugin?.manifest?.authentication ||
-            !isAuthorizedDomain(
-              input,
-              plugin.manifest.authentication.loginUrl,
-              plugin.manifest.authentication.domainHeadersToFind
-            )
+            !isAuthorizedDomain(input, plugin.manifest.authentication)
           ) {
             newInit.credentials = "omit";
           }
@@ -260,7 +256,10 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
             const result = await extensionNetworkRequest(
               input,
               newInit,
-              { auth: plugin.manifest?.authentication },
+              {
+                auth: plugin.manifest?.authentication,
+                pageContextPatterns: plugin.manifest?.pageContextRequests,
+              },
               signal
                 ? { signal, onProgress: (p) => reportDownloadProgress(p) }
                 : {}

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { db } from "./database";
 import i18next from "./i18n";
 import semverValid from "semver/functions/parse";
-import { Manifest, PluginInfo } from "./plugintypes";
+import { Manifest, ManifestAuthentication, PluginInfo } from "./plugintypes";
 import {
   DirectoryFile,
   FileType,
@@ -379,22 +379,39 @@ export const getPluginUrl = (id: string, path: string): URL => {
     : new URL(`${getPluginSubdomain(id)}${path}`);
 };
 
+/**
+ * Whether a plugin request may carry the login: it is to a host the login
+ * window visits -- where it starts, or the completion page it ends on, which
+ * differ for a site whose sign-in is a separate service -- or to one of the
+ * domains whose headers the login collects. Mirrors the extension's
+ * `credentialHostFor`.
+ */
 export const isAuthorizedDomain = (
   input: string,
-  loginUrl?: string,
-  domainHeaders?: Record<string, any>
+  auth: Pick<
+    ManifestAuthentication,
+    "loginUrl" | "completionUrl" | "domainHeadersToFind"
+  >
 ): boolean => {
-  if (!loginUrl) return false;
-
-  const allowedHost = new URL(loginUrl).host;
-  const inputHost = new URL(input).host;
-  if (allowedHost === inputHost) {
+  const hostOf = (url: string | undefined) => {
+    if (!url) return undefined;
+    try {
+      return new URL(url).host;
+    } catch {
+      return undefined;
+    }
+  };
+  const inputHost = hostOf(input);
+  if (!inputHost || !auth.loginUrl) return false;
+  if (
+    inputHost === hostOf(auth.loginUrl) ||
+    inputHost === hostOf(auth.completionUrl)
+  ) {
     return true;
   }
-  if (domainHeaders && Object.keys(domainHeaders).length > 0) {
-    return Object.keys(domainHeaders).some((d) => inputHost.endsWith(d));
-  }
-  return false;
+  return Object.keys(auth.domainHeadersToFind ?? {}).some((d) =>
+    inputHost.endsWith(d)
+  );
 };
 
 export const generatePluginId = () => {
