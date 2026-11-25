@@ -12,6 +12,7 @@ import { formatPublished, searchThumbnailSize } from "../utils";
 import AboutLink, { AboutLinkProps } from "./AboutLink";
 import ConfirmPluginDialog from "./ConfirmPluginDialog";
 import PublicationSourceButton from "./PublicationSourceButton";
+import QueryError from "./QueryError";
 import Spinner from "./Spinner";
 import { buttonVariants } from "./ui/button";
 import { getThumbnailImage } from "@infogata/utils";
@@ -55,7 +56,22 @@ const PublicationDetails: React.FC<PublicationDetailsProps> = (props) => {
   // whole rather than merging field by field: the plugin's own answer is the
   // authority on every field, including the ones it chose to leave empty.
   const publication = detailsQuery.data ?? publicationFromFeed;
-  const loading = detailsQuery.isLoading || isLoading;
+  const loading =
+    detailsQuery.isLoading ||
+    isLoading ||
+    (detailsQuery.isError && detailsQuery.isFetching);
+
+  // With the feed row in hand the page still has something true to show, so
+  // a failed fetch only replaces "not found" when there is nothing else.
+  if (!publication && detailsQuery.isError && !detailsQuery.isFetching) {
+    return (
+      <QueryError
+        title={t("publicationLoadFailed")}
+        error={detailsQuery.error}
+        onRetry={() => detailsQuery.refetch()}
+      />
+    );
+  }
 
   if (!publication) {
     return (

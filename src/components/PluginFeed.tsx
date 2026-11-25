@@ -4,6 +4,8 @@ import usePlugins from "../hooks/usePlugins";
 import ConfirmPluginDialog from "../components/ConfirmPluginDialog";
 import FeedContainer from "../components/FeedContainer";
 import Spinner from "../components/Spinner";
+import QueryError from "../components/QueryError";
+import { useTranslation } from "react-i18next";
 import useFindPlugin from "@/hooks/useFindPlugin";
 import usePagination from "@/hooks/usePagination";
 import { findPluginByParam } from "@/lib/plugin-route";
@@ -24,6 +26,7 @@ type PluginFeed = {
 };
 
 const PluginFeed: React.FC<PluginFeed> = (props) => {
+  const { t } = useTranslation();
   const { plugins, pluginsLoaded } = usePlugins();
   const { pluginId, apiId, filters, onApplyFilters, offset, onOffsetChange } =
     props;
@@ -58,8 +61,20 @@ const PluginFeed: React.FC<PluginFeed> = (props) => {
 
   return (
     <div>
-      <Spinner open={query.isLoading || isLoading} />
-      {query.data && (
+      {/* A retry after an error isn't "loading" to react-query. */}
+      <Spinner
+        open={
+          query.isLoading || isLoading || (query.isError && query.isFetching)
+        }
+      />
+      {query.isError && !query.isFetching && (
+        <QueryError
+          title={t("feedLoadFailed")}
+          error={query.error}
+          onRetry={() => query.refetch()}
+        />
+      )}
+      {query.data && !query.isError && (
         <FeedContainer
           feed={query.data}
           plugin={plugin}

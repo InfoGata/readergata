@@ -7,6 +7,8 @@ import usePlugins from "@/hooks/usePlugins";
 import ConfirmPluginDialog from "@/components/ConfirmPluginDialog";
 import FeedContainer from "@/components/FeedContainer";
 import Spinner from "@/components/Spinner";
+import QueryError from "@/components/QueryError";
+import { useTranslation } from "react-i18next";
 import {
   canonicalizePluginUrl,
   findPluginByParam,
@@ -23,6 +25,7 @@ import { z } from "zod";
 
 const PluginFeedSearch: React.FC = () => {
   const { pluginId } = Route.useParams();
+  const { t } = useTranslation();
   const { apiId, query, searchInfo, filters, offset } = Route.useSearch();
   const { plugins, pluginsLoaded } = usePlugins();
   const plugin = findPluginByParam(plugins, pluginId);
@@ -94,8 +97,21 @@ const PluginFeedSearch: React.FC = () => {
 
   return (
     <div>
-      <Spinner open={searchQuery.isLoading || isLoading} />
-      {searchQuery.data && (
+      <Spinner
+        open={
+          searchQuery.isLoading ||
+          isLoading ||
+          (searchQuery.isError && searchQuery.isFetching)
+        }
+      />
+      {searchQuery.isError && !searchQuery.isFetching && (
+        <QueryError
+          title={t("searchFailed")}
+          error={searchQuery.error}
+          onRetry={() => searchQuery.refetch()}
+        />
+      )}
+      {searchQuery.data && !searchQuery.isError && (
         <FeedContainer
           feed={searchQuery.data}
           plugin={plugin}
