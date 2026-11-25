@@ -245,6 +245,19 @@ ReaderGata is a plugin-based reading application for ebooks and PDFs, built with
 2. **Authentication**
    - Supports plugin authentication via headers or domain-specific headers
    - Handles login redirections for plugins requiring authentication
+   - A plugin's manifest `authentication` says how to tell a login is done.
+     In a browser the extension opens the window and watches it; on Android
+     and iOS the app does (`src/lib/native-login.ts`), in InfoGata's fork of
+     `cordova-plugin-inappbrowser`, with the matching in
+     `src/lib/login-tracker.ts`. Only the fork's Android side reports request
+     headers, so iOS sees navigations alone and a login there needs a
+     `completionUrl`; the Login button is hidden where a login couldn't
+     finish (`canLogInNatively`). Cookies are never read: the in-app browser
+     shares its cookie store with CapacitorHttp, so native plugin requests
+     carry the session by themselves. Electron has no login.
+   - The fork is a git dependency, so `native-fingerprint.ts` hashes its
+     commit from the lockfile -- its package.json version never changes.
+     Updating it means a store build.
 
 3. **Document Management**
    - Tracks document metadata, bookmarks, and reading locations

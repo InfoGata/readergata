@@ -19,11 +19,14 @@ import { FileType, NotifyLoginMessage } from "@/types";
 import {
   getPlugin,
   hasAuthentication,
+  hasExtension,
   getFileTypeFromPluginUrl,
   getFileText,
   directoryProps,
 } from "@/utils";
 import { Manifest } from "@/plugintypes";
+import { Capacitor } from "@capacitor/core";
+import { canLogInNatively } from "@/lib/login-tracker";
 
 const PluginDetails: React.FC = () => {
   const { pluginId } = Route.useParams();
@@ -93,11 +96,39 @@ const PluginDetails: React.FC = () => {
 
   React.useEffect(() => {
     const getHasAuth = async () => {
+      const auth = pluginInfo?.manifest?.authentication;
       const platformHasAuth = await hasAuthentication();
-      setHasAuth(platformHasAuth && !!pluginInfo?.manifest?.authentication);
+      // Without the extension the app opens the window itself, and only
+      // offers to when it could tell the login has finished.
+      const canFinish =
+        !!auth &&
+        (hasExtension() ||
+          !Capacitor.isNativePlatform() ||
+          canLogInNatively(auth));
+      setHasAuth(platformHasAuth && canFinish);
     };
     getHasAuth();
   }, [pluginInfo]);
+
+  /** Stores a finished login, whichever window it came from. */
+  const completeLogin = React.useCallback(
+    async (result: {
+      headers: Record<string, string>;
+      domainHeaders?: Record<string, Record<string, string>>;
+    }) => {
+      if (!plugin?.id) return;
+      // Awaited, so the plugin's isLoggedIn already sees it in onPostLogin.
+      await db.pluginAuths.put({
+        pluginId: plugin.id,
+        headers: result.headers,
+        domainHeaders: result.domainHeaders,
+      });
+      if (await plugin.hasDefined.onPostLogin()) {
+        await plugin.remote.onPostLogin();
+      }
+    },
+    [plugin]
+  );
 
   const iframeListener = React.useCallback(
     async (event: MessageEvent<NotifyLoginMessage>) => {
@@ -107,18 +138,11 @@ const PluginDetails: React.FC = () => {
 
       if (event.data.type === "infogata-extension-notify-login") {
         if (plugin && event.data.pluginId === plugin.id) {
-          db.pluginAuths.put({
-            pluginId: plugin.id || "",
-            headers: event.data.headers,
-            domainHeaders: event.data.domainHeaders,
-          });
-          if (await plugin?.hasDefined.onPostLogin()) {
-            await plugin.remote.onPostLogin();
-          }
+          await completeLogin(event.data);
         }
       }
     },
-    [plugin]
+    [plugin, completeLogin]
   );
 
   React.useEffect(() => {
@@ -126,13 +150,21 @@ const PluginDetails: React.FC = () => {
     return () => window.removeEventListener("message", iframeListener);
   }, [iframeListener]);
 
-  const onLogin = () => {
-    if (pluginInfo?.manifest?.authentication?.loginUrl) {
-      if (window.InfoGata.openLoginWindow) {
-        window.InfoGata.openLoginWindow(
-          pluginInfo.manifest.authentication,
-          pluginInfo.id || ""
-        );
+  const onLogin = async () => {
+    const auth = pluginInfo?.manifest?.authentication;
+    if (!auth?.loginUrl) return;
+    if (hasExtension() && window.InfoGata?.openLoginWindow) {
+      window.InfoGata.openLoginWindow(auth, pluginInfo?.id || "");
+    } else if (Capacitor.isNativePlatform()) {
+      const { nativeLogin, LoginCancelledError } = await import(
+        "@/lib/native-login"
+      );
+      try {
+        await completeLogin(await nativeLogin(auth));
+      } catch (e) {
+        if (e instanceof LoginCancelledError) return;
+        console.error(e);
+        toast.error(e instanceof Error ? e.message : String(e));
       }
     }
   };
@@ -270,7 +302,7 @@ const PluginDetails: React.FC = () => {
           )}
           {hasAuth && pluginAuth && (
             <Button variant="outline" onClick={onLogout}>
-              {t("plugins:login")}
+              {t("plugins:logout")}
             </Button>
           )}
           {hasAuth && !pluginAuth && (

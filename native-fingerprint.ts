@@ -48,8 +48,9 @@ const EXCLUDED = [
 ];
 
 /**
- * Not android/capacitor.settings.gradle, android/app/capacitor.build.gradle
- * or ios/App/CapApp-SPM/Package.swift. `cap sync` regenerates them from the
+ * Not android/capacitor.settings.gradle, android/app/capacitor.build.gradle,
+ * ios/App/CapApp-SPM/Package.swift or the capacitor-cordova-*-plugins
+ * projects. `cap sync` regenerates them from the
  * installed plugins, which nativePackages() already covers, and it writes
  * them after it has read this config. Hashing them would give a binary a
  * fingerprint from before the sync, which no later bundle could match.
@@ -75,6 +76,22 @@ const walk = (dir: string): string[] => {
 };
 
 /**
+ * Where npm installed a package from, when that isn't the registry. A git
+ * dependency (cordova-plugin-inappbrowser) keeps the same version in its
+ * package.json across commits, so the commit in the URL is what identifies
+ * its native code.
+ */
+const gitSourceOf = (name: string): string | undefined => {
+  const lockPath = join(root, "node_modules", ".package-lock.json");
+  if (!existsSync(lockPath)) return undefined;
+  const lock = JSON.parse(readFileSync(lockPath, "utf8")) as {
+    packages?: Record<string, { resolved?: string }>;
+  };
+  const resolved = lock.packages?.[`node_modules/${name}`]?.resolved;
+  return resolved?.startsWith("git") ? resolved : undefined;
+};
+
+/**
  * `name@version` for every dependency with native code. The installed version
  * is used rather than the range in package.json: `^8.0.1` covers builds with
  * different native code.
@@ -90,12 +107,15 @@ const nativePackages = (): string[] => {
       const isNative =
         name.startsWith("@capacitor/") ||
         existsSync(join(dir, "android")) ||
-        existsSync(join(dir, "ios"));
+        existsSync(join(dir, "ios")) ||
+        // Cordova plugins keep their native code in src/ and declare it here.
+        existsSync(join(dir, "plugin.xml"));
       if (!isNative) return [];
       const { version } = JSON.parse(
         readFileSync(join(dir, "package.json"), "utf8")
       ) as { version: string };
-      return [`${name}@${version}`];
+      const source = gitSourceOf(name);
+      return [source ? `${name}@${version} ${source}` : `${name}@${version}`];
     });
 };
 
