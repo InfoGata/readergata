@@ -33,7 +33,6 @@ import {
   getPluginUrl,
   hasExtension,
   isAuthorizedDomain,
-  hasAuthentication,
 } from "../utils";
 import {
   downloadSignal,
@@ -41,6 +40,7 @@ import {
   readWithProgress,
 } from "../lib/publication-download";
 import { extensionNetworkRequest } from "../lib/extension-request";
+import { isPluginLoggedIn } from "../lib/plugin-auth";
 import { mapAsync } from "@infogata/utils";
 import ConfirmUpdatePluginDialog from "../components/ConfirmUpdatePluginDialog";
 import {
@@ -335,16 +335,7 @@ export const PluginsProvider: React.FC<React.PropsWithChildren> = (props) => {
         getCorsProxy: async () => {
           return corsProxyUrlRef.current;
         },
-        isLoggedIn: async () => {
-          if (
-            (await hasAuthentication()) &&
-            plugin.manifest?.authentication &&
-            plugin.id
-          ) {
-            return !!db.pluginAuths.get(plugin.id);
-          }
-          return false;
-        },
+        isLoggedIn: () => isPluginLoggedIn(plugin),
         getTheme: async () => {
           return themeRef.current;
         },
