@@ -11,7 +11,7 @@ import { z } from "zod";
  * sent a flat id-to-value map instead.
  */
 export const filtersSearchSchema = {
-  filters: z.record(z.string()).optional().catch(undefined),
+  filters: z.record(z.string(), z.string()).optional().catch(undefined),
 };
 
 /**
