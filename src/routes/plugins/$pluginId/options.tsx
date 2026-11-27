@@ -1,6 +1,7 @@
 import Spinner from "@/components/Spinner";
 import { db } from "@/database";
 import usePlugins from "@/hooks/usePlugins";
+import usePluginMessages from "@/hooks/usePluginMessages";
 import {
   canonicalizePluginUrl,
   findPluginByParam,
@@ -13,7 +14,7 @@ import { useTranslation } from "react-i18next";
 
 const PluginOptions: React.FC = () => {
   const { pluginId } = Route.useParams();
-  const { plugins, pluginMessage, pluginsLoaded } = usePlugins();
+  const { plugins, pluginsLoaded } = usePlugins();
   const ref = React.useRef<HTMLIFrameElement>(null);
   const plugin = findPluginByParam(plugins, pluginId);
   const [optionsHtml, setOptionsHtml] = React.useState<string>();
@@ -44,11 +45,7 @@ const PluginOptions: React.FC = () => {
     return () => window.removeEventListener("message", iframeListener);
   }, [iframeListener]);
 
-  React.useEffect(() => {
-    if (pluginMessage?.pluginId === plugin?.id) {
-      ref.current?.contentWindow?.postMessage(pluginMessage?.message, "*");
-    }
-  }, [pluginMessage, plugin?.id]);
+  usePluginMessages(plugin?.id, ref);
 
   const iframeOnload = async () => {
     const pluginData = await db.plugins.get(plugin?.id || "");
